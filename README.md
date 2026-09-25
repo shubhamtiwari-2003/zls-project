@@ -16,21 +16,114 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# Shopcart E-Commerce Application
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+A modern, full-stack e-commerce platform built with Next.js (App Router), TypeScript, and Tailwind CSS.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```text
+my-ecommerce/
+├── prisma/                                  # Database schema & seeds
+│   ├── schema.prisma                        # Prisma data models (User, Product, Cart, Order)
+│   └── seed.ts                              # Database seed scripts
+│
+├── public/                                  # Static assets
+│   ├── images/                              # Local banners, fallbacks, placeholders
+│   └── favicon.ico                          # Site icon
+│
+├── src/
+│   ├── app/                                 # Next.js App Router root
+│   │   ├── (shop)/                          # Website route group (customer layout)
+│   │   │   ├── layout.tsx                   # Website root layout (Header, Cart Drawer)
+│   │   │   ├── page.tsx                     # Homepage (Trending/Offer hero, categories, deals)
+│   │   │   ├── products/
+│   │   │   │   ├── page.tsx                 # Full catalog page (filter chips, sort dropdown)
+│   │   │   │   └── [slug]/
+│   │   │   │       └── page.tsx             # Product detail page (gallery, variants, reviews)
+│   │   │   ├── cart/
+│   │   │   │   └── page.tsx                 # Full cart page
+│   │   │   └── checkout/
+│   │   │       ├── page.tsx                 # Checkout flow (shipping address, summary)
+│   │   │       └── success/
+│   │   │           └── page.tsx             # Order confirmation page
+│   │   │
+│   │   ├── (account)/                       # Authenticated customer portal
+│   │   │   ├── layout.tsx                   # Account sidebar layout
+│   │   │   ├── orders/
+│   │   │   │   └── page.tsx                 # Order history & status
+│   │   │   └── profile/
+│   │   │       └── page.tsx                 # User profile & saved addresses
+│   │   │
+│   │   ├── admin/                           # Admin dashboard (protected by RBAC)
+│   │   │   ├── layout.tsx                   # Admin sidebar & header
+│   │   │   ├── products/
+│   │   │   │   └── page.tsx                 # Product catalog management
+│   │   │   └── orders/
+│   │   │       └── page.tsx                 # Customer order management
+│   │   │
+│   │   ├── api/                             # API Route Handlers
+│   │   │   └── webhooks/
+│   │   │       └── stripe/
+│   │   │           └── route.ts             # Stripe webhook processor
+│   │   │
+│   │   ├── globals.css                      # Global styles & Tailwind directives
+│   │   └── layout.tsx                       # Root HTML document & top-level providers
+│   │
+│   ├── components/                          # Shared UI elements
+│   │   ├── layout/
+│   │   │   ├── Header.tsx                   # Top utility bar, main nav, search, modal triggers
+│   │   │   └── Footer.tsx                   # Global site footer
+│   │   └── ui/                              # Reusable primitives (buttons, modals, inputs)
+│   │
+│   ├── features/                            # Domain-driven feature modules
+│   │   ├── auth/                            # Authentication module
+│   │   │   ├── components/
+│   │   │   │   └── AuthModal.tsx            # Floating login/signup modal (Name & Phone)
+│   │   │   ├── actions/                     # Server actions for OTP handling
+│   │   │   └── types.ts
+│   │   │
+│   │   ├── home/                            # Homepage-specific components
+│   │   │   └── components/
+│   │   │       ├── DepartmentHero.tsx       # Isometric 3D podium showcase
+│   │   │       └── TopCategories.tsx        # Colored category tile grid
+│   │   │
+│   │   ├── products/                        # Product domain
+│   │   │   ├── components/
+│   │   │   │   ├── ProductCard.tsx          # Card with image, heart icon, rating, add-to-cart
+│   │   │   │   ├── HeroBanner.tsx           # Category promotional banner
+│   │   │   │   ├── FilterBar.tsx            # Interactive filter chips & sorting controls
+│   │   │   │   └── ProductGallery.tsx       # PDP image thumbnail carousel
+│   │   │   ├── actions/                     # Product search/filter server actions
+│   │   │   └── types.ts
+│   │   │
+│   │   ├── cart/                            # Shopping cart domain
+│   │   │   ├── components/
+│   │   │   │   ├── CartDrawer.tsx           # Slide-out flyout cart panel
+│   │   │   │   └── CartItemRow.tsx          # Cart line item with quantity steppers
+│   │   │   ├── actions/                     # Cart cookie sync & server actions
+│   │   │   └── store.ts                     # Client state (Zustand / Context)
+│   │   │
+│   │   └── checkout/                        # Checkout domain
+│   │       ├── components/
+│   │       │   ├── AddressForm.tsx
+│   │       │   └── OrderSummary.tsx
+│   │       └── actions/                     # Payment intent initialization
+│   │
+│   ├── lib/                                 # Shared configurations & singletons
+│   │   ├── db.ts                            # Prisma client singleton
+│   │   ├── firebase.ts                      # Firebase Auth client initialization (OTP)
+│   │   ├── stripe.ts                        # Stripe SDK configuration
+│   │   └── utils.ts                         # Tailwind clsx/twMerge utilities
+│   │
+│   └── types/                               # Global ambient TypeScript definitions
+│       └── index.ts
+│
+├── .env.example                             # Environment variables template
+├── middleware.ts                            # Route guards for admin & account paths
+├── next.config.ts                           # Next.js configuration (remote image domains)
+├── package.json
+├── tailwind.config.ts                       # Tailwind CSS custom theme colors
+└── tsconfig.json                            # TypeScript configuration & path aliases
