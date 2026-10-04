@@ -27,8 +27,8 @@ const TOP_CATEGORIES: CategoryTile[] = [
   },
   {
     id: "2",
-    title: "Miniature",
-    slug: "miniature",
+    title: "Custom",
+    slug: "custom",
     bgColor: "bg-[#f5c678]", // Soft Warm Yellow
     imageUrl: Clicker.src,
   },
@@ -48,8 +48,8 @@ const TOP_CATEGORIES: CategoryTile[] = [
   },
   {
     id: "5",
-    title: "Poster Frames",
-    slug: "poster-frames",
+    title: "3D Frames",
+    slug: "3d-frames",
     bgColor: "bg-[#f2b3b0]", // Warm Rose/Blush
     imageUrl: poster.src,
   },
@@ -64,13 +64,13 @@ const TOP_CATEGORIES: CategoryTile[] = [
 
 export function TopCategories() {
   return (
-    <section className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 xl:px-20 py-16">
+    <section className="max-w-7xl mx-auto px-4 sm:px-10 lg:px-16 xl:px-20 py-10 sm:py-16">
       <h2 className="text-2xl sm:text-3xl font-sans text-foreground tracking-tight mb-8">
         Find <span className="text-amber-500 ">Products</span> By Categories
       </h2>
 
       {/* Grid of rounded colored category cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
         {TOP_CATEGORIES.map((cat) => (
           <Link
             key={cat.id}

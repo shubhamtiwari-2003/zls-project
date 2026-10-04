@@ -9,6 +9,8 @@
   --font-serif: "Lora", serif;
 }
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 
 :root {
   /* Light Theme */
@@ -80,4 +82,20 @@
       background-color 0.5s ease,
       color 0.5s ease;
   }
+}
+
+button{
+  cursor: pointer;
+}
+
+/*
+  Razorpay Checkout runs in an iframe with a light color scheme. In dark
+  mode the page is `color-scheme: dark`, and browsers paint an opaque
+  (white) backdrop behind iframes whose scheme differs from the page —
+  hiding the site behind the payment popup. Match the scheme to keep the
+  iframe transparent.
+*/
+.razorpay-container,
+.razorpay-checkout-frame {
+  color-scheme: light;
 }

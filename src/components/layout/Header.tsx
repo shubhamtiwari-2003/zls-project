@@ -3,19 +3,31 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Search, User, ShoppingCart, ChevronDown, Phone } from "lucide-react";
+import { Search, ShoppingCart } from "lucide-react";
 import { useState } from "react";
-import { AuthModal } from "@/features/auth/components/AuthModal";
+import { useRouter } from "next/navigation";
+import { CategoriesMenu } from "./CategoriesMenu";
+import { AccountMenu } from "./AccountMenu";
 import white_logo from "../../../public/White-logo-text.png";
 import black_logo from "../../../public/black_logo.png";
 import ThemeToggle from "../shared/toggleTheme";
-import { useResolvedTheme } from "@/hooks/useResolvedTheme";
 import { CartDrawer } from "@/features/cart/components/CartDrawer";
+import { useCartStore } from "@/features/cart/store/cartStore";
+import { useHydrated } from "@/hooks/useHydrated";
 
-export function Header() {
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
+interface HeaderProps {
+  // Active categories (from the shop layout).
+  categories: { name: string; slug: string }[];
+}
+
+export function Header({ categories }: HeaderProps) {
+  const router = useRouter();
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const { mounted, resolvedTheme } = useResolvedTheme();
+  const [search, setSearch] = useState("");
+  const hydrated = useHydrated();
+  const cartCount = useCartStore((state) =>
+    state.items.reduce((sum, item) => sum + item.quantity, 0)
+  );
 
   return (
     <>
@@ -25,63 +37,87 @@ export function Header() {
 
         {/* Main Navigation Bar */}
         <div className="bg-background">
-          <div className="w-full px-6 sm:px-10 lg:px-16 xl:px-20 h-20 flex items-center justify-between gap-6">
-            <Link href="/" className="flex items-center gap-2 text-2xl font-black text-foreground tracking-tight">
-              {/* Light theme */}
-              <Image
-                src = {white_logo.src}
-                alt="Z Layer Studio"
-                className="block dark:hidden h-auto w-40"
-                priority
-                width={500}
-                height={700}
-              />
-
-              {/* Dark theme */}
+          <div className="w-full px-4 sm:px-10 lg:px-16 xl:px-20 h-16 sm:h-20 flex items-center justify-between gap-3 sm:gap-6">
+            <Link href="/" className="flex items-center">
+              {/* Light theme → Black logo */}
               <Image
                 src={black_logo}
                 alt="Z Layer Studio"
-                className="hidden dark:block h-auto w-40"
-                priority
                 width={500}
                 height={700}
+                className="hidden h-auto w-32 sm:w-40 dark:block "
+                priority
+              />
+
+              {/* Dark theme → White logo */}
+              <Image
+                src={white_logo}
+                alt="Z Layer Studio"
+                width={500}
+                height={700}
+                className="block h-auto w-32 sm:w-40 dark:hidden"
+                priority
               />
             </Link>
 
             <nav className="hidden lg:flex items-center gap-8 text-sm font-semibold text-foreground ">
-              <button className="flex items-center gap-1 hover:text-emerald-700">
-                Categories <ChevronDown className="w-4 h-4" />
-              </button>
+              <Link href="/products" className="hover:text-emerald-700">
+                All Products
+              </Link>
+              <CategoriesMenu categories={categories} />
               <Link href="/deals" className="hover:text-emerald-700">Deals</Link>
               <Link href="/whats-new" className="hover:text-emerald-700">What&apos;s New</Link>
               <Link href="/delivery" className="hover:text-emerald-700">Delivery</Link>
             </nav>
 
-            <div className="flex-1 max-w-md relative hidden sm:block">
+            <form
+              role="search"
+              onSubmit={(e) => {
+                e.preventDefault();
+                const q = search.trim();
+                router.push(q ? `/products?q=${encodeURIComponent(q)}` : "/products");
+                setSearch("");
+              }}
+              className="flex-1 max-w-md relative hidden sm:block"
+            >
               <input
-                type="text"
+                type="search"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                maxLength={60}
                 placeholder="Search Product"
+                aria-label="Search products"
                 className="w-full bg-muted border-none rounded-full py-2.5 pl-5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#003d29]/20"
               />
-              <Search className="w-4 h-4 text-zinc-400 absolute right-4 top-1/2 -translate-y-1/2" />
-            </div>
+              <button
+                type="submit"
+                aria-label="Search"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-zinc-400 hover:text-foreground"
+              >
+                <Search className="w-4 h-4" />
+              </button>
+            </form>
 
-            <div className="flex items-center gap-6 text-sm font-semibold text-zinc-800">
+            <div className="flex shrink-0 items-center gap-4 sm:gap-6 text-sm font-semibold text-zinc-800">
 
               <ThemeToggle />
 
-              {/* Account Button: Opens Modal */}
+              {/* Account: sign-in link or dropdown */}
+              <AccountMenu />
+
               <button
                 type="button"
-                onClick={() => setIsAuthOpen(true)}
-                className="flex items-center gap-2 text-foreground hover:text-emerald-700 transition cursor-pointer"
+                onClick={() => setIsCartOpen(true)}
+                className="relative text-foreground hover:text-emerald-700"
+                aria-label={`Open cart (${hydrated ? cartCount : 0} items)`}
               >
-
-                <User className="w-5 h-5" />
-                <span className="hidden sm:inline ">Account</span>
+                <ShoppingCart />
+                {hydrated && cartCount > 0 && (
+                  <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#058e60] px-1 text-[10px] font-bold text-white">
+                    {cartCount}
+                  </span>
+                )}
               </button>
-
-              {!isCartOpen && <button onClick={() => (setIsCartOpen(true))} > <ShoppingCart /></button>}
 
               <CartDrawer
                 isOpen={isCartOpen}
@@ -91,9 +127,6 @@ export function Header() {
           </div>
         </div>
       </header>
-
-      {/* Floating Auth Modal */}
-      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
     </>
   );
 }

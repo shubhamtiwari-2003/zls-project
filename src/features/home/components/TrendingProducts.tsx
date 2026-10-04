@@ -46,8 +46,8 @@ const Trending_deals: ProductItem[] = [
 
 export function TrendingProducts() {
     return (
-        <section className="max-w-7xl mx-auto px-4 sm:px-10 lg:px-16 xl:px-20 mt-4">
-        <div className="flex items-center justify-between mb-8">
+        <section className="max-w-7xl mx-auto px-4 sm:px-10 lg:px-16 xl:px-20 mt-4 overflow-hidden">
+        <div className="flex items-end justify-between gap-4 mb-6 sm:mb-8">
           <div>
             <h2 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
               Todays Best Deals For You!
@@ -56,13 +56,13 @@ export function TrendingProducts() {
           </div>
           <Link
             href="/products"
-            className="text-xs font-bold text-muted hover:underline flex items-center gap-1"
+            className="shrink-0 whitespace-nowrap text-xs font-bold text-muted hover:underline flex items-center gap-1"
           >
             See All Deals <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
           {Trending_deals.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

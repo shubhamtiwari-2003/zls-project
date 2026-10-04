@@ -9,8 +9,51 @@ const formatSegment = (segment: string) =>
     .replace(/-/g, " ")
     .replace(/\b\w/g, (c) => c.toUpperCase());
 
-export default function Breadcrumb() {
+export interface BreadcrumbItem {
+  label: string;
+  href: string;
+}
+
+/**
+ * Without `items`, builds the trail from the URL ("hitman-poster" →
+ * "Hitman Poster"). Pass `items` to show real names instead.
+ */
+export default function Breadcrumb({ items }: { items?: BreadcrumbItem[] } = {}) {
   const pathname = usePathname();
+
+  if (items) {
+    return (
+      <nav aria-label="Breadcrumb" className="w-full py-8">
+        <ol className="flex items-center gap-1 text-sm text-foreground flex-wrap">
+          <li>
+            <Link href="/" className="hover:text-foreground transition-colors">
+              Home
+            </Link>
+          </li>
+
+          {items.map((item, index) => {
+            const isLast = index === items.length - 1;
+
+            return (
+              <li key={item.href} className="flex items-center gap-1">
+                <ChevronRight className="w-3.5 h-3.5 text-zinc-400" />
+
+                {isLast ? (
+                  <span className="font-medium text-foreground" aria-current="page">
+                    {item.label}
+                  </span>
+                ) : (
+                  <Link href={item.href} className="hover:text-foreground transition-colors">
+                    {item.label}
+                  </Link>
+                )}
+              </li>
+            );
+          })}
+        </ol>
+      </nav>
+    );
+  }
 
   const segments = pathname.split("/").filter(Boolean);
 

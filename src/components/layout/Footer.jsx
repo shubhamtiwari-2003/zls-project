@@ -17,14 +17,14 @@ export function Footer() {
   return (
     <footer className="w-full bg-[#161616] text-[#e0e0e0] text-sm selection:bg-zinc-700 selection:text-white border-t border-zinc-800">
       {/* 1. Main Navigation & Information Grid */}
-      <div className="w-full px-6 sm:px-10 lg:px-16 xl:px-20 pt-16 pb-14">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8">
+      <div className="w-full px-4 sm:px-10 lg:px-16 xl:px-20 pt-12 sm:pt-16 pb-10 sm:pb-14">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-12 gap-x-6 gap-y-10 lg:gap-8">
           
           {/* Brand & Manifesto Column (Span 4) */}
-          <div className="lg:col-span-4 flex flex-col items-start pr-0 lg:pr-8">
+          <div className="col-span-2 md:col-span-2 lg:col-span-4 flex flex-col items-start pr-0 lg:pr-8">
             {/* Pop-Art Logo Style */}
             <Link href="/" className=" group mb-4 ">
-              <img src={black_logo.src} alt="" className="w-32 h-32"/>
+              <img src={black_logo.src} alt="Z Layer Studio" className="w-24 h-24 sm:w-32 sm:h-32"/>
             </Link>
 
             <p className="text-xs sm:text-[13px] text-zinc-400 leading-relaxed max-w-sm font-light">
@@ -103,7 +103,7 @@ export function Footer() {
           </div>
 
           {/* Column 4: Drop Notifications (Span 2) */}
-          <div className="lg:col-span-2 space-y-3">
+          <div className="col-span-2 lg:col-span-2 space-y-3">
             <h4 className="text-xs font-semibold text-white tracking-wider">Drop notifications</h4>
             <p className="text-xs text-zinc-400 leading-relaxed">
               One email per drop. Subscribers get the link 12h before everyone else. No noise.
