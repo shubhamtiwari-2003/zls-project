@@ -12,6 +12,7 @@ const Trending_deals: ProductItem[] = [
     price: 89.0,
     rating: 5,
     reviewCount: 121,
+    category: "headphones",
     imageUrl: "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?q=80&w=688&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
   {
@@ -21,6 +22,7 @@ const Trending_deals: ProductItem[] = [
     price: 559.0,
     rating: 5,
     reviewCount: 121,
+    category: "headphones",
     imageUrl: "https://images.unsplash.com/photo-1693168045046-9a4b4f30f1c7?q=80&w=742&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     isPopular: true,
   },
@@ -31,6 +33,7 @@ const Trending_deals: ProductItem[] = [
     price: 289.0,
     rating: 5,
     reviewCount: 121,
+    category: "headphones",
     imageUrl: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80",
   },
   {
@@ -40,6 +43,7 @@ const Trending_deals: ProductItem[] = [
     price: 39.0,
     rating: 5,
     reviewCount: 121,
+    category: "headphones",
     imageUrl: "https://images.unsplash.com/photo-1598662957563-ee4965d4d72c?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
 ];

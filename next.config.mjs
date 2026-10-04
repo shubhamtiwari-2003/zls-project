@@ -1,9 +1,9 @@
-import type { NextConfig } from "next";
+// Plain JavaScript on purpose: Hostinger's build server can't load Next's
+// native compiler (old glibc), and the WebAssembly fallback can't compile a
+// TypeScript next.config.ts.
 
-const nextConfig: NextConfig = {
-
-  /* config options here */
-
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   images: {
     remotePatterns: [
       {
@@ -18,7 +18,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-
 };
 
 export default nextConfig;
