@@ -1,7 +1,6 @@
 "use client";
 
 import { supabase } from "@/lib/supabase/client";
-import { MAX_QTY_PER_ITEM } from "@/lib/shop-config";
 import { variantImageUrl, type VariantValueImageJoin } from "@/lib/variants";
 import {
   cartLineKey,
@@ -134,7 +133,7 @@ function mergeGuestCart(server: CartItem[], guest: CartItem[]): CartItem[] {
     const existing = merged.get(item.lineKey);
 
     if (existing) {
-      existing.quantity = Math.min(existing.quantity + item.quantity, MAX_QTY_PER_ITEM);
+      existing.quantity = Math.min(existing.quantity + item.quantity, useCartStore.getState().maxPerItem);
     } else {
       merged.set(item.lineKey, { ...item });
     }

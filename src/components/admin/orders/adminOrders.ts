@@ -6,7 +6,7 @@ import type { CustomizationSnapshotEntry } from "@/lib/customization";
 
 export const ADMIN_ORDER_SELECT = `
   id, order_number, status, payment_status, fulfillment_status,
-  subtotal_amount, shipping_amount, total_amount,
+  subtotal_amount, shipping_amount, discount_amount, coupon_code, total_amount,
   placed_at, paid_at, canceled_at, fulfilled_at,
   courier, tracking_number, tracking_url, razorpay_payment_id,
   shipping_address:addresses!shipping_address_id (
@@ -46,6 +46,8 @@ export interface AdminOrder {
   fulfillment_status: string;
   subtotal_amount: number;
   shipping_amount: number;
+  discount_amount: number;
+  coupon_code: string | null;
   total_amount: number;
   placed_at: string;
   paid_at: string | null;

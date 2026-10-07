@@ -1,21 +1,11 @@
 "use client";
 
-import { Bell, Menu, Search, LogOut } from "lucide-react";
+import { Bell, Search, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/features/auth/store/authStore";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
-
-interface TopbarProps {
-  collapsed: boolean;
-  setCollapsed: (value: boolean) => void;
-  setMobileOpen: (value: boolean) => void;
-}
-
-export function Topbar({
-  collapsed,
-  setCollapsed,
-  setMobileOpen,
-}: TopbarProps) {
+export function Topbar() {
   const router = useRouter();
   const { profile, signOut, loading } = useAuthStore();
 
@@ -38,27 +28,14 @@ export function Topbar({
         {/* Left Section */}
         <div className="flex items-center gap-3">
 
-          {/* Mobile Menu */}
-          <button
-            onClick={() => setMobileOpen(true)}
-            className="flex lg:hidden h-10 w-10 items-center justify-center rounded-xl border border-border bg-surface hover:bg-surface-secondary transition"
-          >
-            <Menu size={20} />
-          </button>
-
-          {/* Desktop Collapse */}
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className="hidden lg:flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-surface hover:bg-surface-secondary transition"
-          >
-            <Menu size={20} />
-          </button>
+          {/* Collapse (desktop) / open the drawer (phones). Ctrl/Cmd+B too. */}
+          <SidebarTrigger className="size-10 rounded-xl border border-border bg-surface hover:bg-accent" />
 
           <div>
             <h1 className="text-lg md:text-xl font-bold text-foreground">
               Dashboard
             </h1>
-            <p className="hidden sm:block text-sm text-muted">
+            <p className="hidden sm:block text-sm text-muted-foreground">
               Welcome back, {profile?.display_name}
             </p>
           </div>
@@ -69,16 +46,16 @@ export function Topbar({
 
           {/* Search */}
           <div className="hidden md:flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 w-72">
-            <Search size={18} className="text-muted" />
+            <Search size={18} className="text-muted-foreground" />
             <input
               type="text"
               placeholder="Search products, orders..."
-              className="w-full bg-transparent text-sm outline-none placeholder:text-muted"
+              className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
             />
           </div>
 
           {/* Notifications */}
-          <button className="relative flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface hover:bg-surface-secondary transition">
+          <button className="relative flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface hover:bg-accent transition">
             <Bell size={18} />
 
             <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500" />

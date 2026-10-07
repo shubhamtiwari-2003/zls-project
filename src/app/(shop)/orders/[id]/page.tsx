@@ -25,6 +25,8 @@ interface OrderRow {
   tracking_url: string | null;
   subtotal_amount: number;
   shipping_amount: number;
+  discount_amount: number;
+  coupon_code: string | null;
   total_amount: number;
   placed_at: string;
   order_items: {
@@ -64,7 +66,7 @@ export default async function OrderPage({ params }: OrderPageProps) {
     .select(
       `id, order_number, status, payment_status,
        fulfillment_status, courier, tracking_number, tracking_url,
-       subtotal_amount, shipping_amount, total_amount, placed_at,
+       subtotal_amount, shipping_amount, discount_amount, coupon_code, total_amount, placed_at,
        order_items ( id, product_name, variant_title, quantity, unit_price, total_price, customization ),
        shipping_address:addresses!shipping_address_id (
          full_name, phone, line1, line2, city, state, postal_code
@@ -114,7 +116,7 @@ export default async function OrderPage({ params }: OrderPageProps) {
             className={`mx-auto h-14 w-14 ${paid ? "text-green-600" : canceled ? "text-red-500" : "text-amber-500"}`}
           />
           <h1 className="mt-4 text-3xl font-bold">{heading}</h1>
-          <p className="mt-2 text-muted">
+          <p className="mt-2 text-muted-foreground">
             {delivered
               ? "Your order has been delivered. Enjoy!"
               : shipping
@@ -125,7 +127,7 @@ export default async function OrderPage({ params }: OrderPageProps) {
                 ? "This order was canceled and you have not been charged."
                 : "If you completed the payment, it will be confirmed here shortly."}
           </p>
-          <p className="mt-2 text-sm text-muted">
+          <p className="mt-2 text-sm text-muted-foreground">
             Order <span className="font-mono font-semibold text-foreground">{order.order_number}</span>
           </p>
         </div>
@@ -140,12 +142,12 @@ export default async function OrderPage({ params }: OrderPageProps) {
                   <li key={s.value} className="flex flex-col items-center text-center">
                     <span
                       className={`flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-bold ${
-                        done ? "border-green-600 bg-green-600 text-white" : "border-border text-muted"
+                        done ? "border-green-600 bg-green-600 text-white" : "border-border text-muted-foreground"
                       }`}
                     >
                       {done ? <Check size={14} /> : index + 1}
                     </span>
-                    <span className={`mt-2 text-[11px] leading-tight sm:text-xs ${done ? "font-semibold" : "text-muted"}`}>
+                    <span className={`mt-2 text-[11px] leading-tight sm:text-xs ${done ? "font-semibold" : "text-muted-foreground"}`}>
                       {s.label}
                     </span>
                   </li>
@@ -158,7 +160,7 @@ export default async function OrderPage({ params }: OrderPageProps) {
                 <p>
                   {order.courier && <span className="font-medium">{order.courier}</span>}
                   {order.tracking_number && (
-                    <span className="text-muted">
+                    <span className="text-muted-foreground">
                       {order.courier ? " · " : ""}Tracking no. <span className="font-mono">{order.tracking_number}</span>
                     </span>
                   )}
@@ -184,7 +186,7 @@ export default async function OrderPage({ params }: OrderPageProps) {
               <li key={item.id} className="flex justify-between gap-4 py-3 text-sm">
                 <div className="min-w-0">
                   {item.product_name ?? "Product"} × {item.quantity}
-                  {item.variant_title && <span className="block text-xs text-muted">{item.variant_title}</span>}
+                  {item.variant_title && <span className="block text-xs text-muted-foreground">{item.variant_title}</span>}
                   <CartItemCustomization entries={customizationOf(item.customization)} className="mt-1.5" />
                 </div>
                 <span className="font-medium">{formatINR(Number(item.total_price))}</span>
@@ -194,11 +196,17 @@ export default async function OrderPage({ params }: OrderPageProps) {
 
           <div className="mt-4 space-y-2 border-t border-border pt-4 text-sm">
             <div className="flex justify-between">
-              <span className="text-muted">Subtotal</span>
+              <span className="text-muted-foreground">Subtotal</span>
               <span>{formatINR(Number(order.subtotal_amount))}</span>
             </div>
+            {Number(order.discount_amount) > 0 && (
+              <div className="flex justify-between text-green-700 dark:text-green-400">
+                <span>Coupon{order.coupon_code ? ` (${order.coupon_code})` : ""}</span>
+                <span>−{formatINR(Number(order.discount_amount))}</span>
+              </div>
+            )}
             <div className="flex justify-between">
-              <span className="text-muted">Shipping</span>
+              <span className="text-muted-foreground">Shipping</span>
               <span>{Number(order.shipping_amount) === 0 ? "FREE" : formatINR(Number(order.shipping_amount))}</span>
             </div>
             <div className="flex justify-between text-lg font-bold">
@@ -210,7 +218,7 @@ export default async function OrderPage({ params }: OrderPageProps) {
           {order.shipping_address && (
             <div className="mt-6 border-t border-border pt-4 text-sm">
               <h2 className="font-semibold">Shipping to</h2>
-              <p className="mt-2 text-muted">
+              <p className="mt-2 text-muted-foreground">
                 {order.shipping_address.full_name}
                 <br />
                 {order.shipping_address.line1}

@@ -1,220 +1,165 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
-import { SignOut } from "@supabase/supabase-js";
 import {
   Boxes,
   ChartColumn,
   CreditCard,
-  LayoutDashboard,
   Layers,
+  LayoutDashboard,
   MessageSquare,
   Package,
   Receipt,
   Settings,
   ShoppingCart,
+  TicketPercent,
   Wallet,
-  X,
+  type LucideIcon,
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/features/auth/store/authStore";
+import {
+  Sidebar as SidebarRoot,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarRail,
+  useSidebar,
+} from "@/components/ui/sidebar";
 
-interface SidebarProps {
-  collapsed: boolean;
-  mobileOpen: boolean;
-  setMobileOpen: (value: boolean) => void;
+interface MenuItem {
+  label: string;
+  tab: string;
+  icon: LucideIcon;
 }
 
-const menu = [
-  { label: "Overview", tab: "overview", icon: LayoutDashboard },
-  { label: "Orders", tab: "orders", icon: ShoppingCart },
-  { label: "Products", tab: "products", icon: Package },
-  { label: "Inventory", tab: "inventory", icon: Boxes },
-  { label: "Sales", tab: "sales", icon: ChartColumn },
-  { label: "Feedbacks", tab: "feedbacks", icon: MessageSquare },
-  { label: "Payments", tab: "payments", icon: CreditCard },
-  { label: "Refunds", tab: "refunds", icon: Wallet },
-  { label: "Invoices", tab: "invoices", icon: Receipt },
-  { label: "Settings", tab: "settings", icon: Settings },
+const MENU: { label: string; items: MenuItem[] }[] = [
+  {
+    label: "Store",
+    items: [
+      { label: "Overview", tab: "overview", icon: LayoutDashboard },
+      { label: "Orders", tab: "orders", icon: ShoppingCart },
+      { label: "Products", tab: "products", icon: Package },
+      { label: "Inventory", tab: "inventory", icon: Boxes },
+      { label: "Coupons", tab: "coupons", icon: TicketPercent },
+      { label: "Feedbacks", tab: "feedbacks", icon: MessageSquare },
+    ],
+  },
+  {
+    label: "Finance",
+    items: [
+      { label: "Sales", tab: "sales", icon: ChartColumn },
+      { label: "Payments", tab: "payments", icon: CreditCard },
+      { label: "Refunds", tab: "refunds", icon: Wallet },
+      { label: "Invoices", tab: "invoices", icon: Receipt },
+    ],
+  },
+  {
+    label: "System",
+    items: [{ label: "Settings", tab: "settings", icon: Settings }],
+  },
 ];
 
-export function Sidebar({
-  collapsed,
-  mobileOpen,
-  setMobileOpen,
-}: SidebarProps) {
+// Active item: black/white like the rest of the admin (shadcn's default is
+// a light grey).
+const ACTIVE_CLASSES =
+  "data-[active=true]:bg-sidebar-primary data-[active=true]:text-sidebar-primary-foreground";
+
+/** Admin navigation. Tabs live in the URL (?tab=orders). */
+export function Sidebar() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const {user, profile} = useAuthStore();
-  
-  
+  const { setOpenMobile } = useSidebar();
+  const user = useAuthStore((state) => state.user);
+  const profile = useAuthStore((state) => state.profile);
 
   const activeTab = searchParams.get("tab") ?? "overview";
-  
+
   const changeTab = (tab: string) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("tab", tab);
+    router.replace(`/admin?${params.toString()}`, { scroll: false });
 
-    router.replace(`/admin?${params.toString()}`, {
-      scroll: false,
-    });
-
-    setMobileOpen(false);
+    // Phones: close the drawer after picking a tab.
+    setOpenMobile(false);
   };
 
-  const SidebarContent = (
-    <>
-      {/* Logo */}
-      <div className="border-b border-border p-5">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-foreground text-background">
-              <Layers size={22} />
-            </div>
-            
-
-            <AnimatePresence>
-              {!collapsed && (
-                <motion.div
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -8 }}
-                  transition={{ duration: 0.18 }}
-                >
-                  <h2 className="font-bold leading-none">
-                    Z Layer Studio
-                  </h2>
-                  <p className="mt-1 text-xs text-muted">
-                    Admin Panel
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* Mobile Close */}
-          <button
-            onClick={() => setMobileOpen(false)}
-            className="lg:hidden"
-          >
-            <X size={22} />
-          </button>
-        </div>
-      </div>
-
-      {/* Navigation */}
-      <nav className="flex-1 space-y-1 px-3 py-5">
-        {menu.map((item) => {
-          const Icon = item.icon;
-          const active = activeTab === item.tab;
-
-          return (
-            <button
-              key={item.tab}
-              onClick={() => changeTab(item.tab)}
-              className={`flex w-full items-center rounded-xl px-4 py-3 hover:bg-muted/20 cursor-pointer transition ${
-                active
-                  ? "bg-foreground text-background"
-                  : "text-foreground hover:bg-surface-secondary"
-              }`}
-            >
-              <Icon size={20} className="shrink-0" />
-
-              <AnimatePresence>
-                {!collapsed && (
-                  <motion.span
-                    initial={{ opacity: 0, width: 0 }}
-                    animate={{ opacity: 1, width: "auto" }}
-                    exit={{ opacity: 0, width: 0 }}
-                    transition={{ duration: 0.15 }}
-                    className="ml-3 overflow-hidden whitespace-nowrap text-sm font-medium"
-                  >
-                    {item.label}
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </button>
-          );
-        })}
-      </nav>
-
-      {/* Admin Info */}
-      <div className="border-t border-border p-4">
-        <div
-          className={`flex items-center rounded-xl bg-background p-3 ${
-            collapsed ? "justify-center" : "gap-3"
-          }`}
-        >
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-foreground font-bold text-background">
-            S
-          </div>
-
-          <AnimatePresence>
-            {!collapsed && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <p className="text-xs ">
-                  {user?.email}
-                </p>
-                <p className="text-xs text-white">
-                  {profile?.role}
-                </p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-            
-        </div>
-      </div>
-    </>
-  );
+  const name = profile?.display_name || [profile?.first_name, profile?.last_name].filter(Boolean).join(" ");
+  const initial = (name || user?.email || "A").charAt(0).toUpperCase();
 
   return (
-    <>
-      {/* Desktop Sidebar */}
-      <motion.aside
-        animate={{
-          width: collapsed ? 88 : 280,
-        }}
-        transition={{
-          duration: 0.28,
-          ease: [0.4, 0, 0.2, 1],
-        }}
-        className="fixed left-0 top-0 z-40 hidden h-screen overflow-hidden border-r border-border bg-surface lg:flex lg:flex-col"
-      >
-        {SidebarContent}
-      </motion.aside>
+    <SidebarRoot collapsible="icon">
+      {/* Logo */}
+      <SidebarHeader className="border-b border-sidebar-border">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" tooltip="Z Layer Studio" onClick={() => changeTab("overview")}>
+              <div className="flex aspect-square size-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                <Layers className="size-4" />
+              </div>
+              <div className="grid flex-1 text-left leading-tight">
+                <span className="truncate font-bold">Z Layer Studio</span>
+                <span className="truncate text-xs text-muted-foreground">Admin Panel</span>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
 
-      {/* Mobile Drawer */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setMobileOpen(false)}
-              className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden"
-            />
+      {/* Navigation */}
+      <SidebarContent>
+        {MENU.map((group) => (
+          <SidebarGroup key={group.label}>
+            <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {group.items.map(({ label, tab, icon: Icon }) => (
+                  <SidebarMenuItem key={tab}>
+                    <SidebarMenuButton
+                      isActive={activeTab === tab}
+                      tooltip={label}
+                      onClick={() => changeTab(tab)}
+                      className={ACTIVE_CLASSES}
+                    >
+                      <Icon />
+                      <span>{label}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
+      </SidebarContent>
 
-            <motion.aside
-              initial={{ x: -280 }}
-              animate={{ x: 0 }}
-              exit={{ x: -280 }}
-              transition={{
-                type: "spring",
-                stiffness: 280,
-                damping: 28,
-              }}
-              className="fixed left-0 top-0 z-50 flex h-screen w-[280px] flex-col border-r border-border bg-surface lg:hidden"
-            >
-              {SidebarContent}
-            </motion.aside>
-          </>
-        )}
-      </AnimatePresence>
-    </>
+      {/* Signed-in admin */}
+      <SidebarFooter className="border-t border-sidebar-border">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" tooltip={user?.email ?? "Admin"} className="cursor-default hover:bg-transparent">
+              <div className="flex aspect-square size-8 shrink-0 items-center justify-center rounded-full bg-sidebar-primary text-sm font-bold text-sidebar-primary-foreground">
+                {initial}
+              </div>
+              <div className="grid flex-1 text-left leading-tight">
+                <span className="truncate text-sm font-medium">{name || "Admin"}</span>
+                <span className="truncate text-xs text-muted-foreground">{user?.email}</span>
+              </div>
+              {profile?.role && (
+                <span className="shrink-0 rounded-full bg-sidebar-accent px-2 py-0.5 text-[10px] font-semibold uppercase">
+                  {profile.role}
+                </span>
+              )}
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
+
+      <SidebarRail />
+    </SidebarRoot>
   );
 }

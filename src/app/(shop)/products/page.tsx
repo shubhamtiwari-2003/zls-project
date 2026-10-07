@@ -42,7 +42,7 @@ export default async function AllProductsPage({ searchParams }: AllProductsPageP
         ) : products.length === 0 ? (
           <div className="rounded-2xl border border-border p-10 text-center">
             <p className="text-lg font-medium">No products found</p>
-            <p className="mt-2 text-sm text-muted">
+            <p className="mt-2 text-sm text-muted-foreground">
               {filtered ? "Try a different search or remove some filters." : "There are no products available yet."}
             </p>
             {filtered && (

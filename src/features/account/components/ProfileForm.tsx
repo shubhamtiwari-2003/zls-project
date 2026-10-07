@@ -77,7 +77,7 @@ export function ProfileForm({ email, initial }: ProfileFormProps) {
         <input
           value={email}
           disabled
-          className="mt-1.5 w-full cursor-not-allowed rounded-xl border border-border bg-background px-4 py-3 text-muted"
+          className="mt-1.5 w-full cursor-not-allowed rounded-xl border border-border bg-background px-4 py-3 text-muted-foreground"
         />
       </label>
 

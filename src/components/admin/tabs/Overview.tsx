@@ -44,7 +44,7 @@ export default function Overview() {
       <section className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Overview</h1>
-          <p className="mt-1 text-muted">
+          <p className="mt-1 text-muted-foreground">
             Welcome back, Shubham. Here&apos;s your store performance.
           </p>
         </div>
@@ -65,7 +65,7 @@ export default function Overview() {
               className="rounded-3xl border border-border bg-surface p-5"
             >
               <div className="flex items-center justify-between">
-                <p className="text-sm text-muted">{card.title}</p>
+                <p className="text-sm text-muted-foreground">{card.title}</p>
 
                 <div className="rounded-xl bg-surface-secondary p-2">
                   <Icon size={18} />
@@ -90,7 +90,7 @@ export default function Overview() {
           <div className="mb-6 flex items-center justify-between">
             <div>
               <h2 className="text-xl font-semibold">Revenue</h2>
-              <p className="text-sm text-muted">Last 7 Days</p>
+              <p className="text-sm text-muted-foreground">Last 7 Days</p>
             </div>
 
             <h3 className="text-2xl font-bold">₹84,540</h3>
@@ -146,7 +146,7 @@ export default function Overview() {
             </svg>
           </div>
 
-          <div className="mt-4 flex justify-between text-xs text-muted px-2">
+          <div className="mt-4 flex justify-between text-xs text-muted-foreground px-2">
             {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
               <span key={d}>{d}</span>
             ))}

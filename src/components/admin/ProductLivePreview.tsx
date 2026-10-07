@@ -90,7 +90,7 @@ export function ProductLivePreview({
     shown ? (
       <Image src={shown.url} alt={name || "Product preview"} fill sizes={sizes} unoptimized={shown.isBlob} className="object-cover" />
     ) : (
-      <div className="flex h-full flex-col items-center justify-center gap-1 text-xs text-muted">
+      <div className="flex h-full flex-col items-center justify-center gap-1 text-xs text-muted-foreground">
         <ImageIcon size={20} />
         Upload images to preview
       </div>
@@ -101,7 +101,7 @@ export function ProductLivePreview({
       <div className="flex items-center justify-between gap-2">
         <div>
           <h3 className="font-semibold">Live preview</h3>
-          <p className="text-xs text-muted">How customers will see it. Click the options to try them.</p>
+          <p className="text-xs text-muted-foreground">How customers will see it. Click the options to try them.</p>
         </div>
 
         <div className="flex rounded-full bg-surface p-1 text-xs font-medium">
@@ -110,7 +110,7 @@ export function ProductLivePreview({
               key={mode}
               type="button"
               onClick={() => setView(mode)}
-              className={`rounded-full px-3 py-1 transition ${view === mode ? "bg-foreground text-background" : "text-muted"}`}
+              className={`rounded-full px-3 py-1 transition ${view === mode ? "bg-foreground text-background" : "text-muted-foreground"}`}
             >
               {mode === "page" ? "Product page" : "Product card"}
             </button>
@@ -132,9 +132,9 @@ export function ProductLivePreview({
             <div>
               <h4 className="text-xl font-bold">{name || "Product name"}</h4>
               <p className="mt-2 text-2xl font-black">
-                {displayPrice > 0 ? formatINR(displayPrice) : <span className="text-base text-muted">Set a price</span>}
+                {displayPrice > 0 ? formatINR(displayPrice) : <span className="text-base text-muted-foreground">Set a price</span>}
               </p>
-              {hasOptions && variant?.sku && <p className="text-xs text-muted">SKU {variant.sku}</p>}
+              {hasOptions && variant?.sku && <p className="text-xs text-muted-foreground">SKU {variant.sku}</p>}
             </div>
 
             {usable.map((option) => {
@@ -144,7 +144,7 @@ export function ProductLivePreview({
                 <div key={option.key}>
                   <p className="text-sm font-semibold">
                     {option.name.trim() || "Option"}
-                    {picked && <span className="font-normal text-muted">: {picked.value}</span>}
+                    {picked && <span className="font-normal text-muted-foreground">: {picked.value}</span>}
                   </p>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {option.values.map((value) => {
@@ -158,7 +158,7 @@ export function ProductLivePreview({
                           onClick={() => setChosen((current) => ({ ...current, [option.key]: value.key }))}
                           className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
                             active ? "border-foreground bg-foreground text-background" : "border-border"
-                          } ${!available && !active ? "text-muted line-through" : ""}`}
+                          } ${!available && !active ? "text-muted-foreground line-through" : ""}`}
                         >
                           {value.value}
                         </button>
@@ -173,14 +173,14 @@ export function ProductLivePreview({
               type="button"
               disabled
               className={`flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold ${
-                sold ? "bg-[#003D29] text-white" : "bg-border text-muted"
+                sold ? "bg-[#003D29] text-white" : "bg-border text-muted-foreground"
               }`}
             >
               <ShoppingBag size={16} />
               {sold ? "Add to cart" : "This combination isn't sold"}
             </button>
 
-            {description && <p className="line-clamp-3 text-sm text-muted">{description}</p>}
+            {description && <p className="line-clamp-3 text-sm text-muted-foreground">{description}</p>}
           </div>
         </div>
       ) : (
@@ -188,9 +188,9 @@ export function ProductLivePreview({
           <div className="relative aspect-[4/5] bg-background">{productImage(images[0] ?? null, "240px")}</div>
           <div className="space-y-2 p-4">
             <h4 className="line-clamp-2 font-semibold">{name || "Product name"}</h4>
-            <p className="line-clamp-2 text-xs text-muted">{description || "Description"}</p>
+            <p className="line-clamp-2 text-xs text-muted-foreground">{description || "Description"}</p>
             <div>
-              <p className="text-xs text-muted">{hasOptions && activePrices.length > 1 ? "Starting from" : "Price"}</p>
+              <p className="text-xs text-muted-foreground">{hasOptions && activePrices.length > 1 ? "Starting from" : "Price"}</p>
               <p className="text-2xl font-bold">{lowestPrice > 0 ? formatINR(lowestPrice) : "—"}</p>
             </div>
             <div className="rounded-full border border-[#003D29] py-2 text-center text-xs font-semibold">

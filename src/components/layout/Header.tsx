@@ -4,7 +4,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Search, ShoppingCart } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CategoriesMenu } from "./CategoriesMenu";
 import { AccountMenu } from "./AccountMenu";
@@ -14,6 +14,13 @@ import ThemeToggle from "../shared/toggleTheme";
 import { CartDrawer } from "@/features/cart/components/CartDrawer";
 import { useCartStore } from "@/features/cart/store/cartStore";
 import { useHydrated } from "@/hooks/useHydrated";
+import {
+  CART_ADDED_EVENT,
+  CART_OPEN_EVENT,
+  bumpCartIcon,
+  flyToCart,
+  type CartAddedDetail,
+} from "@/features/cart/lib/cartFeedback";
 
 interface HeaderProps {
   // Active categories (from the shop layout).
@@ -28,15 +35,55 @@ export function Header({ categories }: HeaderProps) {
   const cartCount = useCartStore((state) =>
     state.items.reduce((sum, item) => sum + item.quantity, 0)
   );
+  const cartButtonRef = useRef<HTMLButtonElement>(null);
+
+  // The header sticks to the top; once the page scrolls it gets a border
+  // and a translucent background so content behind it stays readable.
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // "Added to cart": fly the product into the cart icon, then bounce it.
+  // "View cart" (toast button): open the drawer.
+  useEffect(() => {
+    const onAdded = async (event: Event) => {
+      const icon = cartButtonRef.current;
+      if (!icon) return;
+
+      const { image, from } = (event as CustomEvent<CartAddedDetail>).detail;
+      await flyToCart(image, from, icon);
+      bumpCartIcon(icon);
+    };
+    const onOpen = () => setIsCartOpen(true);
+
+    window.addEventListener(CART_ADDED_EVENT, onAdded);
+    window.addEventListener(CART_OPEN_EVENT, onOpen);
+    return () => {
+      window.removeEventListener(CART_ADDED_EVENT, onAdded);
+      window.removeEventListener(CART_OPEN_EVENT, onOpen);
+    };
+  }, []);
 
   return (
     <>
-      <header className="w-full">
+      {/* Sticky so the cart (and its add-to-cart animation) stays in view. */}
+      <header className="sticky top-0 z-40 w-full">
         {/* Top Utility Bar */}
         {/* <NewsBar/AnnouncementBar> */}
 
         {/* Main Navigation Bar */}
-        <div className="bg-background">
+        <div
+          className={`border-b transition-[background-color,border-color,box-shadow] duration-300 ${
+            scrolled
+              ? "border-border bg-background/85 shadow-sm backdrop-blur-md"
+              : "border-transparent bg-background"
+          }`}
+        >
           <div className="w-full px-4 sm:px-10 lg:px-16 xl:px-20 h-16 sm:h-20 flex items-center justify-between gap-3 sm:gap-6">
             <Link href="/" className="flex items-center">
               {/* Light theme → Black logo */}
@@ -107,6 +154,7 @@ export function Header({ categories }: HeaderProps) {
 
               <button
                 type="button"
+                ref={cartButtonRef}
                 onClick={() => setIsCartOpen(true)}
                 className="relative text-foreground hover:text-emerald-700"
                 aria-label={`Open cart (${hydrated ? cartCount : 0} items)`}

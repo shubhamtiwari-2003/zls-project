@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { expireStaleOrders } from "@/lib/orders.server";
+import { getShopSettings } from "@/lib/shop-settings.server";
 
 export const dynamic = "force-dynamic";
 
 /**
- * Cancels unpaid orders older than ORDER_RESERVATION_MINUTES and releases
+ * Cancels unpaid orders older than the reservation time (Admin → Settings) and releases
  * their reserved stock. Checkout also does this on every order, so this
  * cron is a backup for quiet periods.
  *
@@ -20,7 +21,8 @@ export async function GET(request: Request) {
   }
 
   try {
-    const expired = await expireStaleOrders(createAdminClient());
+    const { orderReservationMinutes } = await getShopSettings();
+    const expired = await expireStaleOrders(createAdminClient(), orderReservationMinutes);
 
     return NextResponse.json({ success: true, expired });
   } catch (error) {

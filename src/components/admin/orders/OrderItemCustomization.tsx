@@ -75,13 +75,13 @@ export function OrderItemCustomization({ entries }: { entries: CustomizationSnap
               {signed ? (
                 <Image src={signed.preview} alt={entry.label} fill sizes="64px" unoptimized className="object-cover" />
               ) : (
-                loadingUrls && <Loader2 size={16} className="m-auto mt-6 animate-spin text-muted" />
+                loadingUrls && <Loader2 size={16} className="m-auto mt-6 animate-spin text-muted-foreground" />
               )}
             </div>
             <div className="min-w-0 text-xs">
               <p className="font-medium">{entry.label}</p>
               {entry.width && entry.height && (
-                <p className="text-muted">
+                <p className="text-muted-foreground">
                   {entry.width} × {entry.height}px{entry.format ? ` · ${entry.format.toUpperCase()}` : ""}
                 </p>
               )}
@@ -99,14 +99,14 @@ export function OrderItemCustomization({ entries }: { entries: CustomizationSnap
         ) : (
           <div key={entry.key} className="flex items-center justify-between gap-2 text-xs">
             <span className="min-w-0">
-              <span className="text-muted">{entry.label}: </span>
+              <span className="text-muted-foreground">{entry.label}: </span>
               <span className="break-all font-mono text-sm font-semibold">{entry.value}</span>
-              {entry.price > 0 && <span className="text-muted"> (+{formatINR(entry.price)})</span>}
+              {entry.price > 0 && <span className="text-muted-foreground"> (+{formatINR(entry.price)})</span>}
             </span>
             <button
               type="button"
               onClick={() => copy(entry.key, entry.value)}
-              className="shrink-0 rounded-md p-1 text-muted hover:bg-background hover:text-foreground"
+              className="shrink-0 rounded-md p-1 text-muted-foreground hover:bg-background hover:text-foreground"
               aria-label={`Copy ${entry.label}`}
             >
               {copiedKey === entry.key ? <Check size={14} /> : <Copy size={14} />}

@@ -127,7 +127,7 @@ export default function Orders() {
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-3xl font-bold">Orders</h1>
-          <p className="mt-1 text-muted">Track payments and move orders through printing and shipping.</p>
+          <p className="mt-1 text-muted-foreground">Track payments and move orders through printing and shipping.</p>
         </div>
 
         <button
@@ -147,7 +147,7 @@ export default function Orders() {
       {/* FILTERS */}
       <div className="space-y-3 rounded-3xl border border-border bg-surface p-4">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={18} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -176,7 +176,7 @@ export default function Orders() {
         <div className="overflow-x-auto">
           <table className="w-full min-w-[820px]">
             <thead className="border-b border-border">
-              <tr className="text-left text-sm text-muted">
+              <tr className="text-left text-sm text-muted-foreground">
                 <th className="px-6 py-4 font-medium">Order</th>
                 <th className="px-6 py-4 font-medium">Customer</th>
                 <th className="px-6 py-4 font-medium">Items</th>
@@ -189,7 +189,7 @@ export default function Orders() {
             <tbody>
               {loading && orders.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-sm text-muted">
+                  <td colSpan={6} className="px-6 py-12 text-center text-sm text-muted-foreground">
                     Loading orders...
                   </td>
                 </tr>
@@ -197,7 +197,7 @@ export default function Orders() {
 
               {!loading && visible.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-sm text-muted">
+                  <td colSpan={6} className="px-6 py-12 text-center text-sm text-muted-foreground">
                     {orders.length === 0 ? "No orders yet." : "No orders match."}
                   </td>
                 </tr>
@@ -215,20 +215,20 @@ export default function Orders() {
                   >
                     <td className="px-6 py-4">
                       <p className="font-mono text-sm font-semibold">{order.order_number}</p>
-                      <p className="text-xs text-muted">{formatOrderDate(order.placed_at)}</p>
+                      <p className="text-xs text-muted-foreground">{formatOrderDate(order.placed_at)}</p>
                     </td>
                     <td className="px-6 py-4 text-sm">
                       <p className="font-medium">{order.shipping_address?.full_name ?? "—"}</p>
-                      <p className="text-xs text-muted">
+                      <p className="text-xs text-muted-foreground">
                         {[order.shipping_address?.city, order.shipping_address?.phone].filter(Boolean).join(" · ")}
                       </p>
                     </td>
                     <td className="px-6 py-4 text-sm">
                       <p className="line-clamp-1">
                         {first?.product_name ?? "—"}
-                        {first?.variant_title && <span className="text-muted"> · {first.variant_title}</span>}
+                        {first?.variant_title && <span className="text-muted-foreground"> · {first.variant_title}</span>}
                       </p>
-                      <p className="text-xs text-muted">
+                      <p className="text-xs text-muted-foreground">
                         {itemCount(order)} {itemCount(order) === 1 ? "item" : "items"}
                         {order.order_items.length > 1 && ` · ${order.order_items.length} products`}
                       </p>
@@ -239,7 +239,7 @@ export default function Orders() {
                         {badge.label}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-muted">
+                    <td className="px-6 py-4 text-muted-foreground">
                       <ChevronRight size={18} />
                     </td>
                   </tr>
@@ -250,7 +250,7 @@ export default function Orders() {
         </div>
 
         {orders.length >= MAX_ORDERS && (
-          <p className="border-t border-border px-6 py-3 text-xs text-muted">Showing the latest {MAX_ORDERS} orders.</p>
+          <p className="border-t border-border px-6 py-3 text-xs text-muted-foreground">Showing the latest {MAX_ORDERS} orders.</p>
         )}
       </div>
 

@@ -106,7 +106,7 @@ export function AccountMenu() {
         >
           <div className="border-b border-border px-3 pb-3 pt-2">
             <p className="truncate text-sm font-semibold text-foreground">{name}</p>
-            <p className="truncate text-xs font-normal text-muted">{user.email}</p>
+            <p className="truncate text-xs font-normal text-muted-foreground">{user.email}</p>
           </div>
 
           <div className="py-2">

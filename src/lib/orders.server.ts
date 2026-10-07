@@ -1,7 +1,6 @@
 import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { ORDER_RESERVATION_MINUTES } from "@/lib/shop-config";
 
 export type MarkPaidResult = "paid" | "already_paid" | "not_found" | "amount_mismatch";
 
@@ -62,10 +61,13 @@ export async function cancelOrder(
   return data === true;
 }
 
-/** Cancels unpaid orders older than the reservation window. Returns the count. */
-export async function expireStaleOrders(admin: SupabaseClient): Promise<number> {
+/**
+ * Cancels unpaid orders older than the reservation window (Admin →
+ * Settings). Returns the count.
+ */
+export async function expireStaleOrders(admin: SupabaseClient, reservationMinutes: number): Promise<number> {
   const { data, error } = await admin.rpc("expire_stale_orders", {
-    p_minutes: ORDER_RESERVATION_MINUTES,
+    p_minutes: reservationMinutes,
   });
 
   if (error) throw new Error(error.message);

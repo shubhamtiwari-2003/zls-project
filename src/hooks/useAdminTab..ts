@@ -7,6 +7,7 @@ export const ADMIN_TABS = [
   "orders",
   "products",
   "inventory",
+  "coupons",
   "sales",
   "feedbacks",
   "payments",

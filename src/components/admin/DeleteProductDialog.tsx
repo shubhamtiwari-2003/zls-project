@@ -73,7 +73,7 @@ export function DeleteProductDialog({
           type="button"
           onClick={onCancel}
           disabled={deleting}
-          className="absolute right-4 top-4 rounded-lg p-2 text-muted hover:text-foreground disabled:opacity-50"
+          className="absolute right-4 top-4 rounded-lg p-2 text-muted-foreground hover:text-foreground disabled:opacity-50"
           aria-label="Close"
         >
           <X size={18} />
@@ -87,7 +87,7 @@ export function DeleteProductDialog({
           Delete product?
         </h2>
 
-        <p className="mt-2 text-sm text-muted">
+        <p className="mt-2 text-sm text-muted-foreground">
           <span className="font-semibold text-foreground">{productName}</span>{" "}
           and its {imageCount} {imageCount === 1 ? "image" : "images"} will be
           permanently deleted. This cannot be undone.

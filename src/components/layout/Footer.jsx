@@ -4,6 +4,8 @@ import Link from "next/link";
 // import { Instagram, Twitter, Youtube, Mail, Phone } from "lucide-react";
 import { useState } from "react";
 import black_logo from "../../../public/Logo_black.png"
+import { BUSINESS, formatAddress, operatedBy } from "@/lib/business";
+import { LEGAL_PAGES } from "@/lib/legal-pages";
 
 export function Footer() {
   const [email, setEmail] = useState("");
@@ -18,7 +20,7 @@ export function Footer() {
     <footer className="w-full bg-[#161616] text-[#e0e0e0] text-sm selection:bg-zinc-700 selection:text-white border-t border-zinc-800">
       {/* 1. Main Navigation & Information Grid */}
       <div className="w-full px-4 sm:px-10 lg:px-16 xl:px-20 pt-12 sm:pt-16 pb-10 sm:pb-14">
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-12 gap-x-6 gap-y-10 lg:gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-14 gap-x-6 gap-y-10 lg:gap-8">
           
           {/* Brand & Manifesto Column (Span 4) */}
           <div className="col-span-2 md:col-span-2 lg:col-span-4 flex flex-col items-start pr-0 lg:pr-8">
@@ -98,7 +100,19 @@ export function Footer() {
               <li><Link href="/brands" className="hover:text-white transition">For brands & clubs</Link></li>
               <li><Link href="/journal" className="hover:text-white transition">Journal</Link></li>
               <li><Link href="/studio-live" className="hover:text-white transition">The studio <span className="text-zinc-500">(live)</span></Link></li>
-              <li><Link href="/contact" className="hover:text-white transition">Contact</Link></li>
+              <li><Link href="/contact-us" className="hover:text-white transition">Contact</Link></li>
+            </ul>
+          </div>
+
+          {/* Policies (required for payment gateway approval) */}
+          <div className="lg:col-span-2 space-y-3">
+            <h4 className="text-xs font-semibold text-white tracking-wider">Policies</h4>
+            <ul className="space-y-2.5 text-xs text-zinc-400">
+              {LEGAL_PAGES.map((page) => (
+                <li key={page.href}>
+                  <Link href={page.href} className="hover:text-white transition">{page.title}</Link>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -135,36 +149,31 @@ export function Footer() {
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 text-[11px] text-zinc-500">
           <div className="space-y-1 max-w-4xl leading-relaxed">
             <p>
-              <strong className="text-zinc-300 font-medium">Adalwin Commerce LLP</strong> — registered office: 302, Unity Paradise, Behind Krome Mall, BT Kawade Road, Raskar Nagar, Pune 411013, Maharashtra, India
+              <strong className="text-zinc-300 font-medium">{BUSINESS.brandName}</strong> — operated by {operatedBy()}, {formatAddress()}
             </p>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-zinc-400">
-              <span><strong>GSTIN:</strong> 27ABZFA4553G1ZZ</span>
-              <span><strong>PAN:</strong> ABZFA4553G</span>
-              <a href="mailto:oruky@adalwin.com" className="inline-flex items-center gap-1 hover:text-white transition">
-                {/* <Mail className="w-3 h-3 text-zinc-500" />  */}
-                oruky@adalwin.com
+              {BUSINESS.gstRegistered && BUSINESS.gstin && <span><strong>GSTIN:</strong> {BUSINESS.gstin}</span>}
+              <a href={`mailto:${BUSINESS.email}`} className="inline-flex items-center gap-1 hover:text-white transition">
+                {BUSINESS.email}
               </a>
-              <span className="inline-flex items-center gap-1">
-                {/* <Phone className="w-3 h-3 text-zinc-500" />  */}
-                +91-85211-22231
-              </span>
+              <span className="inline-flex items-center gap-1">{BUSINESS.phone}</span>
             </div>
           </div>
 
           {/* Quick Legal Links */}
-          <nav className="flex items-center gap-4 text-zinc-400 shrink-0">
-            <Link href="/shipping" className="hover:text-white transition">Shipping</Link>
-            <Link href="/returns" className="hover:text-white transition">Returns</Link>
-            <Link href="/privacy" className="hover:text-white transition">Privacy</Link>
-            <Link href="/terms" className="hover:text-white transition">Terms</Link>
-            <Link href="/contact" className="hover:text-white transition">Contact</Link>
+          <nav className="flex flex-wrap items-center gap-x-4 gap-y-1 text-zinc-400 shrink-0">
+            <Link href="/shipping-policy" className="hover:text-white transition">Shipping</Link>
+            <Link href="/cancellation-and-refund-policy" className="hover:text-white transition">Refunds</Link>
+            <Link href="/privacy-policy" className="hover:text-white transition">Privacy</Link>
+            <Link href="/terms-and-conditions" className="hover:text-white transition">Terms</Link>
+            <Link href="/contact-us" className="hover:text-white transition">Contact</Link>
           </nav>
         </div>
       </div>
 
       {/* 3. Bottom Minimal Copyright Strip */}
       <div className="w-full border-t border-zinc-800/40 px-6 sm:px-10 lg:px-16 xl:px-20 py-4 text-center text-[11px] text-zinc-500">
-        © 2026 <strong className="text-zinc-300 font-medium">Oruky</strong> · operated by <strong className="text-zinc-300 font-medium">Adalwin Commerce LLP</strong> · part of <strong className="text-zinc-300 font-medium">Adalwin Group</strong>
+        © {new Date().getFullYear()} <strong className="text-zinc-300 font-medium">{BUSINESS.brandName}</strong> · operated by <strong className="text-zinc-300 font-medium">{operatedBy()}</strong>
       </div>
     </footer>
   );

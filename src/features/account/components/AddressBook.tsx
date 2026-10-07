@@ -176,8 +176,8 @@ export function AddressBook({ initialAddresses, defaultName }: AddressBookProps)
       {/* List */}
       {addresses.length === 0 && editing === null ? (
         <div className="mt-6 flex flex-col items-center py-6 text-center">
-          <MapPin className="h-10 w-10 text-muted" />
-          <p className="mt-3 text-sm text-muted">No saved addresses yet.</p>
+          <MapPin className="h-10 w-10 text-muted-foreground" />
+          <p className="mt-3 text-sm text-muted-foreground">No saved addresses yet.</p>
         </div>
       ) : (
         <ul className="mt-4 space-y-3">
@@ -185,14 +185,14 @@ export function AddressBook({ initialAddresses, defaultName }: AddressBookProps)
             .filter((address) => address.id !== editing)
             .map((address) => (
               <li key={address.id} className="flex items-start gap-3 rounded-2xl border border-border p-4">
-                <MapPin size={18} className="mt-0.5 shrink-0 text-muted" />
+                <MapPin size={18} className="mt-0.5 shrink-0 text-muted-foreground" />
 
                 <div className="min-w-0 flex-1 text-sm">
                   <p>
                     <span className="font-semibold">{address.full_name}</span>
-                    <span className="text-muted"> · {address.phone}</span>
+                    <span className="text-muted-foreground"> · {address.phone}</span>
                   </p>
-                  <p className="mt-1 text-muted">{formatAddressLine(address)}</p>
+                  <p className="mt-1 text-muted-foreground">{formatAddressLine(address)}</p>
                 </div>
 
                 <div className="flex shrink-0 gap-1">
@@ -200,7 +200,7 @@ export function AddressBook({ initialAddresses, defaultName }: AddressBookProps)
                     type="button"
                     onClick={() => openEdit(address)}
                     disabled={busy || removingId !== null}
-                    className="rounded-lg p-2 text-muted hover:text-foreground disabled:opacity-40"
+                    className="rounded-lg p-2 text-muted-foreground hover:text-foreground disabled:opacity-40"
                     aria-label="Edit address"
                   >
                     <Pencil size={16} />
@@ -209,7 +209,7 @@ export function AddressBook({ initialAddresses, defaultName }: AddressBookProps)
                     type="button"
                     onClick={() => handleRemove(address.id)}
                     disabled={busy || removingId !== null}
-                    className="rounded-lg p-2 text-muted hover:text-red-500 disabled:opacity-40"
+                    className="rounded-lg p-2 text-muted-foreground hover:text-red-500 disabled:opacity-40"
                     aria-label="Remove address"
                   >
                     {removingId === address.id ? (

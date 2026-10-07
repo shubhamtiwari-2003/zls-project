@@ -106,7 +106,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
             </div>
           ) : (
             <div className="flex min-h-75 flex-col items-center justify-center text-center">
-              <p className="text-muted">
+              <p className="text-muted-foreground">
                 {filtered ? "No products match your filters." : "No products available in this category yet."}
               </p>
               {filtered && (

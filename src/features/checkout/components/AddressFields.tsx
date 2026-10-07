@@ -34,7 +34,7 @@ export function AddressFields({ address, errors, onChange, disabled }: AddressFi
         <label key={field.key} className={`block text-sm ${field.wide ? "sm:col-span-2" : ""}`}>
           <span className="font-medium">
             {field.label}
-            {field.optional && <span className="font-normal text-muted"> (optional)</span>}
+            {field.optional && <span className="font-normal text-muted-foreground"> (optional)</span>}
           </span>
           <input
             value={address[field.key]}

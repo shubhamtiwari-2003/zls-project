@@ -163,7 +163,7 @@ export function OrderDetailDrawer({ order, onClose, onUpdated }: OrderDetailDraw
             <h2 id="order-drawer-title" className="font-mono text-lg font-bold">
               {order.order_number}
             </h2>
-            <p className="text-xs text-muted">Placed {formatOrderDate(order.placed_at)}</p>
+            <p className="text-xs text-muted-foreground">Placed {formatOrderDate(order.placed_at)}</p>
             <span className={`mt-2 inline-block rounded-full px-3 py-1 text-xs font-medium ${TONE_CLASSES[badge.tone]}`}>
               {badge.label}
             </span>
@@ -171,7 +171,7 @@ export function OrderDetailDrawer({ order, onClose, onUpdated }: OrderDetailDraw
           <button
             onClick={onClose}
             disabled={saving}
-            className="rounded-lg p-2 text-muted hover:text-foreground"
+            className="rounded-lg p-2 text-muted-foreground hover:text-foreground"
             aria-label="Close"
           >
             <X size={20} />
@@ -183,7 +183,7 @@ export function OrderDetailDrawer({ order, onClose, onUpdated }: OrderDetailDraw
           <section className="space-y-4 rounded-2xl border border-border p-4">
             <div>
               <h3 className="font-semibold">Shipping status</h3>
-              <p className="text-xs text-muted">
+              <p className="text-xs text-muted-foreground">
                 {canFulfill
                   ? "Move the order forward as you print and ship it. The customer sees this on their order page."
                   : order.status === "canceled"
@@ -214,7 +214,7 @@ export function OrderDetailDrawer({ order, onClose, onUpdated }: OrderDetailDraw
                             ? "border-foreground bg-foreground text-background"
                             : done
                               ? "border-green-600/40 text-green-700 dark:text-green-400"
-                              : "border-border text-muted hover:border-foreground/40"
+                              : "border-border text-muted-foreground hover:border-foreground/40"
                         }`}
                       >
                         {done && !selected && <Check size={12} />}
@@ -225,7 +225,7 @@ export function OrderDetailDrawer({ order, onClose, onUpdated }: OrderDetailDraw
                 </div>
 
                 {status !== order.fulfillment_status && (
-                  <p className="text-xs text-muted">
+                  <p className="text-xs text-muted-foreground">
                     {FULFILLMENT_LABELS[order.fulfillment_status as FulfillmentStatus] ?? order.fulfillment_status} →{" "}
                     <span className="font-semibold text-foreground">{FULFILLMENT_LABELS[status]}</span>
                     {fulfillmentStepIndex(status) < currentStep && " (moving back)"}
@@ -315,18 +315,18 @@ export function OrderDetailDrawer({ order, onClose, onUpdated }: OrderDetailDraw
                     {item.image_url ? (
                       <Image src={item.image_url} alt="" fill sizes="56px" className="object-cover" />
                     ) : (
-                      <Package size={18} className="m-auto mt-4 text-muted" />
+                      <Package size={18} className="m-auto mt-4 text-muted-foreground" />
                     )}
                   </div>
                   <div className="min-w-0 flex-1 text-sm">
                     <p className="font-medium">{item.product_name ?? "Product"}</p>
-                    {item.variant_title && <p className="text-xs text-muted">{item.variant_title}</p>}
-                    {item.sku && <p className="text-xs text-muted">SKU {item.sku}</p>}
+                    {item.variant_title && <p className="text-xs text-muted-foreground">{item.variant_title}</p>}
+                    {item.sku && <p className="text-xs text-muted-foreground">SKU {item.sku}</p>}
                     <OrderItemCustomization entries={item.customization} />
                   </div>
                   <div className="text-right text-sm">
                     <p className="font-semibold">× {item.quantity}</p>
-                    <p className="text-xs text-muted">{formatINR(Number(item.total_price))}</p>
+                    <p className="text-xs text-muted-foreground">{formatINR(Number(item.total_price))}</p>
                   </div>
                 </li>
               ))}
@@ -334,11 +334,17 @@ export function OrderDetailDrawer({ order, onClose, onUpdated }: OrderDetailDraw
 
             <div className="mt-3 space-y-1 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted">Subtotal</span>
+                <span className="text-muted-foreground">Subtotal</span>
                 <span>{formatINR(Number(order.subtotal_amount))}</span>
               </div>
+              {Number(order.discount_amount) > 0 && (
+                <div className="flex justify-between text-green-700 dark:text-green-400">
+                  <span>Coupon{order.coupon_code ? ` (${order.coupon_code})` : ""}</span>
+                  <span>−{formatINR(Number(order.discount_amount))}</span>
+                </div>
+              )}
               <div className="flex justify-between">
-                <span className="text-muted">Shipping</span>
+                <span className="text-muted-foreground">Shipping</span>
                 <span>{Number(order.shipping_amount) === 0 ? "FREE" : formatINR(Number(order.shipping_amount))}</span>
               </div>
               <div className="flex justify-between font-bold">
@@ -356,7 +362,7 @@ export function OrderDetailDrawer({ order, onClose, onUpdated }: OrderDetailDraw
                 <button
                   type="button"
                   onClick={copyAddress}
-                  className="flex items-center gap-1 text-xs text-muted hover:text-foreground"
+                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
                 >
                   {copied ? <Check size={14} /> : <Copy size={14} />}
                   {copied ? "Copied" : "Copy address"}
@@ -366,7 +372,7 @@ export function OrderDetailDrawer({ order, onClose, onUpdated }: OrderDetailDraw
             {address ? (
               <p className="whitespace-pre-line rounded-2xl border border-border p-4 text-sm">{addressText}</p>
             ) : (
-              <p className="text-sm text-muted">No address on this order.</p>
+              <p className="text-sm text-muted-foreground">No address on this order.</p>
             )}
           </section>
 
@@ -374,12 +380,12 @@ export function OrderDetailDrawer({ order, onClose, onUpdated }: OrderDetailDraw
           <section className="space-y-1 text-sm">
             <h3 className="mb-2 font-semibold">Payment</h3>
             <p>
-              <span className="text-muted">Status: </span>
+              <span className="text-muted-foreground">Status: </span>
               {order.payment_status === "paid" ? `Paid ${formatOrderDate(order.paid_at)}` : "Not paid"}
             </p>
             {order.razorpay_payment_id && (
               <p>
-                <span className="text-muted">Razorpay payment: </span>
+                <span className="text-muted-foreground">Razorpay payment: </span>
                 <span className="font-mono text-xs">{order.razorpay_payment_id}</span>
               </p>
             )}
@@ -401,28 +407,28 @@ export function OrderDetailDrawer({ order, onClose, onUpdated }: OrderDetailDraw
             <ol className="space-y-3 border-l border-border pl-4 text-sm">
               <li>
                 <p className="font-medium">Order placed</p>
-                <p className="text-xs text-muted">{formatOrderDate(order.placed_at)}</p>
+                <p className="text-xs text-muted-foreground">{formatOrderDate(order.placed_at)}</p>
               </li>
               {order.paid_at && (
                 <li>
                   <p className="font-medium">Payment received</p>
-                  <p className="text-xs text-muted">{formatOrderDate(order.paid_at)}</p>
+                  <p className="text-xs text-muted-foreground">{formatOrderDate(order.paid_at)}</p>
                 </li>
               )}
               {order.canceled_at && (
                 <li>
                   <p className="font-medium text-red-600">Canceled</p>
-                  <p className="text-xs text-muted">{formatOrderDate(order.canceled_at)}</p>
+                  <p className="text-xs text-muted-foreground">{formatOrderDate(order.canceled_at)}</p>
                 </li>
               )}
               {events.map((event) => (
                 <li key={event.id}>
                   <p className="font-medium">
                     {FULFILLMENT_LABELS[event.status as FulfillmentStatus] ?? event.status}
-                    {event.source === "courier" && <span className="ml-1 text-xs text-muted">(courier)</span>}
+                    {event.source === "courier" && <span className="ml-1 text-xs text-muted-foreground">(courier)</span>}
                   </p>
-                  {event.note && <p className="text-muted">{event.note}</p>}
-                  <p className="text-xs text-muted">{formatOrderDate(event.created_at)}</p>
+                  {event.note && <p className="text-muted-foreground">{event.note}</p>}
+                  <p className="text-xs text-muted-foreground">{formatOrderDate(event.created_at)}</p>
                 </li>
               ))}
             </ol>

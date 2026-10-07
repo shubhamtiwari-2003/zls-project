@@ -105,7 +105,7 @@ const VALUE_EXAMPLES: Record<string, string> = {
 };
 
 const labelClass = "block text-sm font-medium";
-const hintClass = "mt-0.5 text-xs text-muted";
+const hintClass = "mt-0.5 text-xs text-muted-foreground";
 
 export function VariantsEditor({
   options,
@@ -234,7 +234,7 @@ export function VariantsEditor({
         <div className="space-y-3 rounded-2xl border border-dashed border-border p-4">
           <div className="text-sm">
             <p className="font-medium">Does this product come in different versions?</p>
-            <ul className="mt-2 space-y-1 text-xs text-muted">
+            <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
               <li>
                 <span className="font-medium text-foreground">No</span> → skip this. The Price and SKU above are
                 used.
@@ -247,7 +247,7 @@ export function VariantsEditor({
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs text-muted">Add an option:</span>
+            <span className="text-xs text-muted-foreground">Add an option:</span>
             {NAME_SUGGESTIONS.map((name) => (
               <button
                 key={name}
@@ -274,7 +274,7 @@ export function VariantsEditor({
       {/* STEP 1: options */}
       {hasOptions && (
         <div className="space-y-3">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Step 1 · What can the customer choose?
           </p>
 
@@ -294,7 +294,7 @@ export function VariantsEditor({
                       type="button"
                       onClick={() => removeOption(option.key)}
                       disabled={disabled}
-                      className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-muted hover:text-red-500"
+                      className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-muted-foreground hover:text-red-500"
                     >
                       <Trash2 size={14} />
                       Remove option
@@ -382,7 +382,7 @@ export function VariantsEditor({
                     />
                     <span>
                       <span className="font-medium">Show a different photo for each value</span>
-                      <span className="block text-xs text-muted">
+                      <span className="block text-xs text-muted-foreground">
                         Turn on when the values look different (designs, colours). Leave off for sizes. Only one
                         option can do this.
                       </span>
@@ -401,7 +401,7 @@ export function VariantsEditor({
                             <p className="mb-1.5 text-xs">
                               Photo shown when the customer picks{" "}
                               <span className="font-semibold">{value.value}</span>
-                              {!value.imageKey && <span className="text-muted"> — none yet (shows the cover)</span>}
+                              {!value.imageKey && <span className="text-muted-foreground"> — none yet (shows the cover)</span>}
                             </p>
                             <div className="flex flex-wrap gap-2">
                               {images.map((image, imageIndex) => {
@@ -436,7 +436,7 @@ export function VariantsEditor({
 
           {options.length < MAX_OPTIONS && (
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs text-muted">Add another option:</span>
+              <span className="text-xs text-muted-foreground">Add another option:</span>
               {NAME_SUGGESTIONS.filter((name) => !usedNames.has(name.toLowerCase())).map((name) => (
                 <button
                   key={name}
@@ -466,7 +466,7 @@ export function VariantsEditor({
       {tableReady && (
         <div className="space-y-3">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               Step 2 · Price each version
             </p>
             <p className={hintClass}>
@@ -509,7 +509,7 @@ export function VariantsEditor({
             </div>
 
             {/* Column headers */}
-            <div className="hidden grid-cols-[2rem_2.5rem_1fr_6.5rem_8.5rem] gap-3 border-b border-border px-3 py-2 text-xs font-medium text-muted sm:grid">
+            <div className="hidden grid-cols-[2rem_2.5rem_1fr_6.5rem_8.5rem] gap-3 border-b border-border px-3 py-2 text-xs font-medium text-muted-foreground sm:grid">
               <span>Sell</span>
               <span />
               <span>Version</span>
@@ -543,7 +543,7 @@ export function VariantsEditor({
                       {image ? (
                         <Image src={image.url} alt="" fill sizes="40px" unoptimized={image.isBlob} className="object-cover" />
                       ) : (
-                        <ImageIcon size={16} className="m-auto mt-3 text-muted" />
+                        <ImageIcon size={16} className="m-auto mt-3 text-muted-foreground" />
                       )}
                     </div>
 

@@ -5,8 +5,9 @@ import Link from "next/link";
 import { Heart, Minus, Plus, ShoppingBag, Star } from "lucide-react";
 import { useState } from "react";
 import { useCartStore } from "@/features/cart/store/cartStore";
+import { announceAddedToCart } from "@/features/cart/lib/cartFeedback";
 import { useHydrated } from "@/hooks/useHydrated";
-import { LOW_STOCK_THRESHOLD, MAX_QTY_PER_ITEM } from "@/lib/shop-config";
+import { useShopSettings } from "@/components/providers/ShopSettingsProvider";
 
 export interface ProductItem {
   id: string;
@@ -32,6 +33,7 @@ export interface ProductItem {
 export function ProductCard({ product }: { product: ProductItem }) {
   const [liked, setLiked] = useState(false);
   const hydrated = useHydrated();
+  const { lowStockThreshold, maxQtyPerItem } = useShopSettings();
   const { addItem, increase, decrease } = useCartStore();
   const variantId = product.variantId ?? null;
   const cartItem = useCartStore((state) =>
@@ -41,13 +43,13 @@ export function ProductCard({ product }: { product: ProductItem }) {
 
   const stock = product.stock ?? null;
   const outOfStock = stock !== null && stock <= 0;
-  const maxQuantity = Math.min(MAX_QTY_PER_ITEM, stock ?? MAX_QTY_PER_ITEM);
+  const maxQuantity = Math.min(maxQtyPerItem, stock ?? maxQtyPerItem);
 
   const href = `/products/${product?.category?.trim().toLowerCase().replace(/\s+/g, "-")}/${product.slug}`;
   const [rupees, paise] = product.price.toFixed(2).split(".");
 
   return (
-    <div className="group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border sm:rounded-3xl border-border bg-surface transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl">
+    <div data-product-card className="group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border sm:rounded-3xl border-border bg-surface transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl">
       {/* ---------------- Image ---------------- */}
       <div className="relative aspect-4/5 overflow-hidden bg-linear-to-br from-stone-100 to-stone-200 dark:from-zinc-900 dark:to-zinc-800">
         <Link href={href} className="block h-full w-full">
@@ -94,7 +96,7 @@ export function ProductCard({ product }: { product: ProductItem }) {
       {/* ---------------- Content ---------------- */}
       <div className="flex flex-1 flex-col p-2 sm:p-4">
         {/* Rating */}
-        <div className="flex items-center gap-1 text-xs text-muted">
+        <div className="flex items-center gap-1 text-xs text-muted-foreground">
           <Star className="h-2.5 w-2.5 fill-amber-400 text-amber-400" />
           <span className="font-medium text-foreground">
             {product.rating.toFixed(1)}
@@ -110,20 +112,20 @@ export function ProductCard({ product }: { product: ProductItem }) {
         </Link>
 
         {/* Description */}
-        <p className=" mt-1 line-clamp-2 min-h-8 text-xs leading-4 text-muted sm:min-h-10.5 sm:text-sm sm:leading-5">
+        <p className=" mt-1 line-clamp-2 min-h-8 text-xs leading-4 text-muted-foreground sm:min-h-10.5 sm:text-sm sm:leading-5">
           {product.description}
         </p>
 
         {/* Price */}
         <div className="mt-3 flex flex-wrap items-end justify-between gap-x-2 gap-y-1 sm:mt-4">
           <div>
-            <p className="text-xs text-muted">{product.hasOptions ? "Starting from" : "Price"}</p>
+            <p className="text-xs text-muted-foreground">{product.hasOptions ? "Starting from" : "Price"}</p>
 
             <div className="flex items-end ">
               <span className="text-xl font-bold text-foreground sm:text-3xl">
                 ₹{rupees}
               </span>
-              <span className="pb-0.5 text-xs text-muted sm:pb-1 sm:text-sm">.{paise}</span>
+              <span className="pb-0.5 text-xs text-muted-foreground sm:pb-1 sm:text-sm">.{paise}</span>
             </div>
           </div>
 
@@ -131,7 +133,7 @@ export function ProductCard({ product }: { product: ProductItem }) {
             <span className="rounded-full bg-red-500/10 px-2 py-0.5 text-[8px] sm:px-2.5 sm:py-1 sm:text-[11px] font-medium text-red-600">
               Out of stock
             </span>
-          ) : stock !== null && stock <= LOW_STOCK_THRESHOLD ? (
+          ) : stock !== null && stock <= lowStockThreshold ? (
             <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[8px] sm:px-2.5 sm:py-1 sm:text-[11px] font-medium text-amber-700 dark:text-amber-400">
               Only {stock} left
             </span>
@@ -182,13 +184,13 @@ export function ProductCard({ product }: { product: ProductItem }) {
           ) : outOfStock ? (
             <button
               disabled
-              className="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-full bg-border py-2.5 text-xs font-semibold text-muted sm:py-3 sm:text-sm"
+              className="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-full bg-border py-2.5 text-xs font-semibold text-muted-foreground sm:py-3 sm:text-sm"
             >
               Out of stock
             </button>
           ) : (
             <button
-              onClick={() =>
+              onClick={(e) => {
                 addItem({
                   variantId,
                   productId: product.id,
@@ -198,8 +200,14 @@ export function ProductCard({ product }: { product: ProductItem }) {
                   image: product.imageUrl,
                   href,
                   maxQuantity: stock,
-                })
-              }
+                });
+                announceAddedToCart({
+                  title: product.title,
+                  image: product.imageUrl,
+                  imageElement: e.currentTarget.closest("[data-product-card]")?.querySelector("img"),
+                  source: e.currentTarget,
+                });
+              }}
               className="flex w-full items-center justify-center gap-2 rounded-full bg-[#003D29] py-2.5 text-xs font-semibold text-white transition-all hover:bg-[#002B1D] active:scale-[0.98] sm:py-3 sm:text-sm"
             >
               <ShoppingBag size={16} />

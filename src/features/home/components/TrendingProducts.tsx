@@ -60,7 +60,7 @@ export function TrendingProducts() {
           </div>
           <Link
             href="/products"
-            className="shrink-0 whitespace-nowrap text-xs font-bold text-muted hover:underline flex items-center gap-1"
+            className="shrink-0 whitespace-nowrap text-xs font-bold text-muted-foreground hover:underline flex items-center gap-1"
           >
             See All Deals <ArrowRight className="w-3.5 h-3.5" />
           </Link>

@@ -50,10 +50,10 @@ export function RecentOrdersPanel() {
       <div className="flex items-center justify-between border-b border-border p-6">
         <div>
           <h2 className="text-xl font-semibold">Recent Orders</h2>
-          <p className="text-sm text-muted">Latest customer purchases</p>
+          <p className="text-sm text-muted-foreground">Latest customer purchases</p>
         </div>
 
-        <Link href="/admin?tab=orders" className="text-sm font-medium text-muted hover:text-foreground">
+        <Link href="/admin?tab=orders" className="text-sm font-medium text-muted-foreground hover:text-foreground">
           View all
         </Link>
       </div>
@@ -61,14 +61,14 @@ export function RecentOrdersPanel() {
       {error ? (
         <p className="p-6 text-sm text-red-600">Could not load orders.</p>
       ) : orders === null ? (
-        <p className="p-6 text-sm text-muted">Loading...</p>
+        <p className="p-6 text-sm text-muted-foreground">Loading...</p>
       ) : orders.length === 0 ? (
-        <p className="p-6 text-sm text-muted">No orders yet.</p>
+        <p className="p-6 text-sm text-muted-foreground">No orders yet.</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full min-w-[720px]">
             <thead>
-              <tr className="text-left text-sm text-muted">
+              <tr className="text-left text-sm text-muted-foreground">
                 <th className="px-6 py-4 font-medium">Order</th>
                 <th className="px-6 py-4 font-medium">Customer</th>
                 <th className="px-6 py-4 font-medium">Product</th>
@@ -91,13 +91,13 @@ export function RecentOrdersPanel() {
                       <Link href={href} className="font-mono text-sm font-semibold hover:underline">
                         {order.order_number}
                       </Link>
-                      <p className="text-xs text-muted">{formatOrderDate(order.placed_at)}</p>
+                      <p className="text-xs text-muted-foreground">{formatOrderDate(order.placed_at)}</p>
                     </td>
                     <td className="px-6 py-4 text-sm">{order.shipping_address?.full_name ?? "—"}</td>
                     <td className="px-6 py-4 text-sm">
                       {first?.product_name ?? "—"}
-                      {first?.variant_title && <span className="text-muted"> · {first.variant_title}</span>}
-                      {more > 0 && <span className="text-muted"> +{more} more</span>}
+                      {first?.variant_title && <span className="text-muted-foreground"> · {first.variant_title}</span>}
+                      {more > 0 && <span className="text-muted-foreground"> +{more} more</span>}
                     </td>
                     <td className="px-6 py-4 font-medium">{formatINR(Number(order.total_amount))}</td>
                     <td className="px-6 py-4">
@@ -106,7 +106,7 @@ export function RecentOrdersPanel() {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <Link href={href} className="text-muted hover:text-foreground" aria-label={`Open ${order.order_number}`}>
+                      <Link href={href} className="text-muted-foreground hover:text-foreground" aria-label={`Open ${order.order_number}`}>
                         <ChevronRight size={18} />
                       </Link>
                     </td>

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { parseCartItems, priceCart } from "@/lib/pricing.server";
+import { applyCoupon, parseCartItems, priceCart } from "@/lib/pricing.server";
 import {
   normalizeAddress,
   validateAddress,
@@ -9,6 +9,7 @@ import {
 } from "@/lib/checkout-validation";
 import { createRazorpayOrder, razorpayKeyId } from "@/lib/razorpay.server";
 import { cancelOrder, expireStaleOrders } from "@/lib/orders.server";
+import { getShopSettings } from "@/lib/shop-settings.server";
 
 export const runtime = "nodejs";
 
@@ -19,7 +20,7 @@ export const runtime = "nodejs";
  * the address. Every amount is computed here from the database, so a
  * tampered cart cannot change what the customer is charged.
  *
- * Body: { items: [{ key, variantId, quantity, customization? }] } plus ONE of:
+ * Body: { items: [{ key, variantId, quantity, customization? }], couponCode? } plus ONE of:
  *   { addressId }                         → use a saved address
  *   { address, replacesAddressId? }       → new address, or an edit of a
  *                                           saved one (saved as a new row)
@@ -47,6 +48,7 @@ export async function POST(request: Request) {
       address?: unknown;
       addressId?: unknown;
       replacesAddressId?: unknown;
+      couponCode?: unknown;
     };
 
     try {
@@ -55,7 +57,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid request." }, { status: 400 });
     }
 
-    const items = parseCartItems(body?.items);
+    // Store rules from Admin → Settings (shipping, limits, reservation time).
+    const settings = await getShopSettings();
+    const items = parseCartItems(body?.items, settings.maxQtyPerItem);
 
     if (!items) {
       return NextResponse.json({ error: "Your cart is empty or invalid." }, { status: 400 });
@@ -97,13 +101,24 @@ export async function POST(request: Request) {
     const admin = createAdminClient();
 
     try {
-      await expireStaleOrders(admin);
+      await expireStaleOrders(admin, settings.orderReservationMinutes);
     } catch (error) {
       // Not fatal: the cron job (/api/orders/expire) also does this.
       console.error("Expire stale orders error:", error);
     }
 
-    const { quote, snapshots } = await priceCart(supabase, items);
+    const priced = await priceCart(supabase, items, settings);
+    const snapshots = priced.snapshots;
+    const couponCode = typeof body?.couponCode === "string" ? body.couponCode.slice(0, 40) : null;
+    const { quote, coupon } = await applyCoupon(priced.quote, couponCode, user.id);
+
+    // The customer saw a discount; don't silently charge full price.
+    if (quote.couponError) {
+      return NextResponse.json(
+        { error: `Coupon not applied: ${quote.couponError} Remove it or try another.`, quote },
+        { status: 409 }
+      );
+    }
 
     if (quote.invalid.length) {
       return NextResponse.json(
@@ -156,6 +171,8 @@ export async function POST(request: Request) {
       p_subtotal: quote.subtotal,
       p_shipping: quote.shipping,
       p_total: quote.total,
+      p_coupon_id: coupon?.id ?? null,
+      p_discount: quote.discount,
     });
 
     // Stock is re-checked inside the transaction (order_items trigger), in
@@ -163,6 +180,15 @@ export async function POST(request: Request) {
     if (createError?.message.includes("Insufficient stock")) {
       return NextResponse.json(
         { error: "Sorry — an item just sold out. Please review your cart." },
+        { status: 409 }
+      );
+    }
+
+    // Coupon limits are re-checked in the transaction (someone else may have
+    // used the last one since the quote).
+    if (createError?.message.includes("Coupon")) {
+      return NextResponse.json(
+        { error: "Sorry — this coupon can no longer be used. Remove it to continue.", couponError: true },
         { status: 409 }
       );
     }

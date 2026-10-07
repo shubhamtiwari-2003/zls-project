@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { MAX_QTY_PER_ITEM } from "@/lib/shop-config";
+import { DEFAULT_SHOP_SETTINGS } from "@/lib/shop-config";
 import {
   cartLineKey,
   type CustomizationDisplay,
@@ -50,9 +50,23 @@ export type NewCartItem = Omit<CartItem, "quantity" | "lineKey">;
 interface CartStore {
   items: CartItem[];
 
+  // Most of one line a customer can have (Admin → Settings). Set by
+  // ShopSettingsProvider; not persisted.
+  maxPerItem: number;
+  setMaxPerItem: (max: number) => void;
+
   // The signed-in user this cart mirrors (null = guest cart).
   // Lets cart sync tell a guest cart (merge it) from one already synced.
   syncedUserId: string | null;
+
+  // Coupon code the customer entered (checked by the server on every quote).
+  couponCode: string | null;
+  // Why the last code was rejected, shown under the coupon box.
+  couponNotice: string | null;
+  applyCoupon: (code: string) => void;
+  removeCoupon: () => void;
+  // Called when the server says the code can't be used.
+  rejectCoupon: (message: string) => void;
 
   // Used by cart sync: replace the cart with the server's version.
   replaceItems: (items: CartItem[], userId: string) => void;
@@ -73,8 +87,8 @@ interface CartStore {
 }
 
 /** Most of this item a customer can have: per-item cap and known stock. */
-export function itemLimit(item: Pick<CartItem, "maxQuantity">): number {
-  return Math.min(MAX_QTY_PER_ITEM, item.maxQuantity ?? MAX_QTY_PER_ITEM);
+export function itemLimit(item: Pick<CartItem, "maxQuantity">, maxPerItem: number): number {
+  return Math.min(maxPerItem, item.maxQuantity ?? maxPerItem);
 }
 
 const clamp = (quantity: number, limit: number) => Math.min(Math.max(quantity, 1), limit);
@@ -87,10 +101,19 @@ export const useCartStore = create<CartStore>()(
     (set, get) => ({
       items: [],
       syncedUserId: null,
+      maxPerItem: DEFAULT_SHOP_SETTINGS.maxQtyPerItem,
+
+      setMaxPerItem: (max) => set({ maxPerItem: max }),
+
+      couponCode: null,
+      couponNotice: null,
+      applyCoupon: (code) => set({ couponCode: code.trim().toUpperCase().replace(/\s+/g, "") || null, couponNotice: null }),
+      removeCoupon: () => set({ couponCode: null, couponNotice: null }),
+      rejectCoupon: (message) => set({ couponCode: null, couponNotice: message }),
 
       replaceItems: (items, userId) => set({ items, syncedUserId: userId }),
 
-      resetCart: () => set({ items: [], syncedUserId: null }),
+      resetCart: () => set({ items: [], syncedUserId: null, couponCode: null, couponNotice: null }),
 
       addItem: (item, quantity = 1) =>
         set((state) => {
@@ -99,7 +122,7 @@ export const useCartStore = create<CartStore>()(
 
           if (existing) {
             const merged = { ...existing, maxQuantity: item.maxQuantity ?? existing.maxQuantity };
-            const limit = itemLimit(merged);
+            const limit = itemLimit(merged, state.maxPerItem);
 
             return {
               items: state.items.map((i) =>
@@ -110,7 +133,7 @@ export const useCartStore = create<CartStore>()(
             };
           }
 
-          const limit = itemLimit(item);
+          const limit = itemLimit(item, state.maxPerItem);
           if (limit <= 0) return state; // out of stock
 
           return {
@@ -122,7 +145,7 @@ export const useCartStore = create<CartStore>()(
         set((state) => ({
           items: state.items.map((i) =>
             i.lineKey === lineKey
-              ? { ...i, quantity: clamp(i.quantity + 1, Math.max(itemLimit(i), i.quantity)) }
+              ? { ...i, quantity: clamp(i.quantity + 1, Math.max(itemLimit(i, state.maxPerItem), i.quantity)) }
               : i
           ),
         })),
@@ -139,7 +162,8 @@ export const useCartStore = create<CartStore>()(
           items: state.items.filter((i) => i.lineKey !== lineKey),
         })),
 
-      clearCart: () => set({ items: [] }),
+      // After payment: the coupon was used with this order.
+      clearCart: () => set({ items: [], couponCode: null, couponNotice: null }),
 
       applyQuote: (lines) =>
         set((state) => {
@@ -194,7 +218,11 @@ export const useCartStore = create<CartStore>()(
       name: "zlayer-cart", // localStorage key
       storage: createJSONStorage(() => localStorage),
       // Persist data only.
-      partialize: (state) => ({ items: state.items, syncedUserId: state.syncedUserId }),
+      partialize: (state) => ({
+        items: state.items,
+        syncedUserId: state.syncedUserId,
+        couponCode: state.couponCode,
+      }),
       // v2: lines are variants. Older carts (per product) can't be mapped in
       // the browser, so they're dropped; signed-in users get theirs back
       // from the server (cart_items was migrated to variants).

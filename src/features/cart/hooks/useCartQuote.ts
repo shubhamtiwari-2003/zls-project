@@ -19,18 +19,26 @@ export function useCartQuote() {
   const hydrated = useHydrated();
   const items = useCartStore((state) => state.items);
   const applyQuote = useCartStore((state) => state.applyQuote);
+  const couponCode = useCartStore((state) => state.couponCode);
+  const rejectCoupon = useCartStore((state) => state.rejectCoupon);
 
   // Only lines, quantities and customization values matter for pricing.
-  const key = JSON.stringify(
-    items.map((item) => [item.lineKey, item.variantId, item.quantity, item.customization ?? {}])
-  );
+  const key = JSON.stringify({
+    lines: items.map((item) => [item.lineKey, item.variantId, item.quantity, item.customization ?? {}]),
+    couponCode,
+  });
 
   const [state, setState] = useState<QuoteState>({ key: "", quote: null, error: null });
 
   useEffect(() => {
     if (!hydrated) return;
 
-    const payload = (JSON.parse(key) as [string, string, number, Record<string, string>][]).map(
+    const request = JSON.parse(key) as {
+      lines: [string, string, number, Record<string, string>][];
+      couponCode: string | null;
+    };
+
+    const payload = request.lines.map(
       ([lineKey, variantId, quantity, customization]) => ({
         key: lineKey,
         variantId,
@@ -49,7 +57,7 @@ export function useCartQuote() {
         const response = await fetch("/api/cart/quote", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ items: payload }),
+          body: JSON.stringify({ items: payload, couponCode: request.couponCode }),
           signal: controller.signal,
         });
 
@@ -61,6 +69,9 @@ export function useCartQuote() {
 
         setState({ key, quote: data.quote, error: null });
         applyQuote(data.quote.lines);
+
+        // The server couldn't use the code: drop it and say why.
+        if (request.couponCode && data.quote.couponError) rejectCoupon(data.quote.couponError);
       } catch (error) {
         if (controller.signal.aborted) return;
 
@@ -76,7 +87,7 @@ export function useCartQuote() {
       controller.abort();
       clearTimeout(timer);
     };
-  }, [key, hydrated, applyQuote]);
+  }, [key, hydrated, applyQuote, rejectCoupon]);
 
   const current = state.key === key;
 

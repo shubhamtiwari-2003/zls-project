@@ -7,7 +7,7 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
   const categories = await getActiveCategories();
 
   return (
-    <div className="min-h-screen flex flex-col bg-background overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-background overflow-x-clip">
       <Header categories={categories} />
       <main className="flex-1">{children}</main>
       <Footer/>

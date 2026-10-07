@@ -54,7 +54,7 @@ export default function Sales() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <div>
           <h1 className="text-3xl font-bold">Sales</h1>
-          <p className="text-muted mt-1">
+          <p className="text-muted-foreground mt-1">
             Revenue, transactions and payment overview.
           </p>
         </div>
@@ -100,7 +100,7 @@ export default function Sales() {
               className="rounded-3xl border border-border bg-surface p-5"
             >
               <div className="flex items-center justify-between">
-                <p className="text-sm text-muted">{card.title}</p>
+                <p className="text-sm text-muted-foreground">{card.title}</p>
                 <Icon size={18} />
               </div>
 
@@ -119,7 +119,7 @@ export default function Sales() {
       <section className="rounded-3xl border border-border bg-surface p-6">
         <div className="mb-6">
           <h2 className="text-xl font-semibold">Weekly Revenue</h2>
-          <p className="text-sm text-muted">Last 7 days performance</p>
+          <p className="text-sm text-muted-foreground">Last 7 days performance</p>
         </div>
 
         <div className="flex h-64 items-end justify-between gap-3">
@@ -132,7 +132,7 @@ export default function Sales() {
                 }}
               />
 
-              <span className="text-xs text-muted">
+              <span className="text-xs text-muted-foreground">
                 {["M", "T", "W", "T", "F", "S", "S"][index]}
               </span>
             </div>
@@ -148,7 +148,7 @@ export default function Sales() {
 
         <div className="overflow-x-auto">
           <table className="w-full min-w-[760px]">
-            <thead className="bg-surface-secondary/40 text-left text-sm text-muted">
+            <thead className="bg-surface-secondary/40 text-left text-sm text-muted-foreground">
               <tr>
                 <th className="px-6 py-4 font-medium">Invoice</th>
                 <th className="px-6 py-4 font-medium">Customer</th>
@@ -167,7 +167,7 @@ export default function Sales() {
                 >
                   <td className="px-6 py-5 font-semibold">{tx.id}</td>
                   <td className="px-6 py-5">{tx.customer}</td>
-                  <td className="px-6 py-5 text-muted">{tx.date}</td>
+                  <td className="px-6 py-5 text-muted-foreground">{tx.date}</td>
                   <td className="px-6 py-5">{tx.method}</td>
                   <td className="px-6 py-5 font-semibold">
                     ₹{tx.amount.toLocaleString()}

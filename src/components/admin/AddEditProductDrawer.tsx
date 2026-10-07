@@ -184,7 +184,7 @@ function SortableImage({
           justify-center
           rounded-lg
           p-2
-          text-muted
+          text-muted-foreground
           hover:bg-surface-secondary
           hover:text-foreground
           active:cursor-grabbing
@@ -226,12 +226,12 @@ function SortableImage({
           </p>
         </div>
 
-        <p className="mt-1 text-xs text-muted">
+        <p className="mt-1 text-xs text-muted-foreground">
           Order: {index}
         </p>
 
         {image.file && (
-          <p className="mt-1 truncate text-xs text-muted">
+          <p className="mt-1 truncate text-xs text-muted-foreground">
             New image
           </p>
         )}
@@ -246,7 +246,7 @@ function SortableImage({
           shrink-0
           rounded-lg
           p-2
-          text-muted
+          text-muted-foreground
           transition
           hover:bg-red-500/10
           hover:text-red-500
@@ -1256,7 +1256,7 @@ export default function AddEditProductDrawer({
                       : "Add Product"}
                   </h2>
 
-                  <p className="text-sm text-muted">
+                  <p className="text-sm text-muted-foreground">
                     {product
                       ? "Update product information"
                       : "Create a new product"}
@@ -1317,14 +1317,14 @@ export default function AddEditProductDrawer({
                       Product Images
                     </h3>
 
-                    <p className="text-sm text-muted">
+                    <p className="text-sm text-muted-foreground">
                       Drag images to change their
                       sequence. The first image is
                       automatically the cover.
                     </p>
                   </div>
 
-                  <span className="text-sm text-muted">
+                  <span className="text-sm text-muted-foreground">
                     {previewImages.length}{" "}
                     {previewImages.length === 1
                       ? "Image"
@@ -1359,7 +1359,7 @@ export default function AddEditProductDrawer({
                     Click to upload images
                   </p>
 
-                  <p className="text-sm text-muted">
+                  <p className="text-sm text-muted-foreground">
                     JPG • PNG • WEBP • Multiple
                     files
                   </p>
@@ -1444,7 +1444,7 @@ export default function AddEditProductDrawer({
                     <div className="flex items-start gap-3">
                       <ImageIcon
                         size={18}
-                        className="mt-0.5 shrink-0 text-muted"
+                        className="mt-0.5 shrink-0 text-muted-foreground"
                       />
 
                       <div>
@@ -1452,7 +1452,7 @@ export default function AddEditProductDrawer({
                           Image sequence
                         </p>
 
-                        <p className="mt-1 text-xs text-muted">
+                        <p className="mt-1 text-xs text-muted-foreground">
                           Image 1 is always the
                           cover. Drag an image to
                           the top to make it the
@@ -1799,7 +1799,7 @@ export default function AddEditProductDrawer({
                 </h3>
 
                 {options.length > 0 ? (
-                  <p className="rounded-xl bg-surface px-4 py-3 text-sm text-muted">
+                  <p className="rounded-xl bg-surface px-4 py-3 text-sm text-muted-foreground">
                     This product has options, so price and SKU are set for each variant below.
                     New variants start with 1 in stock; update stock in the Inventory tab.
                   </p>
@@ -1838,7 +1838,7 @@ export default function AddEditProductDrawer({
                   </div>
 
                   {/* Stock and inventory policy are managed in the Inventory tab. */}
-                  <p className="self-end pb-3 text-xs text-muted">
+                  <p className="self-end pb-3 text-xs text-muted-foreground">
                     New products start with 1 in stock. Update stock in the Inventory tab.
                   </p>
                 </div>
@@ -1943,7 +1943,7 @@ export default function AddEditProductDrawer({
                       Publish Product
                     </h4>
 
-                    <p className="text-sm text-muted">
+                    <p className="text-sm text-muted-foreground">
                       Product will be visible
                       when active
                     </p>

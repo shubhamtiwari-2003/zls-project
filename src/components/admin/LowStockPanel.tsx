@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AlertTriangle } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
-import { LOW_STOCK_THRESHOLD } from "@/lib/shop-config";
+import { useShopSettings } from "@/components/providers/ShopSettingsProvider";
 import { sellableStock, type InventoryJoin } from "@/lib/stock";
 
 interface LowStockItem {
@@ -26,6 +26,7 @@ const MAX_ITEMS = 6;
 
 // Overview card: variants that are low or out of stock, lowest first.
 export function LowStockPanel() {
+  const { lowStockThreshold } = useShopSettings();
   const [items, setItems] = useState<LowStockItem[] | null>(null);
   const [error, setError] = useState(false);
 
@@ -53,7 +54,7 @@ export function LowStockPanel() {
               variantTitle: variant.title ?? "",
               sellable: sellableStock(variant.inventory),
             }))
-            .filter((item) => item.sellable <= LOW_STOCK_THRESHOLD)
+            .filter((item) => item.sellable <= lowStockThreshold)
             .sort((a, b) => a.sellable - b.sellable)
             .slice(0, MAX_ITEMS)
         );
@@ -62,7 +63,7 @@ export function LowStockPanel() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [lowStockThreshold]);
 
   return (
     <div className="rounded-3xl border border-border bg-surface p-6">
@@ -72,7 +73,7 @@ export function LowStockPanel() {
           <h2 className="text-xl font-semibold">Low Stock</h2>
         </div>
 
-        <Link href="/admin?tab=inventory" className="text-sm font-medium text-muted hover:text-foreground">
+        <Link href="/admin?tab=inventory" className="text-sm font-medium text-muted-foreground hover:text-foreground">
           Manage
         </Link>
       </div>
@@ -80,18 +81,18 @@ export function LowStockPanel() {
       {error ? (
         <p className="text-sm text-red-600">Could not load stock levels.</p>
       ) : items === null ? (
-        <p className="text-sm text-muted">Loading...</p>
+        <p className="text-sm text-muted-foreground">Loading...</p>
       ) : items.length === 0 ? (
-        <p className="text-sm text-muted">All products are well stocked.</p>
+        <p className="text-sm text-muted-foreground">All products are well stocked.</p>
       ) : (
         <div className="space-y-4">
           {items.map((item) => (
             <div key={item.id} className="rounded-2xl border border-border p-4">
               <h3 className="font-medium">{item.name}</h3>
-              {item.variantTitle && <p className="text-sm text-muted">{item.variantTitle}</p>}
+              {item.variantTitle && <p className="text-sm text-muted-foreground">{item.variantTitle}</p>}
 
               <div className="mt-2 flex items-center justify-between">
-                <span className="text-sm text-muted">Remaining</span>
+                <span className="text-sm text-muted-foreground">Remaining</span>
 
                 <span
                   className={`rounded-full px-3 py-1 text-xs font-medium ${

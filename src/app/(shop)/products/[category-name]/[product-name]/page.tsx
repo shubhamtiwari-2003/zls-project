@@ -6,7 +6,8 @@ import Breadcrumb from "@/components/shared/Breadcrumb";
 import { ProductCard } from "@/features/products/components/ProductCard";
 import { ProductDetailView } from "@/features/products/components/ProductDetailView";
 import { getProductDetail, getRelatedProducts } from "@/lib/products.server";
-import { FREE_SHIPPING_THRESHOLD, formatINR } from "@/lib/shop-config";
+import { formatINR } from "@/lib/shop-config";
+import { getShopSettings } from "@/lib/shop-settings.server";
 
 interface ProductPageProps {
   params: Promise<{
@@ -44,7 +45,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
 
   if (!product) notFound();
 
-  const related = await getRelatedProducts(product);
+  const [related, settings] = await Promise.all([getRelatedProducts(product), getShopSettings()]);
 
   const dimensions = [product.widthMm, product.heightMm, product.lengthMm].filter(
     (value): value is number => value !== null
@@ -71,7 +72,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
           <div className="mt-8 space-y-3 rounded-2xl border border-border p-4 text-sm">
             <div className="flex items-center gap-3">
               <Truck size={18} className="shrink-0 text-green-600" />
-              <span>Free shipping on orders above {formatINR(FREE_SHIPPING_THRESHOLD)}</span>
+              <span>Free shipping on orders above {formatINR(settings.freeShippingThreshold)}</span>
             </div>
             <div className="flex items-center gap-3">
               <ShieldCheck size={18} className="shrink-0 text-green-600" />
@@ -83,7 +84,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
           {product.description && (
             <div className="mt-8">
               <h2 className="text-lg font-semibold">Description</h2>
-              <p className="mt-3 whitespace-pre-line leading-7 text-muted">{product.description}</p>
+              <p className="mt-3 whitespace-pre-line leading-7 text-muted-foreground">{product.description}</p>
             </div>
           )}
 
@@ -93,7 +94,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
               {specs.map((spec) => (
                 <div key={spec.label} className="rounded-2xl border border-border bg-surface p-4 text-center">
                   <p className="wrap-break-word font-bold">{spec.value}</p>
-                  <p className="mt-1 text-xs uppercase text-muted">{spec.label}</p>
+                  <p className="mt-1 text-xs uppercase text-muted-foreground">{spec.label}</p>
                 </div>
               ))}
             </div>
@@ -107,7 +108,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
               <h2 className="text-xl font-bold sm:text-2xl">You may also like</h2>
               <Link
                 href={`/products/${product.category.slug}`}
-                className="text-sm text-muted hover:text-foreground"
+                className="text-sm text-muted-foreground hover:text-foreground"
               >
                 View all
               </Link>

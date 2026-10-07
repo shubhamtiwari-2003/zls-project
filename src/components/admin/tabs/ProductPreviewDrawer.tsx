@@ -185,7 +185,7 @@ export default function ProductPreviewDrawer({
                   Website Preview
                 </h2>
 
-                <p className="text-sm text-muted">
+                <p className="text-sm text-muted-foreground">
                   This is how customers will see
                   the product
                 </p>
@@ -245,7 +245,7 @@ export default function ProductPreviewDrawer({
                       "
                     />
                   ) : (
-                    <div className="flex h-full items-center justify-center text-sm text-muted">
+                    <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
                       No product image
                     </div>
                   )}
@@ -384,7 +384,7 @@ export default function ProductPreviewDrawer({
 
                 {/* Description */}
 
-                <p className="mt-2 leading-7 text-muted">
+                <p className="mt-2 leading-7 text-muted-foreground">
                   {product.description ||
                     "No product description available."}
                 </p>
@@ -407,7 +407,7 @@ export default function ProductPreviewDrawer({
                     />
                   ))}
 
-                  <span className="ml-2 text-sm text-muted">
+                  <span className="ml-2 text-sm text-muted-foreground">
                     5.0 (124 Reviews)
                   </span>
                 </div>
@@ -426,7 +426,7 @@ export default function ProductPreviewDrawer({
                     )}
                   </span>
 
-                  <span className="text-xl text-muted line-through">
+                  <span className="text-xl text-muted-foreground line-through">
                     ₹
                     {Math.round(
                       Number(
@@ -620,7 +620,7 @@ export default function ProductPreviewDrawer({
                     </button>
                   </div>
 
-                  <span className="text-sm text-muted">
+                  <span className="text-sm text-muted-foreground">
                     Inventory managed
                     separately
                   </span>
@@ -675,7 +675,7 @@ export default function ProductPreviewDrawer({
                   bg-surface-secondary
                   p-4
                   text-sm
-                  text-muted
+                  text-muted-foreground
                 "
               >
                 Preview Mode • Buttons are
@@ -756,7 +756,7 @@ function Spec({
           mt-1
           text-xs
           uppercase
-          text-muted
+          text-muted-foreground
         "
       >
         {title}

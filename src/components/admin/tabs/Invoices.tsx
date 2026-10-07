@@ -78,7 +78,7 @@ export default function Invoices() {
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-3xl font-bold">Invoices</h1>
-          <p className="mt-1 text-muted">
+          <p className="mt-1 text-muted-foreground">
             View and download customer invoices.
           </p>
         </div>
@@ -93,7 +93,7 @@ export default function Invoices() {
       <section className="grid gap-4 md:grid-cols-3">
         <div className="rounded-3xl border border-border bg-surface p-5">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-muted">Total Invoices</p>
+            <p className="text-sm text-muted-foreground">Total Invoices</p>
             <FileText size={18} />
           </div>
 
@@ -104,7 +104,7 @@ export default function Invoices() {
 
         <div className="rounded-3xl border border-border bg-surface p-5">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-muted">Revenue</p>
+            <p className="text-sm text-muted-foreground">Revenue</p>
             ₹
           </div>
 
@@ -115,7 +115,7 @@ export default function Invoices() {
 
         <div className="rounded-3xl border border-border bg-surface p-5">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-muted">This Month</p>
+            <p className="text-sm text-muted-foreground">This Month</p>
             <Calendar size={18} />
           </div>
 
@@ -127,7 +127,7 @@ export default function Invoices() {
       <div className="relative">
         <Search
           size={18}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
         />
 
         <input
@@ -142,7 +142,7 @@ export default function Invoices() {
       <section className="overflow-hidden rounded-3xl border border-border bg-surface">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[780px]">
-            <thead className="border-b border-border bg-surface-secondary/40 text-left text-sm text-muted">
+            <thead className="border-b border-border bg-surface-secondary/40 text-left text-sm text-muted-foreground">
               <tr>
                 <th className="px-6 py-4">Invoice</th>
                 <th className="px-6 py-4">Order</th>
@@ -188,7 +188,7 @@ export default function Invoices() {
                     </span>
                   </td>
 
-                  <td className="px-6 py-5 text-muted">
+                  <td className="px-6 py-5 text-muted-foreground">
                     {invoice.date}
                   </td>
 

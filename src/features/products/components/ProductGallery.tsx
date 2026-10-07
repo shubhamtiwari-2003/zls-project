@@ -68,7 +68,7 @@ export function ProductGallery({ images, name, selected, onSelect }: ProductGall
 
   if (count === 0) {
     return (
-      <div className="flex aspect-square flex-col items-center justify-center rounded-2xl border border-border bg-surface text-muted sm:rounded-3xl">
+      <div className="flex aspect-square flex-col items-center justify-center rounded-2xl border border-border bg-surface text-muted-foreground sm:rounded-3xl">
         <ImageIcon size={40} />
         <p className="mt-2 text-sm">No image available</p>
       </div>

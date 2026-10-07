@@ -5,8 +5,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Check, Minus, Plus, ShoppingBag, Zap } from "lucide-react";
 import { itemLimit, useCartStore } from "@/features/cart/store/cartStore";
+import { announceAddedToCart } from "@/features/cart/lib/cartFeedback";
 import { useHydrated } from "@/hooks/useHydrated";
-import { LOW_STOCK_THRESHOLD, MAX_QTY_PER_ITEM } from "@/lib/shop-config";
+import { useShopSettings } from "@/components/providers/ShopSettingsProvider";
 import {
   cartLineKey,
   type CustomizationDisplay,
@@ -41,6 +42,7 @@ export function ProductPurchasePanel({ product, variant, customization }: Produc
   const router = useRouter();
   const hydrated = useHydrated();
   const addItem = useCartStore((state) => state.addItem);
+  const { lowStockThreshold, maxQtyPerItem } = useShopSettings();
 
   // This exact line (variant + personalisation), and the variant overall:
   // stock is shared by every personalised line of a variant.
@@ -68,7 +70,7 @@ export function ProductPurchasePanel({ product, variant, customization }: Produc
   if (!variant) {
     return (
       <div className="mt-8">
-        <button disabled className="w-full cursor-not-allowed rounded-full bg-border py-4 font-semibold text-muted">
+        <button disabled className="w-full cursor-not-allowed rounded-full bg-border py-4 font-semibold text-muted-foreground">
           This combination isn&apos;t available
         </button>
       </div>
@@ -82,8 +84,8 @@ export function ProductPurchasePanel({ product, variant, customization }: Produc
 
   // How many more can be added on top of what's already in the cart:
   // the per-line cap, and the variant's stock across all its lines.
-  const lineRoom = MAX_QTY_PER_ITEM - inCart;
-  const stockRoom = stock === null ? Infinity : itemLimit({ maxQuantity: stock }) - inCartAll;
+  const lineRoom = maxQtyPerItem - inCart;
+  const stockRoom = stock === null ? Infinity : itemLimit({ maxQuantity: stock }, maxQtyPerItem) - inCartAll;
   const remaining = Math.max(Math.min(lineRoom, stockRoom), 0);
   const selected = Math.min(quantity, Math.max(remaining, 1));
 
@@ -100,10 +102,18 @@ export function ProductPurchasePanel({ product, variant, customization }: Produc
     customizationDisplay: customization?.display.length ? customization.display : undefined,
   };
 
-  const handleAdd = () => {
+  const handleAdd = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (remaining <= 0) return;
     if (customization && !customization.validate()) return;
     addItem(cartPayload, selected);
+    announceAddedToCart({
+      title: variant.title ? `${product.name} (${variant.title})` : product.name,
+      image: variant.image || null,
+      // The gallery image currently shown.
+      imageElement: document.querySelector<HTMLImageElement>('[aria-roledescription="slide"][aria-hidden="false"] img'),
+      quantity: selected,
+      source: e.currentTarget,
+    });
     setQuantity(1);
     setAdded(true);
   };
@@ -119,7 +129,7 @@ export function ProductPurchasePanel({ product, variant, customization }: Produc
     return (
       <div className="mt-8 space-y-3">
         <p className="text-sm font-semibold text-red-600">Out of stock</p>
-        <button disabled className="w-full cursor-not-allowed rounded-full bg-border py-4 font-semibold text-muted">
+        <button disabled className="w-full cursor-not-allowed rounded-full bg-border py-4 font-semibold text-muted-foreground">
           Currently unavailable
         </button>
       </div>
@@ -128,7 +138,7 @@ export function ProductPurchasePanel({ product, variant, customization }: Produc
 
   return (
     <div className="mt-8">
-      {stock !== null && stock <= LOW_STOCK_THRESHOLD && (
+      {stock !== null && stock <= lowStockThreshold && (
         <p className="mb-3 text-sm font-semibold text-amber-600">Only {stock} left in stock</p>
       )}
 
@@ -162,14 +172,14 @@ export function ProductPurchasePanel({ product, variant, customization }: Produc
         </div>
 
         {inCartAll > 0 && (
-          <Link href="/cart" className="text-sm text-muted underline-offset-4 hover:text-foreground hover:underline">
+          <Link href="/cart" className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
             {inCartAll} in your cart
           </Link>
         )}
       </div>
 
       {remaining <= 0 && (
-        <p className="mt-3 text-sm text-muted">You already have the maximum quantity in your cart.</p>
+        <p className="mt-3 text-sm text-muted-foreground">You already have the maximum quantity in your cart.</p>
       )}
 
       <div className="mt-6 flex flex-col gap-3 sm:flex-row">

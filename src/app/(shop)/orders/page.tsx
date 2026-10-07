@@ -51,9 +51,9 @@ export default async function OrdersPage() {
           </p>
         ) : orders.length === 0 ? (
           <div className="mt-16 flex flex-col items-center text-center">
-            <Package className="h-14 w-14 text-muted" />
+            <Package className="h-14 w-14 text-muted-foreground" />
             <h2 className="mt-4 text-xl font-semibold">No orders yet</h2>
-            <p className="mt-2 text-muted">When you place an order, it will show up here.</p>
+            <p className="mt-2 text-muted-foreground">When you place an order, it will show up here.</p>
             <Link href="/products" className="mt-6 rounded-full bg-foreground px-6 py-3 font-medium text-background">
               Start Shopping
             </Link>
@@ -77,7 +77,7 @@ export default async function OrdersPage() {
                           {badge.label}
                         </span>
                       </div>
-                      <p className="mt-1 text-sm text-muted">
+                      <p className="mt-1 text-sm text-muted-foreground">
                         {new Date(order.placed_at).toLocaleDateString("en-IN", {
                           day: "numeric",
                           month: "short",
@@ -89,7 +89,7 @@ export default async function OrdersPage() {
                     </div>
 
                     <span className="font-semibold">{formatINR(Number(order.total_amount))}</span>
-                    <ChevronRight className="h-5 w-5 text-muted" />
+                    <ChevronRight className="h-5 w-5 text-muted-foreground" />
                   </Link>
                 </li>
               );

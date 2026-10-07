@@ -56,7 +56,7 @@ export function CategoriesMenu({ categories }: CategoriesMenuProps) {
       {open && (
         <div className="absolute left-0 top-full z-50 mt-3 w-60 rounded-2xl border border-border bg-background p-2 shadow-xl">
           {categories.length === 0 ? (
-            <p className="px-3 py-2 text-sm font-normal text-muted">No categories yet</p>
+            <p className="px-3 py-2 text-sm font-normal text-muted-foreground">No categories yet</p>
           ) : (
             <ul className="max-h-80 overflow-y-auto">
               {categories.map((category) => {

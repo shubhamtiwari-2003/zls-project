@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { MAX_CART_LINES, MAX_QTY_PER_ITEM, shippingFor } from "@/lib/shop-config";
+import { MAX_CART_LINES, shippingFor, type ShopSettings } from "@/lib/shop-config";
 import { purchasableStock, type InventoryJoin } from "@/lib/stock";
 import { variantImageUrl, type VariantValueImageJoin } from "@/lib/variants";
 import {
@@ -17,6 +17,8 @@ import {
   type CustomizationSnapshotEntry,
 } from "@/lib/customization";
 import { customerUploadPreviewUrl } from "@/lib/customer-uploads.server";
+import { checkCoupon } from "@/lib/coupons.server";
+import type { Coupon } from "@/lib/coupons";
 import type { CartQuote, CartRequestItem, QuoteLine } from "@/types/cart";
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -25,10 +27,10 @@ const MAX_LINE_KEY_LENGTH = 2100;
 /**
  * Validates the cart sent by the browser. Only variant IDs, quantities and
  * customization values are accepted; any prices the client sends are
- * ignored. Duplicate lines are merged and quantities clamped to
- * MAX_QTY_PER_ITEM.
+ * ignored. Duplicate lines are merged and quantities clamped to the
+ * per-item limit (Admin → Settings).
  */
-export function parseCartItems(input: unknown): CartRequestItem[] | null {
+export function parseCartItems(input: unknown, maxPerItem: number): CartRequestItem[] | null {
   if (!Array.isArray(input) || input.length === 0 || input.length > MAX_CART_LINES) {
     return null;
   }
@@ -58,7 +60,7 @@ export function parseCartItems(input: unknown): CartRequestItem[] | null {
       lineKey,
       variantId,
       customization: values,
-      quantity: Math.min((existing?.quantity ?? 0) + (quantity as number), MAX_QTY_PER_ITEM),
+      quantity: Math.min((existing?.quantity ?? 0) + (quantity as number), maxPerItem),
     });
   }
 
@@ -110,7 +112,8 @@ export interface PricedCart {
  */
 export async function priceCart(
   supabase: SupabaseClient,
-  items: CartRequestItem[]
+  items: CartRequestItem[],
+  settings: ShopSettings
 ): Promise<PricedCart> {
   const ids = items.map((item) => item.variantId).filter((id) => UUID_RE.test(id));
 
@@ -302,7 +305,7 @@ export async function priceCart(
   }
 
   const subtotal = lines.reduce((sum, line) => sum + line.lineTotal, 0);
-  const shipping = shippingFor(subtotal);
+  const shipping = shippingFor(subtotal, settings);
 
   return {
     quote: {
@@ -313,8 +316,41 @@ export async function priceCart(
       invalid,
       subtotal,
       shipping,
+      discount: 0,
+      coupon: null,
+      couponError: null,
       total: subtotal + shipping,
     },
     snapshots,
+  };
+}
+
+/**
+ * Applies the coupon the customer entered to a priced cart. Free shipping
+ * was already decided on the subtotal before the discount. Returns the
+ * coupon row too, for create_order().
+ */
+export async function applyCoupon(
+  quote: CartQuote,
+  code: string | null | undefined,
+  userId: string | null
+): Promise<{ quote: CartQuote; coupon: Coupon | null }> {
+  if (!code?.trim() || quote.lines.length === 0) return { quote, coupon: null };
+
+  const result = await checkCoupon(code, { userId, subtotal: quote.subtotal, shipping: quote.shipping });
+
+  if (!result.ok) {
+    return { quote: { ...quote, couponError: result.error }, coupon: null };
+  }
+
+  return {
+    quote: {
+      ...quote,
+      discount: result.discount,
+      coupon: { code: result.coupon.code, description: result.description, discount: result.discount },
+      couponError: null,
+      total: quote.subtotal - result.discount + quote.shipping,
+    },
+    coupon: result.coupon,
   };
 }

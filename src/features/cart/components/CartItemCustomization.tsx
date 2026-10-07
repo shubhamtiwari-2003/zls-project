@@ -17,7 +17,7 @@ export function CartItemCustomization({ entries, errors, className = "" }: CartI
   return (
     <div className={`space-y-1 text-xs ${className}`}>
       {entries?.map((entry) => (
-        <div key={entry.key} className="flex min-w-0 items-center gap-2 text-muted">
+        <div key={entry.key} className="flex min-w-0 items-center gap-2 text-muted-foreground">
           {entry.imageUrl && (
             <span className="relative h-8 w-8 shrink-0 overflow-hidden rounded border border-border bg-background">
               {/* Signed private URL: skip the image optimizer's shared cache. */}

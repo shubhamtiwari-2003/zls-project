@@ -1,37 +1,33 @@
 "use client";
 
-import { useState } from "react";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Sidebar } from "@/components/admin/Sidebar";
 import { Topbar } from "@/components/admin/Topbar";
 
-export function AdminShell({ children }: { children: ReactNode }) {
-  const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+interface AdminShellProps {
+  children: ReactNode;
+  // From the sidebar_state cookie (see admin/layout.tsx).
+  defaultSidebarOpen: boolean;
+}
 
+/*
+  Admin layout on shadcn's Sidebar: SidebarProvider holds the open /
+  collapsed state (Ctrl/Cmd+B toggles it, a cookie remembers it), and on
+  phones the sidebar becomes a slide-in drawer.
+*/
+export function AdminShell({ children, defaultSidebarOpen }: AdminShellProps) {
   return (
-    <div className="min-h-screen bg-background">
-      {/* Sidebar */}
-      <Sidebar
-        collapsed={collapsed}
-        mobileOpen={mobileOpen}
-        setMobileOpen={setMobileOpen}
-      />
+    <SidebarProvider
+      defaultOpen={defaultSidebarOpen}
+      style={{ "--sidebar-width": "17.5rem" } as CSSProperties}
+    >
+      <Sidebar />
 
-      {/* Main Content */}
-      <div
-        className={`min-h-screen transition-all duration-300 ease-in-out ${
-          collapsed ? "lg:ml-[88px]" : "lg:ml-[280px]"
-        }`}
-      >
-        <Topbar
-          collapsed={collapsed}
-          setCollapsed={setCollapsed}
-          setMobileOpen={setMobileOpen}
-        />
-
+      <SidebarInset className="min-w-0 bg-background">
+        <Topbar />
         <main className="p-4 md:p-6">{children}</main>
-      </div>
-    </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

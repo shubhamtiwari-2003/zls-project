@@ -8,8 +8,10 @@ import { Loader2, Lock, AlertTriangle, Pencil, Plus } from "lucide-react";
 import { useCartStore } from "@/features/cart/store/cartStore";
 import { useCartQuote } from "@/features/cart/hooks/useCartQuote";
 import { CartSummary } from "@/features/cart/components/CartSummary";
+import { CouponBox } from "@/features/cart/components/CouponBox";
 import { CartItemCustomization } from "@/features/cart/components/CartItemCustomization";
-import { PAYMENT_WINDOW_SECONDS, formatINR } from "@/lib/shop-config";
+import { formatINR } from "@/lib/shop-config";
+import { useShopSettings } from "@/components/providers/ShopSettingsProvider";
 import {
   EMPTY_ADDRESS,
   formatAddressLine,
@@ -42,6 +44,9 @@ type AddressMode =
 export function CheckoutForm({ email, defaultName, savedAddresses }: CheckoutFormProps) {
   const router = useRouter();
   const clearCart = useCartStore((state) => state.clearCart);
+  const couponCode = useCartStore((state) => state.couponCode);
+  const rejectCoupon = useCartStore((state) => state.rejectCoupon);
+  const { paymentWindowMinutes } = useShopSettings();
   const { hydrated, items, quote, error: quoteError, loading } = useCartQuote();
 
   // Most recently used saved address is pre-selected.
@@ -123,6 +128,7 @@ export function CheckoutForm({ email, defaultName, savedAddresses }: CheckoutFor
             quantity: item.quantity,
             customization: item.customization ?? {},
           })),
+          couponCode,
           ...addressPayload,
         }),
       });
@@ -136,6 +142,11 @@ export function CheckoutForm({ email, defaultName, savedAddresses }: CheckoutFor
 
       if (!response.ok) {
         if (data.fieldErrors) setFieldErrors(data.fieldErrors);
+
+        // Coupon became unusable: drop it so the totals update, and say why.
+        if (data.couponError || data.quote?.couponError) {
+          rejectCoupon(data.quote?.couponError ?? data.error);
+        }
         throw new Error(data.error ?? "Could not place your order.");
       }
 
@@ -155,7 +166,7 @@ export function CheckoutForm({ email, defaultName, savedAddresses }: CheckoutFor
         description: `Order ${data.orderNumber}`,
         prefill: data.prefill,
         theme: { color: "#003D29" },
-        timeout: PAYMENT_WINDOW_SECONDS,
+        timeout: paymentWindowMinutes * 60,
 
         handler: async (payment) => {
           // 3. Verify on the server, then show the order.
@@ -220,7 +231,7 @@ export function CheckoutForm({ email, defaultName, savedAddresses }: CheckoutFor
         {/* LEFT: address */}
         <section className="rounded-3xl border border-border bg-surface p-6">
           <h1 className="text-2xl font-bold">Checkout</h1>
-          <p className="mt-1 text-sm text-muted">Signed in as {email}</p>
+          <p className="mt-1 text-sm text-muted-foreground">Signed in as {email}</p>
 
           <h2 className="mt-8 text-lg font-semibold">Shipping address</h2>
 
@@ -249,8 +260,8 @@ export function CheckoutForm({ email, defaultName, savedAddresses }: CheckoutFor
                       />
                       <span className="text-sm">
                         <span className="font-semibold">{saved.full_name}</span>
-                        <span className="text-muted"> · {saved.phone}</span>
-                        <span className="mt-1 block text-muted">{formatAddressLine(saved)}</span>
+                        <span className="text-muted-foreground"> · {saved.phone}</span>
+                        <span className="mt-1 block text-muted-foreground">{formatAddressLine(saved)}</span>
                       </span>
                     </label>
 
@@ -258,7 +269,7 @@ export function CheckoutForm({ email, defaultName, savedAddresses }: CheckoutFor
                       type="button"
                       onClick={() => startEdit(saved)}
                       disabled={submitting}
-                      className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-muted hover:text-foreground"
+                      className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-muted-foreground hover:text-foreground"
                     >
                       <Pencil size={14} />
                       Edit
@@ -272,7 +283,7 @@ export function CheckoutForm({ email, defaultName, savedAddresses }: CheckoutFor
                 onClick={startNew}
                 disabled={submitting}
                 className={`flex w-full items-center gap-2 rounded-2xl border border-dashed p-4 text-sm font-medium transition hover:border-foreground ${
-                  mode.kind === "new" ? "border-[#003D29] text-foreground" : "border-border text-muted"
+                  mode.kind === "new" ? "border-[#003D29] text-foreground" : "border-border text-muted-foreground"
                 }`}
               >
                 <Plus size={16} />
@@ -315,13 +326,17 @@ export function CheckoutForm({ email, defaultName, savedAddresses }: CheckoutFor
                 </div>
                 <div className="min-w-0 flex-1 text-sm">
                   {item.title}
-                  {item.variantTitle && <span className="block text-xs text-muted">{item.variantTitle}</span>}
+                  {item.variantTitle && <span className="block text-xs text-muted-foreground">{item.variantTitle}</span>}
                   <CartItemCustomization entries={item.customizationDisplay} className="mt-1" />
                 </div>
                 <span className="text-sm font-medium">{formatINR(item.price * item.quantity)}</span>
               </li>
             ))}
           </ul>
+
+          <div className="mb-6">
+            <CouponBox quote={quote} loading={loading} disabled={submitting} />
+          </div>
 
           <CartSummary quote={quote} loading={loading} />
 
@@ -350,7 +365,23 @@ export function CheckoutForm({ email, defaultName, savedAddresses }: CheckoutFor
             {submitting ? "Processing..." : quote ? `Pay ${formatINR(quote.total)}` : "Pay"}
           </button>
 
-          <p className="mt-4 text-center text-xs text-muted">Secure payments powered by Razorpay</p>
+          <p className="mt-4 text-center text-xs text-muted-foreground">
+            By placing this order you agree to our{" "}
+            <Link href="/terms-and-conditions" className="underline underline-offset-2 hover:text-foreground">
+              Terms
+            </Link>
+            ,{" "}
+            <Link href="/privacy-policy" className="underline underline-offset-2 hover:text-foreground">
+              Privacy Policy
+            </Link>{" "}
+            and{" "}
+            <Link href="/cancellation-and-refund-policy" className="underline underline-offset-2 hover:text-foreground">
+              Refund Policy
+            </Link>
+            .
+          </p>
+
+          <p className="mt-2 text-center text-xs text-muted-foreground">Secure payments powered by Razorpay</p>
         </aside>
       </form>
     </main>

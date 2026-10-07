@@ -92,7 +92,7 @@ export default function Payments() {
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-3xl font-bold">Payments</h1>
-          <p className="mt-1 text-muted">
+          <p className="mt-1 text-muted-foreground">
             Monitor customer transactions and settlements.
           </p>
         </div>
@@ -141,7 +141,7 @@ export default function Payments() {
             <h2 className="text-xl font-semibold">
               Razorpay Settlement
             </h2>
-            <p className="text-sm text-muted mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               Amount to be settled to your bank account
             </p>
           </div>
@@ -153,12 +153,12 @@ export default function Payments() {
 
         <div className="mt-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-sm text-muted">Settlement Amount</p>
+            <p className="text-sm text-muted-foreground">Settlement Amount</p>
             <h3 className="text-4xl font-black">₹18,740</h3>
           </div>
 
           <div className="text-right">
-            <p className="text-sm text-muted">Expected Date</p>
+            <p className="text-sm text-muted-foreground">Expected Date</p>
             <p className="text-lg font-semibold">20 Sep 2026</p>
           </div>
         </div>
@@ -167,7 +167,7 @@ export default function Payments() {
       {/* Search */}
       <div className="relative">
         <Search
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
           size={18}
         />
 
@@ -183,7 +183,7 @@ export default function Payments() {
       <section className="overflow-hidden rounded-3xl border border-border bg-surface">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[760px]">
-            <thead className="border-b border-border bg-surface-secondary/40 text-left text-sm text-muted">
+            <thead className="border-b border-border bg-surface-secondary/40 text-left text-sm text-muted-foreground">
               <tr>
                 <th className="px-6 py-4">Payment ID</th>
                 <th className="px-6 py-4">Order</th>
@@ -211,7 +211,7 @@ export default function Payments() {
                   <td className="px-6 py-5">
                     <StatusBadge status={payment.status} />
                   </td>
-                  <td className="px-6 py-5 text-muted">{payment.date}</td>
+                  <td className="px-6 py-5 text-muted-foreground">{payment.date}</td>
                 </tr>
               ))}
             </tbody>
@@ -236,7 +236,7 @@ function StatCard({
   return (
     <div className="rounded-3xl border border-border bg-surface p-5">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted">{title}</p>
+        <p className="text-sm text-muted-foreground">{title}</p>
         <div className={color}>{icon}</div>
       </div>
 

@@ -90,7 +90,7 @@ export default function Feedbacks() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold">Feedbacks</h1>
-        <p className="mt-1 text-muted">
+        <p className="mt-1 text-muted-foreground">
           Manage customer reviews and ratings.
         </p>
       </div>
@@ -122,7 +122,7 @@ export default function Feedbacks() {
           <div className="relative flex-1">
             <Search
               size={18}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
             />
 
             <input
@@ -152,7 +152,7 @@ export default function Feedbacks() {
       <div className="hidden overflow-hidden rounded-3xl border border-border bg-surface lg:block">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="border-b border-border bg-surface-secondary/40 text-left text-sm text-muted">
+            <thead className="border-b border-border bg-surface-secondary/40 text-left text-sm text-muted-foreground">
               <tr>
                 <th className="px-6 py-4">Customer</th>
                 <th className="px-6 py-4">Product</th>
@@ -172,7 +172,7 @@ export default function Feedbacks() {
                   <td className="px-6 py-5">
                     <div>
                       <p className="font-semibold">{review.customer}</p>
-                      <p className="text-xs text-muted">{review.date}</p>
+                      <p className="text-xs text-muted-foreground">{review.date}</p>
                     </div>
                   </td>
 
@@ -194,7 +194,7 @@ export default function Feedbacks() {
                     </div>
                   </td>
 
-                  <td className="max-w-xs px-6 py-5 text-sm text-muted">
+                  <td className="max-w-xs px-6 py-5 text-sm text-muted-foreground">
                     {review.comment}
                   </td>
 
@@ -234,7 +234,7 @@ export default function Feedbacks() {
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="font-semibold">{review.customer}</h3>
-                <p className="text-sm text-muted">{review.product}</p>
+                <p className="text-sm text-muted-foreground">{review.product}</p>
               </div>
 
               <StatusBadge status={review.status} />
@@ -254,7 +254,7 @@ export default function Feedbacks() {
               ))}
             </div>
 
-            <p className="mt-3 text-sm text-muted">{review.comment}</p>
+            <p className="mt-3 text-sm text-muted-foreground">{review.comment}</p>
 
             <div className="mt-4 flex justify-end gap-2">
               <button className="rounded-lg p-2 hover:bg-green-100 dark:hover:bg-green-900/20">
@@ -288,7 +288,7 @@ function StatCard({
   return (
     <div className="rounded-3xl border border-border bg-surface p-5">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted">{title}</p>
+        <p className="text-sm text-muted-foreground">{title}</p>
         {icon}
       </div>
 

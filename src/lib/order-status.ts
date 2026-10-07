@@ -38,7 +38,7 @@ export const TONE_CLASSES: Record<StatusTone, string> = {
   blue: "bg-blue-500/10 text-blue-700 dark:text-blue-400",
   amber: "bg-amber-500/10 text-amber-700 dark:text-amber-400",
   red: "bg-red-500/10 text-red-600",
-  gray: "bg-zinc-500/10 text-muted",
+  gray: "bg-zinc-500/10 text-muted-foreground",
 };
 
 export interface OrderStatusFields {

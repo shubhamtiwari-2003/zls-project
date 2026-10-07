@@ -56,7 +56,7 @@ export function CustomizationForm(props: CustomizationFormProps) {
         )}
       </div>
 
-      <p className="mt-5 text-xs text-muted">
+      <p className="mt-5 text-xs text-muted-foreground">
         Personalised items are made just for you, so they can&apos;t be returned unless they arrive damaged.
       </p>
     </section>
@@ -72,7 +72,7 @@ function FieldLabel({ field, htmlFor, extra }: { field: CustomizationField; html
     <div className="flex items-baseline justify-between gap-3">
       <label htmlFor={htmlFor} className="text-sm font-semibold">
         {field.label}
-        {!field.required && <span className="font-normal text-muted"> (optional)</span>}
+        {!field.required && <span className="font-normal text-muted-foreground"> (optional)</span>}
       </label>
       {extra}
     </div>
@@ -101,13 +101,13 @@ function TextFieldInput({
         field={field}
         htmlFor={id}
         extra={
-          <span className={`text-xs tabular-nums ${count > field.config.maxLength ? "text-red-600" : "text-muted"}`}>
+          <span className={`text-xs tabular-nums ${count > field.config.maxLength ? "text-red-600" : "text-muted-foreground"}`}>
             {count}/{field.config.maxLength}
           </span>
         }
       />
 
-      {field.helpText && <p className="mt-1 text-xs text-muted">{field.helpText}</p>}
+      {field.helpText && <p className="mt-1 text-xs text-muted-foreground">{field.helpText}</p>}
 
       <input
         id={id}
@@ -129,7 +129,7 @@ function TextFieldInput({
       />
 
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs">
-        {pricing ? <span className="text-muted">{pricing}</span> : <span />}
+        {pricing ? <span className="text-muted-foreground">{pricing}</span> : <span />}
         {addOn > 0 && <span className="font-semibold">+{formatINR(addOn)}</span>}
       </div>
 
@@ -142,7 +142,7 @@ function TextFieldInput({
       {/* Live preview */}
       {text && (
         <div className="mt-3 flex items-center gap-3">
-          <span className="text-xs text-muted">Preview</span>
+          <span className="text-xs text-muted-foreground">Preview</span>
           <span className="inline-flex max-w-full items-center gap-2 rounded-full border-2 border-foreground/80 bg-background px-4 py-1.5">
             <span className="h-2.5 w-2.5 shrink-0 rounded-full border-2 border-foreground/60" aria-hidden="true" />
             <span className="truncate text-lg font-black tracking-wider">{text}</span>
@@ -230,7 +230,7 @@ function PhotoFieldInput({
   return (
     <div>
       <FieldLabel field={field} htmlFor={user ? id : undefined} />
-      {field.helpText && <p className="mt-1 text-xs text-muted">{field.helpText}</p>}
+      {field.helpText && <p className="mt-1 text-xs text-muted-foreground">{field.helpText}</p>}
 
       {!user ? (
         <button
@@ -239,9 +239,9 @@ function PhotoFieldInput({
           disabled={authLoading}
           className="mt-2 flex w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-border px-4 py-6 text-center transition hover:border-foreground/40 disabled:opacity-60"
         >
-          <ImagePlus size={28} className="text-muted" />
+          <ImagePlus size={28} className="text-muted-foreground" />
           <span className="mt-2 text-sm font-medium">Sign in to upload your photo</span>
-          <span className="mt-1 text-xs text-muted">Your photo is stored privately with your account.</span>
+          <span className="mt-1 text-xs text-muted-foreground">Your photo is stored privately with your account.</span>
         </button>
       ) : photo ? (
         <div className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-start">
@@ -262,7 +262,7 @@ function PhotoFieldInput({
           <div className="min-w-0 flex-1 text-sm">
             <p className="font-medium text-green-700 dark:text-green-500">Photo uploaded</p>
             {photo.width && photo.height && (
-              <p className="mt-0.5 text-xs text-muted">
+              <p className="mt-0.5 text-xs text-muted-foreground">
                 {photo.width} × {photo.height}px
               </p>
             )}
@@ -274,7 +274,7 @@ function PhotoFieldInput({
               </p>
             )}
 
-            <p className="mt-2 text-xs text-muted">
+            <p className="mt-2 text-xs text-muted-foreground">
               We&apos;ll centre your photo in the frame and check it before printing.
             </p>
 
@@ -292,7 +292,7 @@ function PhotoFieldInput({
                 type="button"
                 onClick={() => onChange(field.key, "")}
                 disabled={uploading}
-                className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted hover:text-red-600"
+                className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-red-600"
               >
                 <Trash2 size={14} />
                 Remove
@@ -310,7 +310,7 @@ function PhotoFieldInput({
           >
             {uploading ? (
               <>
-                <Loader2 size={28} className="animate-spin text-muted" />
+                <Loader2 size={28} className="animate-spin text-muted-foreground" />
                 <span className="mt-2 text-sm font-medium">Uploading… {progress}%</span>
                 <span className="mt-2 h-1.5 w-40 overflow-hidden rounded-full bg-border">
                   <span className="block h-full bg-foreground transition-all" style={{ width: `${progress}%` }} />
@@ -318,9 +318,9 @@ function PhotoFieldInput({
               </>
             ) : (
               <>
-                <ImagePlus size={28} className="text-muted" />
+                <ImagePlus size={28} className="text-muted-foreground" />
                 <span className="mt-2 text-sm font-medium">Upload your photo</span>
-                <span className="mt-1 text-xs text-muted">
+                <span className="mt-1 text-xs text-muted-foreground">
                   JPG, PNG, WEBP or HEIC · up to {field.config.maxMB} MB
                 </span>
               </>
@@ -330,7 +330,7 @@ function PhotoFieldInput({
         </>
       )}
 
-      {pricing && <p className="mt-2 text-xs text-muted">{pricing}</p>}
+      {pricing && <p className="mt-2 text-xs text-muted-foreground">{pricing}</p>}
 
       {error && <p className="mt-1 text-xs font-medium text-red-600">{error}</p>}
     </div>

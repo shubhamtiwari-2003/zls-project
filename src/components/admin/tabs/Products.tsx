@@ -570,7 +570,7 @@ export default function Products() {
                         Products
                     </h1>
 
-                    <p className="mt-1 text-muted">
+                    <p className="mt-1 text-muted-foreground">
                         Manage inventory, pricing
                         and products.
                     </p>
@@ -611,7 +611,7 @@ export default function Products() {
                     <div className="relative flex-1">
 
                         <Search
-                            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
+                            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                             size={18}
                         />
 
@@ -668,7 +668,7 @@ export default function Products() {
 
                         <thead className="border-b border-border bg-surface-secondary/40">
 
-                            <tr className="text-left text-sm text-muted">
+                            <tr className="text-left text-sm text-muted-foreground">
 
                                 <th className="px-6 py-4 font-medium">
                                     Product
@@ -710,7 +710,7 @@ export default function Products() {
                                 <tr>
                                     <td
                                         colSpan={7}
-                                        className="px-6 py-12 text-center text-sm text-muted"
+                                        className="px-6 py-12 text-center text-sm text-muted-foreground"
                                     >
                                         Loading products...
                                     </td>
@@ -733,7 +733,7 @@ export default function Products() {
                                                     No products found
                                                 </p>
 
-                                                <p className="text-sm text-muted">
+                                                <p className="text-sm text-muted-foreground">
                                                     {search ||
                                                         category !==
                                                         "All"
@@ -795,7 +795,7 @@ export default function Products() {
                                                                     className="object-cover"
                                                                 />
                                                             ) : (
-                                                                <div className="flex h-full items-center justify-center text-xs text-muted">
+                                                                <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
                                                                     No image
                                                                 </div>
                                                             )}
@@ -810,7 +810,7 @@ export default function Products() {
                                                                 }
                                                             </h3>
 
-                                                            <p className="mt-1 line-clamp-1 text-sm text-muted">
+                                                            <p className="mt-1 line-clamp-1 text-sm text-muted-foreground">
                                                                 {
                                                                     product.description ||
                                                                     "No description"
@@ -847,7 +847,7 @@ export default function Products() {
                                                 <td className="px-6 py-5 font-semibold">
 
                                                     {activeVariantCount(product) > 1 && (
-                                                        <span className="mr-1 text-xs font-normal text-muted">
+                                                        <span className="mr-1 text-xs font-normal text-muted-foreground">
                                                             From
                                                         </span>
                                                     )}
@@ -859,7 +859,7 @@ export default function Products() {
                                                     )}
 
                                                     {activeVariantCount(product) > 1 && (
-                                                        <p className="text-xs font-normal text-muted">
+                                                        <p className="text-xs font-normal text-muted-foreground">
                                                             {activeVariantCount(product)} variants
                                                         </p>
                                                     )}
@@ -980,7 +980,7 @@ export default function Products() {
 
                 <div className="flex items-center justify-between border-t border-border px-6 py-4">
 
-                    <p className="text-sm text-muted">
+                    <p className="text-sm text-muted-foreground">
                         Showing{" "}
                         {
                             filteredProducts.length

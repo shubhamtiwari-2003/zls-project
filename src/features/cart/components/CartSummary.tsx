@@ -1,4 +1,7 @@
-import { FREE_SHIPPING_THRESHOLD, formatINR } from "@/lib/shop-config";
+"use client";
+
+import { formatINR } from "@/lib/shop-config";
+import { useShopSettings } from "@/components/providers/ShopSettingsProvider";
 import type { CartQuote } from "@/types/cart";
 
 interface CartSummaryProps {
@@ -8,6 +11,7 @@ interface CartSummaryProps {
 
 // Totals always come from the server quote, never from localStorage prices.
 export function CartSummary({ quote, loading }: CartSummaryProps) {
+  const { freeShippingThreshold } = useShopSettings();
   const amount = (value: number | undefined) =>
     loading || value === undefined ? (
       <span className="inline-block h-4 w-16 animate-pulse rounded bg-border" />
@@ -16,17 +20,24 @@ export function CartSummary({ quote, loading }: CartSummaryProps) {
     );
 
   const remainingForFreeShipping =
-    quote && quote.shipping > 0 ? FREE_SHIPPING_THRESHOLD - quote.subtotal : 0;
+    quote && quote.shipping > 0 ? freeShippingThreshold - quote.subtotal : 0;
 
   return (
     <div className="space-y-4 text-sm">
       <div className="flex justify-between">
-        <span className="text-muted">Subtotal</span>
+        <span className="text-muted-foreground">Subtotal</span>
         <span>{amount(quote?.subtotal)}</span>
       </div>
 
+      {!loading && quote?.coupon && quote.discount > 0 && (
+        <div className="flex justify-between text-green-700 dark:text-green-400">
+          <span>Coupon ({quote.coupon.code})</span>
+          <span>−{formatINR(quote.discount)}</span>
+        </div>
+      )}
+
       <div className="flex justify-between">
-        <span className="text-muted">Shipping</span>
+        <span className="text-muted-foreground">Shipping</span>
         {!loading && quote?.shipping === 0 ? (
           <span className="text-green-600">FREE</span>
         ) : (

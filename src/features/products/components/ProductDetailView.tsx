@@ -10,6 +10,7 @@ import {
 } from "@/features/products/components/CustomizationForm";
 import type { UploadedPhoto } from "@/features/products/lib/uploadCustomerPhoto";
 import { formatINR } from "@/lib/shop-config";
+import { BUSINESS } from "@/lib/business";
 import {
   checkCustomization,
   customizationPrice,
@@ -183,8 +184,8 @@ export function ProductDetailView({ product, initialVariantId, children }: Produ
         <h1 className="mt-3 text-2xl font-bold text-foreground sm:mt-4 sm:text-4xl">{product.name}</h1>
 
         <p className="mt-4 text-3xl font-black sm:mt-6 sm:text-4xl">{formatINR(displayPrice)}</p>
-        <p className="mt-1 text-xs text-muted">
-          Inclusive of all taxes
+        <p className="mt-1 text-xs text-muted-foreground">
+          {BUSINESS.gstRegistered ? "Inclusive of all taxes" : "Final price · no hidden charges"}
           {addOn > 0 && <span> · includes {formatINR(addOn)} personalisation</span>}
           {variant?.sku && <span> · SKU {variant.sku}</span>}
         </p>
@@ -199,7 +200,7 @@ export function ProductDetailView({ product, initialVariantId, children }: Produ
                 <fieldset key={option.id}>
                   <legend className="text-sm font-semibold">
                     {option.name}
-                    {selectedValue && <span className="font-normal text-muted">: {selectedValue.value}</span>}
+                    {selectedValue && <span className="font-normal text-muted-foreground">: {selectedValue.value}</span>}
                   </legend>
 
                   <div className="mt-3 flex flex-wrap gap-2">
@@ -218,7 +219,7 @@ export function ProductDetailView({ product, initialVariantId, children }: Produ
                             active
                               ? "border-foreground bg-foreground text-background"
                               : "border-border hover:border-foreground/50"
-                          } ${state !== "available" && !active ? "text-muted line-through decoration-1" : ""}`}
+                          } ${state !== "available" && !active ? "text-muted-foreground line-through decoration-1" : ""}`}
                         >
                           {value.value}
                         </button>

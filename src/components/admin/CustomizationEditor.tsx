@@ -34,7 +34,7 @@ interface CustomizationEditorProps {
 }
 
 const labelClass = "block text-sm font-medium";
-const hintClass = "mt-0.5 text-xs text-muted";
+const hintClass = "mt-0.5 text-xs text-muted-foreground";
 const inputClass = "mt-1.5 w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm disabled:opacity-60";
 
 const ASPECT_RATIOS: { value: string; label: string }[] = [
@@ -119,7 +119,7 @@ export function CustomizationEditor({ fields, onChange, basePrice, disabled }: C
       </div>
 
       {fields.length === 0 && (
-        <p className="rounded-2xl border border-dashed border-border p-4 text-xs text-muted">
+        <p className="rounded-2xl border border-dashed border-border p-4 text-xs text-muted-foreground">
           Regular product? Skip this. For a name keychain add a <span className="font-medium text-foreground">Text</span>{" "}
           field; for a photo frame add a <span className="font-medium text-foreground">Photo upload</span>.
         </p>
@@ -149,7 +149,7 @@ export function CustomizationEditor({ fields, onChange, basePrice, disabled }: C
                 type="button"
                 onClick={() => remove(field.uid)}
                 disabled={disabled}
-                className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-muted hover:text-red-500"
+                className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-muted-foreground hover:text-red-500"
               >
                 <Trash2 size={14} />
                 Remove
@@ -187,7 +187,7 @@ export function CustomizationEditor({ fields, onChange, basePrice, disabled }: C
 
             <div>
               <label className={labelClass} htmlFor={`cf-help-${field.uid}`}>
-                Help text <span className="font-normal text-muted">(optional)</span>
+                Help text <span className="font-normal text-muted-foreground">(optional)</span>
               </label>
               <input
                 id={`cf-help-${field.uid}`}
@@ -230,7 +230,7 @@ export function CustomizationEditor({ fields, onChange, basePrice, disabled }: C
 
           <PricePreview field={field} basePrice={basePrice} />
 
-          <p className="text-[11px] text-muted">
+          <p className="text-[11px] text-muted-foreground">
             Saved as <code className="rounded bg-surface px-1">{field.key}</code>
           </p>
         </div>
@@ -275,7 +275,7 @@ function IconButton({
       onClick={onClick}
       disabled={disabled}
       aria-label={label}
-      className="rounded-lg p-1.5 text-muted hover:bg-surface hover:text-foreground disabled:opacity-30"
+      className="rounded-lg p-1.5 text-muted-foreground hover:bg-surface hover:text-foreground disabled:opacity-30"
     >
       {children}
     </button>
@@ -299,7 +299,7 @@ function TextRules({
 
   return (
     <div className="space-y-3">
-      <p className="text-xs font-semibold uppercase tracking-wide text-muted">What can be typed</p>
+      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">What can be typed</p>
 
       <div className="grid grid-cols-2 gap-3">
         <div>
@@ -403,7 +403,7 @@ function ImageRules({
 
   return (
     <div className="space-y-3">
-      <p className="text-xs font-semibold uppercase tracking-wide text-muted">Photo rules</p>
+      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Photo rules</p>
 
       <div className="grid gap-3 sm:grid-cols-2">
         <div>
@@ -456,7 +456,7 @@ function ImageRules({
             onChange={(e) => set({ minWidth: parseWholeNumber(e.target.value) })}
             className={`${inputClass} mt-0`}
           />
-          <X size={14} className="shrink-0 text-muted" />
+          <X size={14} className="shrink-0 text-muted-foreground" />
           <input
             type="text"
             inputMode="numeric"
@@ -513,7 +513,7 @@ function PricingRules({
 
   return (
     <div className="space-y-3">
-      <p className="text-xs font-semibold uppercase tracking-wide text-muted">Extra charge</p>
+      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Extra charge</p>
 
       <select
         value={pricing.mode}
@@ -626,7 +626,7 @@ function TierEditor({
 
         return (
           <div key={index} className="flex items-center gap-2 text-sm">
-            <span className="w-14 shrink-0 text-xs text-muted">{from} to</span>
+            <span className="w-14 shrink-0 text-xs text-muted-foreground">{from} to</span>
             <input
               type="text"
               inputMode="numeric"
@@ -636,7 +636,7 @@ function TierEditor({
               onChange={(e) => set(index, { upTo: Math.min(parseWholeNumber(e.target.value) ?? 0, MAX_TEXT_LENGTH) })}
               className="w-16 rounded-xl border border-border bg-surface px-3 py-2 text-sm"
             />
-            <span className="shrink-0 text-xs text-muted">chars: +₹</span>
+            <span className="shrink-0 text-xs text-muted-foreground">chars: +₹</span>
             <input
               type="text"
               inputMode="numeric"
@@ -687,7 +687,7 @@ function PricePreview({ field, basePrice }: { field: CustomizationFieldDraft; ba
   if (field.type === "image") {
     const addOn = fieldPrice(field, "photo");
     return (
-      <div className="rounded-xl bg-surface px-3 py-2 text-xs text-muted">
+      <div className="rounded-xl bg-surface px-3 py-2 text-xs text-muted-foreground">
         {addOn > 0
           ? `Customer pays ${formatINR(basePrice)} + ${formatINR(addOn)} = ${formatINR(basePrice + addOn)} with a photo.`
           : "No extra charge for the photo."}
@@ -701,7 +701,7 @@ function PricePreview({ field, basePrice }: { field: CustomizationFieldDraft; ba
     <div className="space-y-2 rounded-xl bg-surface p-3 text-xs">
       <div className="flex items-center justify-between gap-2">
         <span className="font-semibold">Price preview</span>
-        {summary && <span className="text-right text-muted">{summary}</span>}
+        {summary && <span className="text-right text-muted-foreground">{summary}</span>}
       </div>
 
       <input
@@ -721,7 +721,7 @@ function PricePreview({ field, basePrice }: { field: CustomizationFieldDraft; ba
           return (
             <li key={raw} className="flex items-center justify-between gap-2">
               <span className="min-w-0 truncate font-medium">
-                {text || "—"} <span className="font-normal text-muted">({countChars(text)} chars)</span>
+                {text || "—"} <span className="font-normal text-muted-foreground">({countChars(text)} chars)</span>
               </span>
               {error ? (
                 <span className="shrink-0 text-amber-600">{error}</span>

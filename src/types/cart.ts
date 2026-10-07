@@ -1,4 +1,5 @@
 import type { CustomizationDisplay, CustomizationValues } from "@/lib/customization";
+import type { AppliedCoupon } from "@/lib/coupons";
 
 // What the browser sends: variant IDs, quantities and customization
 // values, never prices.
@@ -48,5 +49,11 @@ export interface CartQuote {
   invalid: { lineKey: string; errors: Record<string, string> }[];
   subtotal: number;
   shipping: number;
+  // Coupon discount (0 = none). Comes off the products, not shipping.
+  discount: number;
+  coupon: AppliedCoupon | null;
+  // Why the entered coupon wasn't applied (null = none entered, or applied).
+  couponError: string | null;
+  // subtotal - discount + shipping
   total: number;
 }

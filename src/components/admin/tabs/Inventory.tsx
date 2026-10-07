@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { Loader2, Minus, Plus, Search } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
-import { LOW_STOCK_THRESHOLD } from "@/lib/shop-config";
+import { useShopSettings } from "@/components/providers/ShopSettingsProvider";
 import { variantImageUrl, type VariantValueImageJoin } from "@/lib/variants";
 
 type Policy = "deny" | "continue";
@@ -50,16 +50,17 @@ interface VariantQueryRow {
 
 const MAX_STOCK = 100000;
 
-function stockStatus(stock: number) {
+function stockStatus(stock: number, lowStockThreshold: number) {
   if (stock < 0) return { label: "Oversold", className: "bg-red-500/10 text-red-600" };
   if (stock === 0) return { label: "Out of stock", className: "bg-red-500/10 text-red-600" };
-  if (stock <= LOW_STOCK_THRESHOLD) {
+  if (stock <= lowStockThreshold) {
     return { label: "Low stock", className: "bg-amber-500/10 text-amber-700 dark:text-amber-400" };
   }
   return { label: "In stock", className: "bg-green-500/10 text-green-700 dark:text-green-400" };
 }
 
 export default function Inventory() {
+  const { lowStockThreshold } = useShopSettings();
   const [rows, setRows] = useState<InventoryRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -140,10 +141,10 @@ export default function Inventory() {
   const counts = useMemo(
     () => ({
       all: rows.length,
-      low: rows.filter((row) => sellable(row) > 0 && sellable(row) <= LOW_STOCK_THRESHOLD).length,
+      low: rows.filter((row) => sellable(row) > 0 && sellable(row) <= lowStockThreshold).length,
       out: rows.filter((row) => sellable(row) <= 0).length,
     }),
-    [rows]
+    [rows, lowStockThreshold]
   );
 
   const visibleRows = useMemo(() => {
@@ -158,12 +159,12 @@ export default function Inventory() {
 
       const matchesFilter =
         filter === "all" ||
-        (filter === "low" && sellable(row) > 0 && sellable(row) <= LOW_STOCK_THRESHOLD) ||
+        (filter === "low" && sellable(row) > 0 && sellable(row) <= lowStockThreshold) ||
         (filter === "out" && sellable(row) <= 0);
 
       return matchesSearch && matchesFilter;
     });
-  }, [rows, search, filter]);
+  }, [rows, search, filter, lowStockThreshold]);
 
   // =========================================
   // EDIT
@@ -279,7 +280,7 @@ export default function Inventory() {
       {/* HEADER */}
       <div>
         <h1 className="text-3xl font-bold">Inventory</h1>
-        <p className="mt-1 text-muted">
+        <p className="mt-1 text-muted-foreground">
           Set units on hand. Units in an unpaid checkout are held for up to 30 minutes and
           deducted automatically when the order is paid.
         </p>
@@ -294,7 +295,7 @@ export default function Inventory() {
       {/* FILTERS */}
       <div className="flex flex-col gap-3 rounded-3xl border border-border bg-surface p-4 md:flex-row md:items-center">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={18} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -315,7 +316,7 @@ export default function Inventory() {
         <div className="overflow-x-auto">
           <table className="w-full min-w-[860px]">
             <thead className="border-b border-border">
-              <tr className="text-left text-sm text-muted">
+              <tr className="text-left text-sm text-muted-foreground">
                 <th className="px-6 py-4 font-medium">Product</th>
                 <th className="px-6 py-4 font-medium">Status</th>
                 <th className="px-6 py-4 font-medium">On hand</th>
@@ -327,7 +328,7 @@ export default function Inventory() {
             <tbody>
               {loading && (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-sm text-muted">
+                  <td colSpan={5} className="px-6 py-12 text-center text-sm text-muted-foreground">
                     Loading inventory...
                   </td>
                 </tr>
@@ -335,7 +336,7 @@ export default function Inventory() {
 
               {!loading && visibleRows.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-sm text-muted">
+                  <td colSpan={5} className="px-6 py-12 text-center text-sm text-muted-foreground">
                     No products match.
                   </td>
                 </tr>
@@ -343,7 +344,7 @@ export default function Inventory() {
 
               {!loading &&
                 visibleRows.map((row) => {
-                  const status = stockStatus(sellable(row));
+                  const status = stockStatus(sellable(row), lowStockThreshold);
                   const draft = drafts[row.id];
                   const dirty = draft !== undefined && draft !== String(row.stock);
                   const saving = savingId === row.id;
@@ -357,7 +358,7 @@ export default function Inventory() {
                             {row.imageUrl ? (
                               <Image src={row.imageUrl} alt={row.name} fill sizes="48px" className="object-cover" />
                             ) : (
-                              <div className="flex h-full items-center justify-center text-[10px] text-muted">
+                              <div className="flex h-full items-center justify-center text-[10px] text-muted-foreground">
                                 No image
                               </div>
                             )}
@@ -365,7 +366,7 @@ export default function Inventory() {
                           <div className="min-w-0">
                             <p className="truncate font-semibold">{row.name}</p>
                             {row.variantTitle && <p className="truncate text-sm">{row.variantTitle}</p>}
-                            <p className="text-xs text-muted">{row.sku || "No SKU"}</p>
+                            <p className="text-xs text-muted-foreground">{row.sku || "No SKU"}</p>
                           </div>
                         </div>
                       </td>
@@ -384,7 +385,7 @@ export default function Inventory() {
                             <button
                               onClick={() => stepDraft(row, -1)}
                               disabled={saving}
-                              className="cursor-pointer p-2 text-muted hover:text-foreground disabled:opacity-40"
+                              className="cursor-pointer p-2 text-muted-foreground hover:text-foreground disabled:opacity-40"
                               aria-label="Decrease stock"
                             >
                               <Minus size={14} />
@@ -406,7 +407,7 @@ export default function Inventory() {
                             <button
                               onClick={() => stepDraft(row, 1)}
                               disabled={saving}
-                              className="cursor-pointer p-2 text-muted hover:text-foreground disabled:opacity-40"
+                              className="cursor-pointer p-2 text-muted-foreground hover:text-foreground disabled:opacity-40"
                               aria-label="Increase stock"
                             >
                               <Plus size={14} />
@@ -432,7 +433,7 @@ export default function Inventory() {
                                   })
                                 }
                                 disabled={saving}
-                                className="cursor-pointer rounded-xl px-2 py-2 text-xs text-muted hover:text-foreground"
+                                className="cursor-pointer rounded-xl px-2 py-2 text-xs text-muted-foreground hover:text-foreground"
                               >
                                 Cancel
                               </button>
@@ -443,7 +444,7 @@ export default function Inventory() {
                         {rowErrors[row.id] && <p className="mt-2 text-xs text-red-600">{rowErrors[row.id]}</p>}
 
                         {row.updatedAt && !rowErrors[row.id] && (
-                          <p className="mt-2 text-xs text-muted">
+                          <p className="mt-2 text-xs text-muted-foreground">
                             Updated{" "}
                             {new Date(row.updatedAt).toLocaleString("en-IN", {
                               day: "numeric",
@@ -460,10 +461,10 @@ export default function Inventory() {
                         {row.reserved > 0 ? (
                           <span title="Held by unpaid checkouts">
                             {row.reserved} in checkout
-                            <span className="block text-xs text-muted">{sellable(row)} sellable</span>
+                            <span className="block text-xs text-muted-foreground">{sellable(row)} sellable</span>
                           </span>
                         ) : (
-                          <span className="text-muted">—</span>
+                          <span className="text-muted-foreground">—</span>
                         )}
                       </td>
 
