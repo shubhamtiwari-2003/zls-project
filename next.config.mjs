@@ -24,6 +24,17 @@ const nextConfig = {
   // Don't advertise the framework in every response.
   poweredByHeader: false,
 
+  // Files the invoice PDF routes read at runtime that the build can't
+  // detect on its own. Hosts like Hostinger deploy only the files the build
+  // lists, so without this the PDFs fail there ("Cannot find module
+  // …pdfkit/js/standard-fonts/Helvetica.cjs") while working locally.
+  //   pdfkit/js      built-in fonts (loaded by name) and font metrics
+  //   src/assets     Noto Sans, for the ₹ sign
+  outputFileTracingIncludes: {
+    "/api/invoices/**": ["./node_modules/pdfkit/js/**/*", "./src/assets/fonts/**/*"],
+    "/api/admin/invoices/**": ["./node_modules/pdfkit/js/**/*", "./src/assets/fonts/**/*"],
+  },
+
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
