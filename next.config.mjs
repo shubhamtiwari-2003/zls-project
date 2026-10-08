@@ -2,8 +2,32 @@
 // native compiler (old glibc), and the WebAssembly fallback can't compile a
 // TypeScript next.config.ts.
 
+// Security headers on every page and API response.
+//   X-Frame-Options       other sites can't show this site in a frame
+//                         (clickjacking). SAMEORIGIN: the admin's invoice
+//                         preview frames our own PDF route.
+//   nosniff               browsers trust the declared file type
+//   Referrer-Policy       other sites see only the domain we came from
+//   Permissions-Policy    no camera/microphone/location access (photo
+//                         uploads use the file picker, which doesn't need it)
+//   HSTS                  browsers always use https after the first visit
+const securityHeaders = [
+  { key: "X-Frame-Options", value: "SAMEORIGIN" },
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+  { key: "Strict-Transport-Security", value: "max-age=31536000" },
+];
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Don't advertise the framework in every response.
+  poweredByHeader: false,
+
+  async headers() {
+    return [{ source: "/:path*", headers: securityHeaders }];
+  },
+
   images: {
     // Cloudinary resizes images on its CDN (see src/lib/cloudinary-loader.ts);
     // the Next.js server no longer downloads and resizes originals.

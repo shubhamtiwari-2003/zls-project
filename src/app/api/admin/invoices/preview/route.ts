@@ -64,9 +64,11 @@ export async function POST(request: Request) {
     });
   } catch (renderError) {
     console.error("Invoice preview error:", renderError);
-    return NextResponse.json(
-      { error: "Could not draw the preview. If you set a logo, check the link opens a PNG or JPG image." },
-      { status: 500 }
-    );
+    // Admins only: show the real reason, so problems on the host can be fixed.
+    const reason = renderError instanceof Error ? renderError.message : String(renderError);
+    const hint = /supabaseKey is required/i.test(reason)
+      ? "SUPABASE_SERVICE_ROLE_KEY is not set in the server's environment variables."
+      : reason;
+    return NextResponse.json({ error: `Could not draw the preview: ${hint}` }, { status: 500 });
   }
 }

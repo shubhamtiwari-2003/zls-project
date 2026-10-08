@@ -1,5 +1,6 @@
 import "server-only";
 
+import { existsSync } from "node:fs";
 import path from "node:path";
 import { Document, Font, Image, Page, StyleSheet, Text, View, renderToBuffer } from "@react-pdf/renderer";
 import {
@@ -22,11 +23,23 @@ import {
   Noto Sans is bundled because the PDF standard fonts have no ₹ sign.
 */
 
-const FONT_DIR = path.join(process.cwd(), "src", "assets", "fonts");
+// The app may be started from the project folder or from inside .next
+// (some hosts do this), so look in both places.
+const FONT_DIRS = [
+  path.join(process.cwd(), "src", "assets", "fonts"),
+  path.join(process.cwd(), "..", "src", "assets", "fonts"),
+];
+
+function fontDir(): string {
+  const found = FONT_DIRS.find((dir) => existsSync(path.join(dir, "NotoSans-Regular.ttf")));
+  if (!found) throw new Error(`Invoice fonts are missing on the server (looked in ${FONT_DIRS.join(", ")}). Upload src/assets/fonts.`);
+  return found;
+}
 
 let fontsRegistered = false;
 function registerFonts() {
   if (fontsRegistered) return;
+  const FONT_DIR = fontDir();
   Font.register({
     family: "NotoSans",
     fonts: [
@@ -105,7 +118,9 @@ function makeStyles(accent: string) {
   });
 }
 
-function InvoiceDocument({ invoice, settings }: { invoice: InvoiceRecord; settings: InvoiceSettings }) {
+type LogoImage = { data: Buffer; format: "png" | "jpg" };
+
+function InvoiceDocument({ invoice, settings, logo }: { invoice: InvoiceRecord; settings: InvoiceSettings; logo: LogoImage | null }) {
   const s = makeStyles(settings.accent_color || "#111827");
   const { data } = invoice;
   const { seller, buyer, totals } = data;
@@ -123,9 +138,9 @@ function InvoiceDocument({ invoice, settings }: { invoice: InvoiceRecord; settin
         {/* Header */}
         <View style={s.header}>
           <View>
-            {settings.logo_url ? (
+            {logo ? (
               // eslint-disable-next-line jsx-a11y/alt-text -- react-pdf Image has no alt
-              <Image src={pdfImageUrl(settings.logo_url)} style={s.logo} />
+              <Image src={logo} style={s.logo} />
             ) : (
               <Text style={s.brand}>{seller.name}</Text>
             )}
@@ -292,7 +307,30 @@ function InvoiceDocument({ invoice, settings }: { invoice: InvoiceRecord; settin
 }
 
 /** The invoice as a PDF file. */
+/**
+ * Downloads the logo before drawing. If it can't be loaded (bad link,
+ * network, not a PNG/JPG), the invoice is drawn with the business name
+ * instead: a logo problem must never stop an invoice.
+ */
+async function loadLogo(url: string | null): Promise<LogoImage | null> {
+  if (!url) return null;
+
+  try {
+    const response = await fetch(pdfImageUrl(url), { signal: AbortSignal.timeout(8000) });
+    const type = response.headers.get("content-type") ?? "";
+    if (!response.ok || !/image\/(png|jpe?g)/.test(type)) {
+      console.error("Invoice logo not usable:", response.status, type, url);
+      return null;
+    }
+    return { data: Buffer.from(await response.arrayBuffer()), format: type.includes("png") ? "png" : "jpg" };
+  } catch (error) {
+    console.error("Invoice logo download error:", error);
+    return null;
+  }
+}
+
 export async function renderInvoicePdf(invoice: InvoiceRecord, settings: InvoiceSettings): Promise<Buffer> {
   registerFonts();
-  return renderToBuffer(<InvoiceDocument invoice={invoice} settings={settings} />);
+  const logo = await loadLogo(settings.logo_url);
+  return renderToBuffer(<InvoiceDocument invoice={invoice} settings={settings} logo={logo} />);
 }

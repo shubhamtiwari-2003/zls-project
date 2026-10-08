@@ -119,11 +119,12 @@ export async function POST(request: Request) {
     // 5. Validate file type
     // --------------------------------
 
-    if (!file.type.startsWith("image/")) {
+    // Photos only: SVG can carry scripts.
+    if (!/^image\/(jpeg|png|webp|avif|gif)$/.test(file.type)) {
       return NextResponse.json(
         {
           success: false,
-          error: "Only image files are allowed.",
+          error: "Use a JPG, PNG, WebP, AVIF or GIF image.",
         },
         { status: 400 }
       );
