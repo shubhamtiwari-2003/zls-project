@@ -1,66 +1,27 @@
 // src/app/(shop)/page.tsx
 import { BannerHero } from "@/features/home/components/Banner-Hero";
 import { TopCategories } from "@/features/home/components/TopCategories";
-import { ProductCard, ProductItem } from "@/features/products/components/ProductCard";
-import { TrendingProducts } from "@/features/home/components/TrendingProducts";
+import { LatestProducts } from "@/features/home/components/LatestProducts";
+import { parseProductFilters } from "@/lib/catalog";
+import { listProducts } from "@/lib/catalog.server";
+import { getLivePromotions } from "@/lib/promotions.server";
 
-// Featured deals section beneath categories
-const Trending_deals: ProductItem[] = [
-  {
-    id: "1",
-    title: "Wireless Earbuds",
-    description: "Organic Cotton, fairtrade certified",
-    price: 89.0,
-    rating: 5,
-    reviewCount: 121,
-    category: "headphones",
-    imageUrl: "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?q=80&w=688&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-  {
-    id: "2",
-    title: "AirPods Max",
-    description: "A perfect balance of high-fidelity audio",
-    price: 559.0,
-    rating: 5,
-    reviewCount: 121,
-    category: "headphones",
-    imageUrl: "https://images.unsplash.com/photo-1693168045046-9a4b4f30f1c7?q=80&w=742&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    isPopular: true,
-  },
-  {
-    id: "3",
-    title: "Bose BT Earphones",
-    description: "Table with air purifier, stained venner/black",
-    price: 289.0,
-    rating: 5,
-    reviewCount: 121,
-    category: "headphones",
-    imageUrl: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80",
-  },
-  {
-    id: "4",
-    title: "VIVEFO Headphones",
-    description: "Wired Stereo Headsets With Mic",
-    price: 39.0,
-    rating: 5,
-    reviewCount: 121,
-    category: "headphones",
-    imageUrl: "https://images.unsplash.com/photo-1598662957563-ee4965d4d72c?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  },
-];
+// Newest products on the homepage (until collections replace this row).
+const LATEST_COUNT = 8;
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [{ products }, promotions] = await Promise.all([listProducts(parseProductFilters({})), getLivePromotions()]);
+
   return (
     <div className="w-full pb-20 ">
-      {/* 1.Store Hero Section*/}
-      <BannerHero />
+      {/* 1. Hero: campaign banners (Admin → Promotions), or the default slide */}
+      <BannerHero banners={promotions.heroBanners} />
 
       {/* 2. Top Categories */}
       <TopCategories />
 
-      {/* 3. Todays Best Deals / Trending Grid */}
-      <TrendingProducts/>
-      
+      {/* 3. Newest products */}
+      <LatestProducts products={products.slice(0, LATEST_COUNT)} />
     </div>
   );
 }

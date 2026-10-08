@@ -79,7 +79,7 @@ export function DeleteProductDialog({
           <X size={18} />
         </button>
 
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-500/10 text-red-500">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-danger/10 text-danger">
           <AlertTriangle size={22} />
         </div>
 
@@ -95,7 +95,7 @@ export function DeleteProductDialog({
 
         <label className="mt-5 block text-sm">
           Type{" "}
-          <span className="rounded bg-red-500/10 px-1.5 py-0.5 font-mono font-semibold text-red-500">
+          <span className="rounded bg-danger/10 px-1.5 py-0.5 font-mono font-semibold text-danger">
             {CONFIRM_TEXT}
           </span>{" "}
           to confirm
@@ -106,12 +106,12 @@ export function DeleteProductDialog({
             disabled={deleting}
             autoComplete="off"
             spellCheck={false}
-            className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 font-mono outline-none focus:ring-2 focus:ring-red-500/30"
+            className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 font-mono outline-none focus:ring-2 focus:ring-danger/30"
           />
         </label>
 
         {error && (
-          <div className="mt-4 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-600">
+          <div className="mt-4 rounded-xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">
             {error}
           </div>
         )}
@@ -129,7 +129,7 @@ export function DeleteProductDialog({
           <button
             type="submit"
             disabled={!confirmed || deleting}
-            className="flex cursor-pointer items-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex cursor-pointer items-center gap-2 rounded-xl bg-danger px-5 py-2.5 text-sm font-medium text-white hover:bg-danger/90 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {deleting && <Loader2 size={16} className="animate-spin" />}
             {deleting ? "Deleting..." : "Delete product"}

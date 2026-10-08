@@ -62,7 +62,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
           <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-2xl mb-3">
             🛒
           </div>
-          <h3 className="text-2xl font-black text-[#003d29] tracking-tight">
+          <h3 className="text-2xl font-black text-brand tracking-tight">
             {isSignUp ? "Create an Account" : "Welcome Back"}
           </h3>
           <p className="mt-1 text-xs text-zinc-500">
@@ -111,7 +111,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Alex Morgan"
-                className="w-full rounded-xl border border-zinc-200 bg-zinc-50/50 py-3 pl-10 pr-4 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#003d29] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#003d29]/10"
+                className="w-full rounded-xl border border-zinc-200 bg-zinc-50/50 py-3 pl-10 pr-4 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-brand focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand/10"
               />
             </div>
           </div>
@@ -131,7 +131,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="+1 (555) 000-0000"
-                className="w-full rounded-xl border border-zinc-200 bg-zinc-50/50 py-3 pl-10 pr-4 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-[#003d29] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#003d29]/10"
+                className="w-full rounded-xl border border-zinc-200 bg-zinc-50/50 py-3 pl-10 pr-4 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-brand focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand/10"
               />
             </div>
           </div>
@@ -139,7 +139,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
           {/* Submit Button */}
           <button
             type="submit"
-            className="mt-2 flex w-full items-center justify-center gap-2 rounded-full bg-[#003d29] py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#002b1d] focus:outline-none focus:ring-2 focus:ring-[#003d29] focus:ring-offset-2"
+            className="mt-2 flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-hover focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
           >
             <span>{isSignUp ? "Create Account" : "Continue"}</span>
             <ArrowRight className="h-4 w-4" />

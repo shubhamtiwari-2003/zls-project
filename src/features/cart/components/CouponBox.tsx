@@ -45,11 +45,11 @@ export function CouponBox({ quote, loading, disabled }: CouponBoxProps) {
     return (
       <div
         ref={boxRef}
-        className="flex items-start gap-3 rounded-xl border border-green-600/30 bg-green-500/10 px-4 py-3 animate-in fade-in-0 zoom-in-95 duration-300"
+        className="flex items-start gap-3 rounded-xl border border-success/30 bg-success/10 px-4 py-3 animate-in fade-in-0 zoom-in-95 duration-300"
       >
-        <BadgePercent className="mt-0.5 h-4 w-4 shrink-0 text-green-700 dark:text-green-400" />
+        <BadgePercent className="mt-0.5 h-4 w-4 shrink-0 text-success " />
         <div className="min-w-0 flex-1 text-sm">
-          <p className="font-semibold text-green-700 dark:text-green-400">
+          <p className="font-semibold text-success ">
             {applied.code} applied · you save {formatINR(applied.discount)}
           </p>
           <p className="text-xs text-muted-foreground">{applied.description}</p>
@@ -101,7 +101,7 @@ export function CouponBox({ quote, loading, disabled }: CouponBoxProps) {
           aria-invalid={!!couponNotice}
           aria-describedby={couponNotice ? "coupon-notice" : undefined}
           className={`min-w-0 flex-1 rounded-xl border bg-background px-3 py-2 text-sm uppercase tracking-wide outline-none placeholder:normal-case placeholder:tracking-normal focus:ring-2 focus:ring-foreground/10 ${
-            couponNotice ? "border-red-500" : "border-border"
+            couponNotice ? "border-danger" : "border-border"
           }`}
         />
         <button
@@ -115,7 +115,7 @@ export function CouponBox({ quote, loading, disabled }: CouponBoxProps) {
         </button>
       </div>
       {couponNotice && (
-        <p id="coupon-notice" className="mt-1.5 text-xs text-red-600" role="alert">
+        <p id="coupon-notice" className="mt-1.5 text-xs text-danger" role="alert">
           {couponNotice}
         </p>
       )}

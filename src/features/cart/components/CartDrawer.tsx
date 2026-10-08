@@ -31,7 +31,7 @@ function DrawerCouponLine() {
 
   if (quote?.coupon && quote.discount > 0) {
     return (
-      <p className="flex items-center justify-center gap-1.5 text-center text-xs text-green-700 dark:text-green-400">
+      <p className="flex items-center justify-center gap-1.5 text-center text-xs text-success ">
         <BadgePercent className="h-3.5 w-3.5" />
         Coupon {quote.coupon.code} applied: −{formatINR(quote.discount)} at checkout
       </p>
@@ -131,7 +131,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                         {item.variantTitle && <p className="text-xs text-muted-foreground">{item.variantTitle}</p>}
                         <CartItemCustomization entries={item.customizationDisplay} className="mt-1" />
                         {item.maxQuantity != null && item.maxQuantity <= lowStockThreshold && (
-                          <p className="mt-0.5 text-xs font-medium text-amber-600">
+                          <p className="mt-0.5 text-xs font-medium text-warning">
                             {item.maxQuantity <= 0 ? "Out of stock" : `Only ${item.maxQuantity} left`}
                           </p>
                         )}
@@ -187,7 +187,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             </div>
             <p className="text-xs text-muted-foreground">Shipping and final total are calculated at checkout.</p>
 
-            <Button asChild className="h-11 rounded-full bg-[#058e60] text-white hover:bg-[#003D29]">
+            <Button asChild className="h-11 rounded-full bg-brand-bright text-white hover:bg-brand">
               <Link href="/checkout" onClick={onClose}>
                 Checkout
               </Link>

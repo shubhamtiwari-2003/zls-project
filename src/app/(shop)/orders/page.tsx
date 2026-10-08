@@ -46,7 +46,7 @@ export default async function OrdersPage() {
         <h1 className="text-3xl font-bold">My Orders</h1>
 
         {error ? (
-          <p className="mt-8 rounded-xl bg-red-500/10 px-4 py-3 text-sm text-red-600">
+          <p className="mt-8 rounded-xl bg-danger/10 px-4 py-3 text-sm text-danger">
             Could not load your orders. Please try again.
           </p>
         ) : orders.length === 0 ? (

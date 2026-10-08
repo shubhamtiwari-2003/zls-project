@@ -129,7 +129,7 @@ export function AddressBook({ initialAddresses, defaultName }: AddressBookProps)
         )}
       </div>
 
-      {error && <p className="mt-4 rounded-xl bg-red-500/10 px-4 py-3 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-4 rounded-xl bg-danger/10 px-4 py-3 text-sm text-danger">{error}</p>}
 
       {/* Add / edit form */}
       {editing !== null && (
@@ -137,7 +137,7 @@ export function AddressBook({ initialAddresses, defaultName }: AddressBookProps)
           <h3 className="mb-4 text-sm font-semibold">{editing === "new" ? "New address" : "Edit address"}</h3>
 
           {editing !== "new" && (
-            <p className="mb-4 rounded-xl bg-amber-500/10 px-4 py-3 text-xs text-amber-700 dark:text-amber-400">
+            <p className="mb-4 rounded-xl bg-warning/10 px-4 py-3 text-xs text-warning ">
               Your changes will be saved as a new address. Past orders keep the address they were shipped to.
             </p>
           )}
@@ -164,7 +164,7 @@ export function AddressBook({ initialAddresses, defaultName }: AddressBookProps)
             <button
               type="submit"
               disabled={busy}
-              className="flex items-center gap-2 rounded-full bg-[#003D29] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#002B1D] disabled:opacity-50"
+              className="flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-hover disabled:opacity-50"
             >
               {busy && <Loader2 size={16} className="animate-spin" />}
               {busy ? "Saving..." : "Save address"}
@@ -209,7 +209,7 @@ export function AddressBook({ initialAddresses, defaultName }: AddressBookProps)
                     type="button"
                     onClick={() => handleRemove(address.id)}
                     disabled={busy || removingId !== null}
-                    className="rounded-lg p-2 text-muted-foreground hover:text-red-500 disabled:opacity-40"
+                    className="rounded-lg p-2 text-muted-foreground hover:text-danger disabled:opacity-40"
                     aria-label="Remove address"
                   >
                     {removingId === address.id ? (

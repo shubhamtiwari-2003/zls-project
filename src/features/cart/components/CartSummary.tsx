@@ -30,7 +30,7 @@ export function CartSummary({ quote, loading }: CartSummaryProps) {
       </div>
 
       {!loading && quote?.coupon && quote.discount > 0 && (
-        <div className="flex justify-between text-green-700 dark:text-green-400">
+        <div className="flex justify-between text-success ">
           <span>Coupon ({quote.coupon.code})</span>
           <span>−{formatINR(quote.discount)}</span>
         </div>
@@ -39,14 +39,14 @@ export function CartSummary({ quote, loading }: CartSummaryProps) {
       <div className="flex justify-between">
         <span className="text-muted-foreground">Shipping</span>
         {!loading && quote?.shipping === 0 ? (
-          <span className="text-green-600">FREE</span>
+          <span className="text-success">FREE</span>
         ) : (
           <span>{amount(quote?.shipping)}</span>
         )}
       </div>
 
       {!loading && remainingForFreeShipping > 0 && (
-        <p className="rounded-xl bg-green-500/10 px-3 py-2 text-xs text-green-700 dark:text-green-400">
+        <p className="rounded-xl bg-success/10 px-3 py-2 text-xs text-success ">
           Add {formatINR(remainingForFreeShipping)} more for free shipping.
         </p>
       )}

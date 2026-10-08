@@ -128,7 +128,7 @@ export function ProductPurchasePanel({ product, variant, customization }: Produc
   if (outOfStock) {
     return (
       <div className="mt-8 space-y-3">
-        <p className="text-sm font-semibold text-red-600">Out of stock</p>
+        <p className="text-sm font-semibold text-danger">Out of stock</p>
         <button disabled className="w-full cursor-not-allowed rounded-full bg-border py-4 font-semibold text-muted-foreground">
           Currently unavailable
         </button>
@@ -139,7 +139,7 @@ export function ProductPurchasePanel({ product, variant, customization }: Produc
   return (
     <div className="mt-8">
       {stock !== null && stock <= lowStockThreshold && (
-        <p className="mb-3 text-sm font-semibold text-amber-600">Only {stock} left in stock</p>
+        <p className="mb-3 text-sm font-semibold text-warning">Only {stock} left in stock</p>
       )}
 
       <div className="flex flex-wrap items-center gap-4">
@@ -196,7 +196,7 @@ export function ProductPurchasePanel({ product, variant, customization }: Produc
         <button
           type="button"
           onClick={handleBuyNow}
-          className="flex flex-1 items-center justify-center gap-2 rounded-full bg-[#003D29] py-4 font-semibold text-white transition hover:bg-[#002B1D]"
+          className="flex flex-1 items-center justify-center gap-2 rounded-full bg-brand py-4 font-semibold text-white transition hover:bg-brand-hover"
         >
           <Zap size={18} />
           Buy now

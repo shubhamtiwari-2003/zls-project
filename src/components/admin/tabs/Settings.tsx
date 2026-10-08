@@ -98,7 +98,7 @@ export default function Settings() {
   }, []);
 
   if (loadError) {
-    return <p className="rounded-2xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-600">{loadError}</p>;
+    return <p className="rounded-2xl border border-danger/20 bg-danger/10 p-4 text-sm text-danger">{loadError}</p>;
   }
 
   if (!draft || !saved) {
@@ -167,7 +167,7 @@ export default function Settings() {
         </label>
         <div
           className={`flex items-center rounded-xl border bg-background px-4 focus-within:ring-2 focus-within:ring-foreground/10 ${
-            error ? "border-red-500" : "border-border"
+            error ? "border-danger" : "border-border"
           }`}
         >
           {unit.prefix && <span className="mr-2 text-sm text-muted-foreground">{unit.prefix}</span>}
@@ -182,7 +182,7 @@ export default function Settings() {
           />
           {unit.suffix && <span className="ml-2 shrink-0 text-sm text-muted-foreground">{unit.suffix}</span>}
         </div>
-        {error ? <p className="mt-1 text-xs text-red-600">{error}</p> : <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
+        {error ? <p className="mt-1 text-xs text-danger">{error}</p> : <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
       </div>
     );
   };
@@ -255,7 +255,7 @@ export default function Settings() {
       {/* Save */}
       <div className="sticky bottom-4 flex flex-wrap items-center justify-end gap-3 rounded-2xl border border-border bg-background/90 p-3 backdrop-blur">
         {message && (
-          <p className={`mr-auto text-sm ${message.type === "success" ? "text-green-600" : "text-red-600"}`}>
+          <p className={`mr-auto text-sm ${message.type === "success" ? "text-success" : "text-danger"}`}>
             {message.text}
           </p>
         )}

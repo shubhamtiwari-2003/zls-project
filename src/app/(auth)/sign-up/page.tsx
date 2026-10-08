@@ -87,7 +87,7 @@ export default function SignUpPage() {
 
           <div className="relative z-10 flex h-full flex-col justify-between p-14">
             <Link href="/">
-              <h1 className="text-4xl font-black text-[#003D29] dark:text-white">
+              <h1 className="text-4xl font-black text-brand dark:text-white">
                 ZLayer
               </h1>
             </Link>
@@ -116,7 +116,7 @@ export default function SignUpPage() {
                   "Secure checkout with Supabase Auth",
                 ].map((item) => (
                   <div key={item} className="flex items-center gap-3">
-                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#003D29]">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand">
                       <Check className="h-3.5 w-3.5 text-white" />
                     </div>
                     <span>{item}</span>
@@ -173,7 +173,7 @@ export default function SignUpPage() {
                     placeholder="Enter your name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full rounded-xl border border-border bg-background px-4 py-3 outline-none focus:border-[#003D29]"
+                    className="w-full rounded-xl border border-border bg-background px-4 py-3 outline-none focus:border-brand"
                   />
                 </div>
 
@@ -185,7 +185,7 @@ export default function SignUpPage() {
                     placeholder="Enter your email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full rounded-xl border border-border bg-background px-4 py-3 outline-none focus:border-[#003D29]"
+                    className="w-full rounded-xl border border-border bg-background px-4 py-3 outline-none focus:border-brand"
                   />
                 </div>
 
@@ -199,7 +199,7 @@ export default function SignUpPage() {
                       placeholder="Minimum 6 characters"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full rounded-xl border border-border bg-background px-4 py-3 pr-11 outline-none focus:border-[#003D29]"
+                      className="w-full rounded-xl border border-border bg-background px-4 py-3 pr-11 outline-none focus:border-brand"
                     />
 
                     <button
@@ -228,7 +228,7 @@ export default function SignUpPage() {
                       placeholder="Re-enter password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full rounded-xl border border-border bg-background px-4 py-3 pr-11 outline-none focus:border-[#003D29]"
+                      className="w-full rounded-xl border border-border bg-background px-4 py-3 pr-11 outline-none focus:border-brand"
                     />
 
                     <button
@@ -247,7 +247,7 @@ export default function SignUpPage() {
 
                 {/* Error */}
                 {error && (
-                  <div className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">
+                  <div className="mt-4 rounded-lg bg-danger/10 p-3 text-sm text-danger">
                     {error}
                   </div>
                 )}

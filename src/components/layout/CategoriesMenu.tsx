@@ -47,7 +47,7 @@ export function CategoriesMenu({ categories }: CategoriesMenuProps) {
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
         aria-haspopup="true"
-        className="flex items-center gap-1 hover:text-emerald-700"
+        className="flex items-center gap-1 hover:text-brand-bright"
       >
         Categories
         <ChevronDown className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
@@ -68,7 +68,7 @@ export function CategoriesMenu({ categories }: CategoriesMenuProps) {
                     <Link
                       href={href}
                       className={`block rounded-xl px-3 py-2 text-sm hover:bg-surface ${
-                        active ? "font-semibold text-[#058e60]" : "font-medium"
+                        active ? "font-semibold text-brand-bright" : "font-medium"
                       }`}
                     >
                       {category.name}
@@ -81,7 +81,7 @@ export function CategoriesMenu({ categories }: CategoriesMenuProps) {
 
           <Link
             href="/products"
-            className="mt-1 block rounded-xl border-t border-border px-3 pb-2 pt-3 text-sm font-semibold text-[#058e60] hover:bg-surface"
+            className="mt-1 block rounded-xl border-t border-border px-3 pb-2 pt-3 text-sm font-semibold text-brand-bright hover:bg-surface"
           >
             View all products
           </Link>

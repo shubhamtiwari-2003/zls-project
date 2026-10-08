@@ -31,7 +31,7 @@ export function CartItemCustomization({ entries, errors, className = "" }: CartI
       ))}
 
       {errorList.map(([key, message]) => (
-        <p key={key} className="font-medium text-red-600">
+        <p key={key} className="font-medium text-danger">
           {message}
         </p>
       ))}

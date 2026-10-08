@@ -11,6 +11,7 @@ import {
 import type { UploadedPhoto } from "@/features/products/lib/uploadCustomerPhoto";
 import { formatINR } from "@/lib/shop-config";
 import { BUSINESS } from "@/lib/business";
+import { priceDisplay } from "@/lib/product-details";
 import {
   checkCustomization,
   customizationPrice,
@@ -136,6 +137,11 @@ export function ProductDetailView({ product, initialVariantId, children }: Produ
   const customCheck = checkCustomization(customizationFields, customValues);
   const addOn = customizationPrice(customizationFields, customCheck.values);
   const displayPrice = (variant?.price ?? product.price) + addOn;
+  // MRP of the selected variant; personalisation adds to both prices.
+  const { mrp, percentOff, saving } = priceDisplay(
+    displayPrice,
+    variant?.compareAtPrice ? variant.compareAtPrice + addOn : null
+  );
 
   const customDisplay: CustomizationDisplay[] = customizationFields
     .filter((field) => customCheck.values[field.key])
@@ -169,8 +175,11 @@ export function ProductDetailView({ product, initialVariantId, children }: Produ
 
   return (
     <div className="grid gap-6 sm:gap-8 lg:grid-cols-2 xl:gap-12 [&>*]:min-w-0">
-      {/* LEFT: gallery */}
-      <ProductGallery images={images} name={product.name} selected={imageIndex} onSelect={handleImageSelect} />
+      {/* LEFT: gallery. On desktop it stays in view (below the sticky
+          header) while the details on the right scroll. */}
+      <div className="lg:sticky lg:top-24 lg:self-start">
+        <ProductGallery images={images} name={product.name} selected={imageIndex} onSelect={handleImageSelect} />
+      </div>
 
       {/* RIGHT: details */}
       <div className="flex flex-col">
@@ -183,7 +192,25 @@ export function ProductDetailView({ product, initialVariantId, children }: Produ
 
         <h1 className="mt-3 text-2xl font-bold text-foreground sm:mt-4 sm:text-4xl">{product.name}</h1>
 
-        <p className="mt-4 text-3xl font-black sm:mt-6 sm:text-4xl">{formatINR(displayPrice)}</p>
+        <div className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 sm:mt-6">
+          <p className="text-3xl font-black sm:text-4xl">{formatINR(displayPrice)}</p>
+          {mrp && (
+            <>
+              <p className="text-lg text-muted-foreground sm:text-xl">
+                <span className="sr-only">MRP </span>
+                <s>{formatINR(mrp)}</s>
+              </p>
+              <span className="self-center rounded-full bg-brand-bright px-2.5 py-1 text-xs font-bold text-white sm:text-sm">
+                {percentOff}% OFF
+              </span>
+            </>
+          )}
+        </div>
+        {mrp && (
+          <p className="mt-1 text-sm font-medium text-brand-bright">
+            You save {formatINR(saving)}
+          </p>
+        )}
         <p className="mt-1 text-xs text-muted-foreground">
           {BUSINESS.gstRegistered ? "Inclusive of all taxes" : "Final price · no hidden charges"}
           {addOn > 0 && <span> · includes {formatINR(addOn)} personalisation</span>}

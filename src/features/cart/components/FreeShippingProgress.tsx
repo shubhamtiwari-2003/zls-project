@@ -27,9 +27,9 @@ export function FreeShippingProgress({ subtotal, className = "" }: FreeShippingP
       <p className="flex items-center gap-2 text-sm" aria-live="polite">
         {unlocked ? (
           <>
-            <PartyPopper className="h-4 w-4 shrink-0 text-[#058e60]" />
+            <PartyPopper className="h-4 w-4 shrink-0 text-brand-bright" />
             <span>
-              You&apos;ve unlocked <strong className="text-[#058e60]">free delivery</strong>!
+              You&apos;ve unlocked <strong className="text-brand-bright">free delivery</strong>!
             </span>
           </>
         ) : (
@@ -51,7 +51,7 @@ export function FreeShippingProgress({ subtotal, className = "" }: FreeShippingP
         aria-valuenow={Math.min(subtotal, freeShippingThreshold)}
       >
         <div
-          className={`h-full rounded-full transition-[width] duration-500 ease-out ${unlocked ? "bg-[#058e60]" : "bg-foreground"}`}
+          className={`h-full rounded-full transition-[width] duration-500 ease-out ${unlocked ? "bg-brand-bright" : "bg-foreground"}`}
           style={{ width: `${percent}%` }}
         />
       </div>

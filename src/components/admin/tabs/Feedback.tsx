@@ -204,16 +204,16 @@ export default function Feedbacks() {
 
                   <td className="px-6 py-5">
                     <div className="flex gap-2">
-                      <button className="rounded-lg p-2 hover:bg-green-100 dark:hover:bg-green-900/20">
-                        <CheckCircle2 size={18} className="text-green-600" />
+                      <button className="rounded-lg p-2 hover:bg-success/15 ">
+                        <CheckCircle2 size={18} className="text-success" />
                       </button>
 
                       <button className="rounded-lg p-2 hover:bg-orange-100 dark:hover:bg-orange-900/20">
                         <EyeOff size={18} className="text-orange-500" />
                       </button>
 
-                      <button className="rounded-lg p-2 hover:bg-red-100 dark:hover:bg-red-900/20">
-                        <Trash2 size={18} className="text-red-500" />
+                      <button className="rounded-lg p-2 hover:bg-danger/15 ">
+                        <Trash2 size={18} className="text-danger" />
                       </button>
                     </div>
                   </td>
@@ -257,16 +257,16 @@ export default function Feedbacks() {
             <p className="mt-3 text-sm text-muted-foreground">{review.comment}</p>
 
             <div className="mt-4 flex justify-end gap-2">
-              <button className="rounded-lg p-2 hover:bg-green-100 dark:hover:bg-green-900/20">
-                <CheckCircle2 size={18} className="text-green-600" />
+              <button className="rounded-lg p-2 hover:bg-success/15 ">
+                <CheckCircle2 size={18} className="text-success" />
               </button>
 
               <button className="rounded-lg p-2 hover:bg-orange-100 dark:hover:bg-orange-900/20">
                 <EyeOff size={18} className="text-orange-500" />
               </button>
 
-              <button className="rounded-lg p-2 hover:bg-red-100 dark:hover:bg-red-900/20">
-                <Trash2 size={18} className="text-red-500" />
+              <button className="rounded-lg p-2 hover:bg-danger/15 ">
+                <Trash2 size={18} className="text-danger" />
               </button>
             </div>
           </div>
@@ -300,7 +300,7 @@ function StatCard({
 function StatusBadge({ status }: { status: ReviewStatus }) {
   const styles = {
     Approved:
-      "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+      "bg-success/10 text-success  ",
     Pending:
       "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400",
     Hidden:

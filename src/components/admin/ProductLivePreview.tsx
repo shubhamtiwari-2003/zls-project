@@ -119,7 +119,7 @@ export function ProductLivePreview({
       </div>
 
       {!isActive || status === "Draft" ? (
-        <p className="rounded-xl bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-400">
+        <p className="rounded-xl bg-warning/10 px-3 py-2 text-xs text-warning ">
           Not visible in the store yet — {status === "Draft" ? "status is Draft" : "product is unpublished"}.
         </p>
       ) : null}
@@ -173,7 +173,7 @@ export function ProductLivePreview({
               type="button"
               disabled
               className={`flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold ${
-                sold ? "bg-[#003D29] text-white" : "bg-border text-muted-foreground"
+                sold ? "bg-brand text-white" : "bg-border text-muted-foreground"
               }`}
             >
               <ShoppingBag size={16} />
@@ -193,7 +193,7 @@ export function ProductLivePreview({
               <p className="text-xs text-muted-foreground">{hasOptions && activePrices.length > 1 ? "Starting from" : "Price"}</p>
               <p className="text-2xl font-bold">{lowestPrice > 0 ? formatINR(lowestPrice) : "—"}</p>
             </div>
-            <div className="rounded-full border border-[#003D29] py-2 text-center text-xs font-semibold">
+            <div className="rounded-full border border-brand py-2 text-center text-xs font-semibold">
               {hasOptions && variants.filter((v) => v.isActive).length > 1 ? "Choose options" : "Add to Cart"}
             </div>
           </div>

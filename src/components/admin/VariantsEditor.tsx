@@ -294,7 +294,7 @@ export function VariantsEditor({
                       type="button"
                       onClick={() => removeOption(option.key)}
                       disabled={disabled}
-                      className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-muted-foreground hover:text-red-500"
+                      className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-muted-foreground hover:text-danger"
                     >
                       <Trash2 size={14} />
                       Remove option
@@ -309,10 +309,10 @@ export function VariantsEditor({
                     maxLength={50}
                     disabled={disabled}
                     className={`mt-2 w-full rounded-xl border bg-surface px-4 py-2.5 text-sm ${
-                      nameMissing ? "border-amber-500" : "border-border"
+                      nameMissing ? "border-warning" : "border-border"
                     }`}
                   />
-                  {nameMissing && <p className="mt-1 text-xs text-amber-600">Give this option a name.</p>}
+                  {nameMissing && <p className="mt-1 text-xs text-warning">Give this option a name.</p>}
                 </div>
 
                 {/* Values */}
@@ -327,7 +327,7 @@ export function VariantsEditor({
 
                   <div
                     className={`mt-2 flex flex-wrap items-center gap-2 rounded-xl border p-2 ${
-                      option.values.length === 0 ? "border-amber-500" : "border-border"
+                      option.values.length === 0 ? "border-warning" : "border-border"
                     }`}
                   >
                     {option.values.map((value) => (
@@ -366,7 +366,7 @@ export function VariantsEditor({
                     />
                   </div>
                   {option.values.length === 0 && (
-                    <p className="mt-1 text-xs text-amber-600">Add at least one value.</p>
+                    <p className="mt-1 text-xs text-warning">Add at least one value.</p>
                   )}
                 </div>
 
@@ -392,7 +392,7 @@ export function VariantsEditor({
                   {option.isVisual && option.values.length > 0 && (
                     <div className="mt-4 space-y-3">
                       {images.length === 0 ? (
-                        <p className="text-xs text-amber-600">
+                        <p className="text-xs text-warning">
                           Upload product images in the Images section first, then pick one for each value here.
                         </p>
                       ) : (
@@ -509,11 +509,12 @@ export function VariantsEditor({
             </div>
 
             {/* Column headers */}
-            <div className="hidden grid-cols-[2rem_2.5rem_1fr_6.5rem_8.5rem] gap-3 border-b border-border px-3 py-2 text-xs font-medium text-muted-foreground sm:grid">
+            <div className="hidden grid-cols-[2rem_2.5rem_1fr_6rem_6rem_8rem] gap-3 border-b border-border px-3 py-2 text-xs font-medium text-muted-foreground sm:grid">
               <span>Sell</span>
               <span />
               <span>Version</span>
               <span>Price (₹)</span>
+              <span title="Original price, shown struck through">MRP (₹)</span>
               <span>SKU (optional)</span>
             </div>
 
@@ -522,11 +523,13 @@ export function VariantsEditor({
                 const image = variantImage(variant);
                 const label = variantLabel(variant);
                 const priceMissing = variant.isActive && (!variant.price || variant.price <= 0);
+                const mrpTooLow =
+                  variant.isActive && !!variant.compareAtPrice && variant.compareAtPrice <= variant.price;
 
                 return (
                   <div
                     key={variant.valueKeys.join("|")}
-                    className={`grid grid-cols-[2rem_2.5rem_1fr] items-center gap-3 p-3 sm:grid-cols-[2rem_2.5rem_1fr_6.5rem_8.5rem] ${
+                    className={`grid grid-cols-[2rem_2.5rem_1fr] items-center gap-3 p-3 sm:grid-cols-[2rem_2.5rem_1fr_6rem_6rem_8rem] ${
                       variant.isActive ? "" : "opacity-50"
                     }`}
                   >
@@ -558,7 +561,21 @@ export function VariantsEditor({
                       placeholder="Price"
                       aria-label={`Price for ${label}`}
                       className={`col-start-3 rounded-lg border bg-surface px-2 py-1.5 text-sm sm:col-start-auto ${
-                        priceMissing ? "border-red-500" : "border-border"
+                        priceMissing ? "border-danger" : "border-border"
+                      }`}
+                    />
+
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={showWholeNumber(variant.compareAtPrice)}
+                      onChange={(e) => updateVariant(index, { compareAtPrice: parseWholeNumber(e.target.value) })}
+                      disabled={disabled || !variant.isActive}
+                      placeholder="MRP"
+                      aria-label={`MRP for ${label}`}
+                      title="Original price, shown struck through. Leave empty for no discount."
+                      className={`col-start-3 rounded-lg border bg-surface px-2 py-1.5 text-sm sm:col-start-auto ${
+                        mrpTooLow ? "border-danger" : "border-border"
                       }`}
                     />
 
@@ -602,6 +619,9 @@ export function validateVariants(
   if (active.length === 0) return "At least one variant must be enabled.";
   if (active.some((variant) => !variant.price || variant.price <= 0)) {
     return "Every enabled variant needs a price above 0.";
+  }
+  if (active.some((variant) => variant.compareAtPrice && variant.compareAtPrice <= variant.price)) {
+    return "A variant's MRP must be higher than its price (or left empty).";
   }
 
   const skus = active.map((variant) => variant.sku.trim()).filter(Boolean);

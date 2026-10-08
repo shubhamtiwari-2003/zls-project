@@ -95,7 +95,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
 
         <div className="mt-8">
           {error ? (
-            <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-6 text-sm text-red-600">
+            <div className="rounded-xl border border-danger/20 bg-danger/10 p-6 text-sm text-danger">
               Unable to load products. Please try again.
             </div>
           ) : products.length > 0 ? (

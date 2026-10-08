@@ -1,13 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ShieldCheck, Truck } from "lucide-react";
+import { Truck } from "lucide-react";
 import Breadcrumb from "@/components/shared/Breadcrumb";
 import { ProductCard } from "@/features/products/components/ProductCard";
 import { ProductDetailView } from "@/features/products/components/ProductDetailView";
+import { ProductDetailsSections } from "@/features/products/components/ProductDetailsSections";
+import { PaymentMethodsBadge } from "@/features/products/components/PaymentMethodsBadge";
 import { getProductDetail, getRelatedProducts } from "@/lib/products.server";
 import { formatINR } from "@/lib/shop-config";
 import { getShopSettings } from "@/lib/shop-settings.server";
+import { getLivePromotions } from "@/lib/promotions.server";
+import { noticesFor } from "@/lib/promotions";
+import { ProductNotices } from "@/components/promotions/ProductNotices";
 
 interface ProductPageProps {
   params: Promise<{
@@ -45,7 +50,12 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
 
   if (!product) notFound();
 
-  const [related, settings] = await Promise.all([getRelatedProducts(product), getShopSettings()]);
+  const [related, settings, promotions] = await Promise.all([
+    getRelatedProducts(product),
+    getShopSettings(),
+    getLivePromotions(),
+  ]);
+  const notices = noticesFor(promotions.productNotices, { id: product.id, categoryId: product.category.id });
 
   const dimensions = [product.widthMm, product.heightMm, product.lengthMm].filter(
     (value): value is number => value !== null
@@ -68,16 +78,16 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
         />
 
         <ProductDetailView product={product} initialVariantId={typeof variant === "string" ? variant : null}>
-          {/* Highlights */}
-          <div className="mt-8 space-y-3 rounded-2xl border border-border p-4 text-sm">
-            <div className="flex items-center gap-3">
-              <Truck size={18} className="shrink-0 text-green-600" />
-              <span>Free shipping on orders above {formatINR(settings.freeShippingThreshold)}</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <ShieldCheck size={18} className="shrink-0 text-green-600" />
-              <span>Secure payments with UPI, cards and netbanking via Razorpay</span>
-            </div>
+          {/* Campaign notes (Admin → Promotions → Product page notices) */}
+          <ProductNotices notices={notices} className="mt-4" />
+
+          {/* Payment methods (Razorpay) */}
+          <PaymentMethodsBadge className="mt-4" />
+
+          {/* Shipping */}
+          <div className="mt-3 flex items-center gap-3 rounded-2xl border border-border px-4 py-3 text-sm">
+            <Truck size={18} className="shrink-0 text-success" />
+            <span>Free shipping on orders above {formatINR(settings.freeShippingThreshold)}</span>
           </div>
 
           {/* Description */}
@@ -88,17 +98,8 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
             </div>
           )}
 
-          {/* Specs */}
-          {specs.length > 0 && (
-            <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {specs.map((spec) => (
-                <div key={spec.label} className="rounded-2xl border border-border bg-surface p-4 text-center">
-                  <p className="wrap-break-word font-bold">{spec.value}</p>
-                  <p className="mt-1 text-xs uppercase text-muted-foreground">{spec.label}</p>
-                </div>
-              ))}
-            </div>
-          )}
+          {/* Highlights, what's in the box, specifications, care */}
+          <ProductDetailsSections details={product.details} baseSpecs={specs} />
         </ProductDetailView>
 
         {/* Related */}

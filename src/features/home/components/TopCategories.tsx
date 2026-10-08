@@ -66,7 +66,7 @@ export function TopCategories() {
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-10 lg:px-16 xl:px-20 py-10 sm:py-16">
       <h2 className="text-2xl sm:text-3xl font-sans text-foreground tracking-tight mb-8">
-        Find <span className="text-amber-500 ">Products</span> By Categories
+        Find <span className="text-warning ">Products</span> By Categories
       </h2>
 
       {/* Grid of rounded colored category cards */}

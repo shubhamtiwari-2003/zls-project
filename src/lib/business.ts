@@ -22,11 +22,11 @@ export const BUSINESS = {
 
   // Address where the business is run (as on the Razorpay account).
   address: {
-    line1: "[House / flat, building, street]",
-    line2: "[Area / locality]",
-    city: "[City]",
-    state: "[State]",
-    postalCode: "[PIN code]",
+    line1: "Tower 1",
+    line2: "Flat 708 , Godrej Boluvard Manjari khurd",
+    city: "Pune",
+    state: "Maharashtra",
+    postalCode: "412307",
     country: "India",
   },
 
@@ -36,7 +36,7 @@ export const BUSINESS = {
   gstin: "",
 
   email: "connect@zfactorstudio.in",
-  phone: "[phone number]",
+  phone: "6280833871",
   supportHours: "Monday to Saturday, 10:00 AM – 6:00 PM IST",
 
   // Required by India's IT Rules and the DPDP Act: a named person who
@@ -47,7 +47,7 @@ export const BUSINESS = {
   },
 
   // Courts for disputes: the city the business is run from.
-  jurisdictionCity: "[City]",
+  jurisdictionCity: "Pune",
 };
 
 // Operational promises made in the policies. Keep them realistic: Razorpay

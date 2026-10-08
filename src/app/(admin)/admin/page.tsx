@@ -5,6 +5,7 @@ import Overview from "@/components/admin/tabs/Overview"
 import Products from "@/components/admin/tabs/Products";
 import Inventory from "@/components/admin/tabs/Inventory";
 import Coupons from "@/components/admin/tabs/Coupons";
+import Promotions from "@/components/admin/tabs/Promotions";
 import Orders from "@/components/admin/tabs/Orders";
 import Sales from "@/components/admin/tabs/Sales";
 import Payments from "@/components/admin/tabs/Payments";
@@ -28,6 +29,9 @@ export default function AdminPage() {
 
     case "coupons":
       return <Coupons />;
+
+    case "promotions":
+      return <Promotions />;
 
     case "sales":
       return <Sales/>;

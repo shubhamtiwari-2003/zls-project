@@ -36,6 +36,7 @@ interface ProductListRow {
   slug: string;
   description: string | null;
   price: number;
+  compare_at_price: number | null;
   status: string | null;
   inventory_policy: string | null;
   categories: { slug: string } | { slug: string }[] | null;
@@ -45,7 +46,7 @@ interface ProductListRow {
 }
 
 // Characters that would break a PostgREST filter or act as wildcards.
-const cleanSearch = (q: string) => q.replace(/[,()*%\\:"'.]/g, " ").replace(/\s+/g, " ").trim();
+export const cleanSearch = (q: string) => q.replace(/[,()*%\\:"'.]/g, " ").replace(/\s+/g, " ").trim();
 
 /**
  * Active products for listing pages, filtered and sorted in the database.
@@ -73,7 +74,7 @@ export async function listProducts(
   let query = supabase
     .from("products")
     .select(
-      `id, name, slug, description, price, status, inventory_policy,
+      `id, name, slug, description, price, compare_at_price, status, inventory_policy,
        categories ( slug ),
        product_images ( url, is_primary, "order" ),
        product_variants ( id, is_active, price, inventory ( stock_available, stock_reserved ) ),
@@ -124,6 +125,7 @@ export async function listProducts(
         title: row.name,
         description: row.description ?? "",
         price: Number(row.price),
+        compareAtPrice: row.compare_at_price ? Number(row.compare_at_price) : null,
         // Reviews come later.
         rating: 0,
         reviewCount: 0,

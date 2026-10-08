@@ -135,7 +135,7 @@ export function FilterBar({ categories, showCategoryFilter = true, resultCount }
   const chipClass = (active: boolean) =>
     `flex items-center gap-1.5 rounded-full border px-4 py-2 text-xs font-semibold transition ${
       active
-        ? "border-[#003d29] bg-[#003d29] text-white"
+        ? "border-brand bg-brand text-white"
         : "border-border bg-surface text-foreground hover:border-foreground/40"
     }`;
 
@@ -161,7 +161,7 @@ export function FilterBar({ categories, showCategoryFilter = true, resultCount }
             placeholder="Search products"
             maxLength={60}
             aria-label="Search products"
-            className="w-full rounded-full border border-border bg-surface py-2.5 pl-11 pr-10 text-sm outline-none focus:ring-2 focus:ring-[#003d29]/20"
+            className="w-full rounded-full border border-border bg-surface py-2.5 pl-11 pr-10 text-sm outline-none focus:ring-2 focus:ring-brand/20"
           />
           {pending ? (
             <Loader2 className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-muted-foreground" />
@@ -191,7 +191,7 @@ export function FilterBar({ categories, showCategoryFilter = true, resultCount }
             className="flex w-full items-center justify-between gap-2 rounded-full border border-border bg-surface px-4 py-2.5 text-xs font-semibold sm:w-auto"
           >
             <span>
-              Sort by: <span className="font-bold text-[#058e60]">{sortLabel}</span>
+              Sort by: <span className="font-bold text-brand-bright">{sortLabel}</span>
             </span>
             <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
           </button>
@@ -209,7 +209,7 @@ export function FilterBar({ categories, showCategoryFilter = true, resultCount }
                   className={optionClass}
                 >
                   {option.label}
-                  {filters.sort === option.value && <Check className="h-4 w-4 text-[#058e60]" />}
+                  {filters.sort === option.value && <Check className="h-4 w-4 text-brand-bright" />}
                 </button>
               ))}
             </div>
@@ -247,7 +247,7 @@ export function FilterBar({ categories, showCategoryFilter = true, resultCount }
                         type="checkbox"
                         checked={checked}
                         onChange={() => toggleCategory(category.slug)}
-                        className="h-4 w-4 accent-[#003D29]"
+                        className="h-4 w-4 accent-brand"
                       />
                     </label>
                   );
@@ -279,7 +279,7 @@ export function FilterBar({ categories, showCategoryFilter = true, resultCount }
                 >
                   {range.label}
                   {filters.min === range.min && filters.max === range.max && (
-                    <Check className="h-4 w-4 text-[#058e60]" />
+                    <Check className="h-4 w-4 text-brand-bright" />
                   )}
                 </button>
               ))}
@@ -314,7 +314,7 @@ export function FilterBar({ categories, showCategoryFilter = true, resultCount }
                   />
                   <button
                     type="submit"
-                    className="shrink-0 rounded-lg bg-[#003d29] px-3 py-1.5 text-xs font-semibold text-white"
+                    className="shrink-0 rounded-lg bg-brand px-3 py-1.5 text-xs font-semibold text-white"
                   >
                     Apply
                   </button>

@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { RazorpayPaymentEntity } from "@/lib/razorpay.server";
 
 export type MarkPaidResult = "paid" | "already_paid" | "not_found" | "amount_mismatch";
 
@@ -39,6 +40,37 @@ export async function markOrderPaid(
   }
 
   return result;
+}
+
+/**
+ * Saves how the customer paid (UPI, card…) and Razorpay's fee on the order.
+ * Call before markOrderPaid(): the invoice issued at payment includes the
+ * method. Never throws — these details are nice to have, not required.
+ */
+export async function recordPaymentDetails(
+  admin: SupabaseClient,
+  razorpayOrderId: string,
+  payment: RazorpayPaymentEntity
+): Promise<void> {
+  const details = {
+    bank: payment.bank ?? null,
+    wallet: payment.wallet ?? null,
+    vpa: payment.vpa ?? null,
+    card_network: payment.card?.network ?? null,
+    card_last4: payment.card?.last4 ?? null,
+  };
+
+  const { error } = await admin
+    .from("orders")
+    .update({
+      payment_method: payment.method ?? null,
+      payment_details: details,
+      payment_fee: payment.fee ?? null,
+      payment_tax: payment.tax ?? null,
+    })
+    .eq("razorpay_order_id", razorpayOrderId);
+
+  if (error) console.error("Record payment details error:", error);
 }
 
 /**

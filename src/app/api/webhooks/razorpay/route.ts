@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { verifyWebhookSignature } from "@/lib/razorpay.server";
-import { markOrderPaid } from "@/lib/orders.server";
+import { markOrderPaid, recordPaymentDetails } from "@/lib/orders.server";
 
 export const runtime = "nodejs";
 
@@ -39,7 +39,12 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await markOrderPaid(createAdminClient(), {
+    const admin = createAdminClient();
+
+    // Method and fee come with the event; saved before the invoice is issued.
+    await recordPaymentDetails(admin, payment.order_id, payment);
+
+    const result = await markOrderPaid(admin, {
       razorpayOrderId: payment.order_id,
       razorpayPaymentId: payment.id,
       amountPaise: payment.amount,

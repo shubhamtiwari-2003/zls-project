@@ -168,6 +168,9 @@ export async function POST(request: Request) {
           {
             folder: "z-layer-studio/products",
             resource_type: "image",
+            // Store at most 2560px on the long side: plenty for zoom, and
+            // keeps originals small (phone/camera PNGs can be 7 MB+).
+            transformation: [{ width: 2560, height: 2560, crop: "limit" }],
             use_filename: true,
             unique_filename: true,
             overwrite: false,

@@ -48,6 +48,13 @@ import type {
 } from "@/types/products";
 import { VariantsEditor, validateVariants } from "@/components/admin/VariantsEditor";
 import { CustomizationEditor } from "@/components/admin/CustomizationEditor";
+import { ProductDetailsEditor } from "@/components/admin/ProductDetailsEditor";
+import {
+  EMPTY_DETAILS,
+  productDetailsPayload,
+  validateProductDetails,
+  type ProductDetails,
+} from "@/lib/product-details";
 import { validateCustomizationFields } from "@/lib/customization";
 import { ProductLivePreview } from "@/components/admin/ProductLivePreview";
 
@@ -248,8 +255,8 @@ function SortableImage({
           p-2
           text-muted-foreground
           transition
-          hover:bg-red-500/10
-          hover:text-red-500
+          hover:bg-danger/10
+          hover:text-danger
         "
         aria-label="Remove image"
       >
@@ -305,6 +312,14 @@ export default function AddEditProductDrawer({
 
   const [customizationFields, setCustomizationFields] =
     useState<CustomizationFieldDraft[]>([]);
+
+  /* -------------------------------------------------------
+     PRODUCT DETAILS (what's in the box, highlights, specs, care)
+     New products start with one empty "What's in the box" row.
+  ------------------------------------------------------- */
+
+  const [details, setDetails] =
+    useState<ProductDetails>({ ...EMPTY_DETAILS, includedItems: [{ name: "", qty: 1 }] });
 
   /* -------------------------------------------------------
      CATEGORIES
@@ -428,6 +443,11 @@ export default function AddEditProductDrawer({
       setOptions(product.options ?? []);
       setVariants(product.variants ?? []);
       setCustomizationFields(product.customizationFields ?? []);
+      setDetails(
+        product.details && product.details.includedItems.length
+          ? product.details
+          : { ...(product.details ?? EMPTY_DETAILS), includedItems: [{ name: "", qty: 1 }] }
+      );
     } else {
       /* ---------------------------------------------------
          ADD MODE
@@ -442,6 +462,7 @@ export default function AddEditProductDrawer({
       setOptions([]);
       setVariants([]);
       setCustomizationFields([]);
+      setDetails({ ...EMPTY_DETAILS, includedItems: [{ name: "", qty: 1 }] });
     }
   }, [product, open]);
 
@@ -815,6 +836,22 @@ export default function AddEditProductDrawer({
       return;
     }
 
+    if (
+      !hasOptions &&
+      form.compare_at_price &&
+      form.compare_at_price <= Number(form.price)
+    ) {
+      setError("The MRP must be higher than the price (or left empty).");
+      return;
+    }
+
+    const detailsError = validateProductDetails(details);
+
+    if (detailsError) {
+      setError(detailsError);
+      return;
+    }
+
     const customizationError = validateCustomizationFields(customizationFields);
 
     if (customizationError) {
@@ -932,6 +969,7 @@ export default function AddEditProductDrawer({
             id: variant.id ?? null,
             value_keys: variant.valueKeys,
             price: Number(variant.price) || 0,
+            compare_at_price: variant.compareAtPrice || null,
             sku: variant.sku.trim() || null,
             is_active: variant.isActive,
           }))
@@ -940,6 +978,7 @@ export default function AddEditProductDrawer({
               id: defaultVariantId ?? null,
               value_keys: [],
               price: Number(form.price),
+              compare_at_price: form.compare_at_price || null,
               sku: (form.sku ?? "").trim() || null,
               is_active: true,
             },
@@ -1007,6 +1046,9 @@ export default function AddEditProductDrawer({
         inventory_policy:
           form.inventory_policy ??
           "deny",
+
+        // What's in the box, highlights, specifications, care.
+        ...productDetailsPayload(details),
       };
 
       /* ===================================================
@@ -1266,7 +1308,7 @@ export default function AddEditProductDrawer({
               ================================================= */}
 
                   {error && (
-                    <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-500">
+                    <div className="rounded-xl border border-danger/20 bg-danger/10 p-4 text-sm text-danger">
                       {error}
                     </div>
                   )}
@@ -1276,7 +1318,7 @@ export default function AddEditProductDrawer({
               ================================================= */}
 
                   {success && (
-                    <div className="rounded-xl border border-green-500/20 bg-green-500/10 p-4 text-sm text-green-600">
+                    <div className="rounded-xl border border-success/20 bg-success/10 p-4 text-sm text-success">
                       {success}
                     </div>
                   )}
@@ -1837,11 +1879,38 @@ export default function AddEditProductDrawer({
                     />
                   </div>
 
-                  {/* Stock and inventory policy are managed in the Inventory tab. */}
-                  <p className="self-end pb-3 text-xs text-muted-foreground">
-                    New products start with 1 in stock. Update stock in the Inventory tab.
-                  </p>
+                  {/* MRP */}
+
+                  <div>
+                    <label className="mb-2 block text-sm font-medium">
+                      MRP (₹) <span className="font-normal text-muted-foreground">(optional)</span>
+                    </label>
+
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="e.g. 699"
+                      value={showWholeNumber(form.compare_at_price)}
+                      disabled={saving}
+                      onChange={(e) =>
+                        update(
+                          "compare_at_price",
+                          parseWholeNumber(e.target.value)
+                        )
+                      }
+                      className={`w-full rounded-xl border bg-surface px-4 py-3 ${
+                        form.compare_at_price && form.compare_at_price <= Number(form.price)
+                          ? "border-danger"
+                          : "border-border"
+                      }`}
+                    />
+                  </div>
                 </div>
+
+                <p className="-mt-2 text-xs text-muted-foreground">
+                  MRP is the original price, shown struck through with the discount (e.g. <s>₹699</s> ₹499 · 29% off).
+                  Leave it empty for no discount. Stock is managed in the Inventory tab (new products start with 1).
+                </p>
 
                 {/* SKU */}
 
@@ -1899,6 +1968,16 @@ export default function AddEditProductDrawer({
                   0
                 }
                 defaultSku={form.sku ?? ""}
+                disabled={saving}
+              />
+
+              {/* =================================================
+                  PRODUCT DETAILS
+              ================================================= */}
+
+              <ProductDetailsEditor
+                details={details}
+                onChange={setDetails}
                 disabled={saving}
               />
 
@@ -1965,7 +2044,7 @@ export default function AddEditProductDrawer({
                       rounded-full
                       transition
                       ${form.is_active
-                        ? "bg-green-600"
+                        ? "bg-success"
                         : "bg-zinc-300"
                       }
                     `}

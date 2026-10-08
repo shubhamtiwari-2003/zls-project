@@ -94,17 +94,17 @@ export function ProfileForm({ email, initial }: ProfileFormProps) {
               autoComplete={field.autoComplete}
               disabled={saving}
               maxLength={100}
-              className="mt-1.5 w-full rounded-xl border border-border bg-background px-4 py-3 outline-none transition focus:ring-2 focus:ring-[#003D29]/20"
+              className="mt-1.5 w-full rounded-xl border border-border bg-background px-4 py-3 outline-none transition focus:ring-2 focus:ring-brand/20"
             />
           </label>
         ))}
       </div>
 
-      {error && <p className="mt-4 rounded-xl bg-red-500/10 px-4 py-3 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-4 rounded-xl bg-danger/10 px-4 py-3 text-sm text-danger">{error}</p>}
 
       <div className="mt-6 flex items-center justify-end gap-3">
         {saved && (
-          <span className="flex items-center gap-1 text-sm text-green-600">
+          <span className="flex items-center gap-1 text-sm text-success">
             <Check size={16} />
             Saved
           </span>
@@ -112,7 +112,7 @@ export function ProfileForm({ email, initial }: ProfileFormProps) {
         <button
           type="submit"
           disabled={saving || !user}
-          className="flex items-center gap-2 rounded-full bg-[#003D29] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#002B1D] disabled:opacity-50"
+          className="flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-white transition hover:bg-brand-hover disabled:opacity-50"
         >
           {saving && <Loader2 size={16} className="animate-spin" />}
           {saving ? "Saving..." : "Save changes"}

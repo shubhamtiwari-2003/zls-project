@@ -45,7 +45,7 @@ export function LegalPage({ href, title, intro, children, showUpdated = true }: 
 
         <article>
           {missing.length > 0 && (
-            <div role="alert" className="mb-6 rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-amber-700 dark:text-amber-400">
+            <div role="alert" className="mb-6 rounded-xl border border-warning/40 bg-warning/10 px-4 py-3 text-sm text-warning ">
               <strong>Business details not filled in yet:</strong> {missing.join(", ")}. Update{" "}
               <code>src/lib/business.ts</code> before applying to Razorpay or going live.
             </div>

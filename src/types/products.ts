@@ -1,4 +1,5 @@
 import type { CustomizationField } from "@/lib/customization";
+import type { ProductDetails } from "@/lib/product-details";
 
 export interface Category {
   id: string;
@@ -31,6 +32,8 @@ export interface Product {
   description: string | null;
   category_id: string | null;
   price: number;
+  // MRP shown struck through (products without options); null = none.
+  compare_at_price?: number | null;
   weight_grams: number | null;
   width_mm: number | null;
   height_mm: number | null;
@@ -44,6 +47,8 @@ export interface Product {
   variants?: ProductVariantDraft[];
   // Personalisation fields (name, photo…). Empty = regular product.
   customizationFields?: CustomizationFieldDraft[];
+  // What's in the box, highlights, specifications, care.
+  details?: ProductDetails;
 }
 
 // A customization field in the admin form. `uid` is a stable React key
@@ -81,6 +86,8 @@ export interface ProductVariantDraft {
   // One value key per option, in option order. Empty = default variant.
   valueKeys: string[];
   price: number;
+  // MRP / original price; null or absent = none.
+  compareAtPrice?: number | null;
   sku: string;
   isActive: boolean;
 }

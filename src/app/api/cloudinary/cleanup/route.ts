@@ -18,7 +18,8 @@ const GRACE_PERIOD_MS = 24 * 60 * 60 * 1000;
  *
  * An image counts as referenced if its public_id matches either
  * product_images.cloudinary_public_id OR the public_id inside any stored
- * image URL (product_images.url, categories.image_url). Older rows have
+ * image URL (product_images.url, categories.image_url, the invoice logo,
+ * promotion banners). Older rows have
  * only a URL, so matching on public_id alone is not safe.
  *
  * Auth:  Authorization: Bearer <CRON_SECRET>
@@ -84,6 +85,34 @@ export async function GET(request: Request) {
     if (categoriesError) throw new Error(categoriesError.message);
 
     categories.forEach((row) => addUrl(row.image_url));
+
+    // 1c. invoice logo (Admin → Invoices → Template)
+    const { data: invoiceSettings, error: invoiceSettingsError } = await supabase
+      .from("invoice_settings")
+      .select("logo_url");
+
+    // Older databases may not have the table yet; that's fine.
+    if (invoiceSettingsError && !invoiceSettingsError.message.includes("invoice_settings")) {
+      throw new Error(invoiceSettingsError.message);
+    }
+
+    (invoiceSettings ?? []).forEach((row) => addUrl(row.logo_url));
+
+    // 1d. promotion images (Admin → Promotions): banners, popups
+    const { data: promotions, error: promotionsError } = await supabase
+      .from("promotions")
+      .select("image_url, image_public_id, mobile_image_url, mobile_image_public_id");
+
+    if (promotionsError && !promotionsError.message.includes("promotions")) {
+      throw new Error(promotionsError.message);
+    }
+
+    for (const row of promotions ?? []) {
+      if (row.image_public_id) referenced.add(row.image_public_id);
+      if (row.mobile_image_public_id) referenced.add(row.mobile_image_public_id);
+      addUrl(row.image_url);
+      addUrl(row.mobile_image_url);
+    }
 
     // Safety: if we can't tell what a Cloudinary URL points to, we can't
     // safely decide anything is unused.

@@ -36,7 +36,7 @@ export default function Breadcrumb({ items }: { items?: BreadcrumbItem[] } = {})
 
             return (
               <li key={item.href} className="flex items-center gap-1">
-                <ChevronRight className="w-3.5 h-3.5 text-zinc-400" />
+                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
 
                 {isLast ? (
                   <span className="font-medium text-foreground" aria-current="page">
@@ -75,7 +75,7 @@ export default function Breadcrumb({ items }: { items?: BreadcrumbItem[] } = {})
 
           return (
             <li key={href} className="flex items-center gap-1">
-              <ChevronRight className="w-3.5 h-3.5 text-zinc-400" />
+              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
 
               {isLast ? (
                 <span className="font-medium text-foreground">

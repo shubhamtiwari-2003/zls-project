@@ -638,7 +638,7 @@ export default function ProductPreviewDrawer({
                   className="
                     w-full
                     rounded-full
-                    bg-[#003D29]
+                    bg-brand
                     py-4
                     font-semibold
                     text-white

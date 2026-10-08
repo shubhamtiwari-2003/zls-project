@@ -55,7 +55,7 @@ export function AccountMenu() {
     return (
       <Link
         href={`/sign-in?next=${encodeURIComponent(pathname)}`}
-        className="flex items-center gap-2 text-foreground transition hover:text-emerald-700"
+        className="flex items-center gap-2 text-foreground transition hover:text-brand-bright"
       >
         <User className="h-5 w-5" />
         <span className="hidden sm:inline">Sign in</span>
@@ -92,7 +92,7 @@ export function AccountMenu() {
         onClick={() => setOpen((value) => !value)}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="flex cursor-pointer items-center gap-2 text-foreground transition hover:text-emerald-700"
+        className="flex cursor-pointer items-center gap-2 text-foreground transition hover:text-brand-bright"
       >
         <User className="h-5 w-5" />
         <span className="hidden max-w-32 truncate sm:inline">{name}</span>
@@ -133,7 +133,7 @@ export function AccountMenu() {
               type="button"
               role="menuitem"
               onClick={handleSignOut}
-              className={`${itemClass} text-red-600 hover:text-red-600`}
+              className={`${itemClass} text-danger hover:text-danger`}
             >
               <LogOut size={18} />
               Sign out

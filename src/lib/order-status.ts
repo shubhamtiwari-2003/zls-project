@@ -34,10 +34,10 @@ export const SHIPPING_STATUSES: FulfillmentStatus[] = ["out_for_shipping", "in_t
 export type StatusTone = "green" | "blue" | "amber" | "red" | "gray";
 
 export const TONE_CLASSES: Record<StatusTone, string> = {
-  green: "bg-green-500/10 text-green-700 dark:text-green-400",
-  blue: "bg-blue-500/10 text-blue-700 dark:text-blue-400",
-  amber: "bg-amber-500/10 text-amber-700 dark:text-amber-400",
-  red: "bg-red-500/10 text-red-600",
+  green: "bg-success/10 text-success ",
+  blue: "bg-info/10 text-info ",
+  amber: "bg-warning/10 text-warning ",
+  red: "bg-danger/10 text-danger",
   gray: "bg-zinc-500/10 text-muted-foreground",
 };
 

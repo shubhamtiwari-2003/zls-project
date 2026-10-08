@@ -213,7 +213,7 @@ export function OrderDetailDrawer({ order, onClose, onUpdated }: OrderDetailDraw
                           selected
                             ? "border-foreground bg-foreground text-background"
                             : done
-                              ? "border-green-600/40 text-green-700 dark:text-green-400"
+                              ? "border-success/40 text-success "
                               : "border-border text-muted-foreground hover:border-foreground/40"
                         }`}
                       >
@@ -283,11 +283,11 @@ export function OrderDetailDrawer({ order, onClose, onUpdated }: OrderDetailDraw
                   />
                 </label>
 
-                {error && <p className="rounded-xl bg-red-500/10 px-3 py-2 text-sm text-red-600">{error}</p>}
+                {error && <p className="rounded-xl bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
 
                 <div className="flex items-center justify-end gap-3">
                   {saved && !dirty && (
-                    <span className="flex items-center gap-1 text-sm text-green-600">
+                    <span className="flex items-center gap-1 text-sm text-success">
                       <Check size={16} /> Saved
                     </span>
                   )}
@@ -338,7 +338,7 @@ export function OrderDetailDrawer({ order, onClose, onUpdated }: OrderDetailDraw
                 <span>{formatINR(Number(order.subtotal_amount))}</span>
               </div>
               {Number(order.discount_amount) > 0 && (
-                <div className="flex justify-between text-green-700 dark:text-green-400">
+                <div className="flex justify-between text-success ">
                   <span>Coupon{order.coupon_code ? ` (${order.coupon_code})` : ""}</span>
                   <span>−{formatINR(Number(order.discount_amount))}</span>
                 </div>
@@ -394,7 +394,7 @@ export function OrderDetailDrawer({ order, onClose, onUpdated }: OrderDetailDraw
                 href={order.tracking_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-blue-600 hover:underline"
+                className="inline-flex items-center gap-1 text-info hover:underline"
               >
                 Open tracking <ExternalLink size={12} />
               </a>
@@ -417,7 +417,7 @@ export function OrderDetailDrawer({ order, onClose, onUpdated }: OrderDetailDraw
               )}
               {order.canceled_at && (
                 <li>
-                  <p className="font-medium text-red-600">Canceled</p>
+                  <p className="font-medium text-danger">Canceled</p>
                   <p className="text-xs text-muted-foreground">{formatOrderDate(order.canceled_at)}</p>
                 </li>
               )}

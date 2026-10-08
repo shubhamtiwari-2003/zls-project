@@ -21,6 +21,7 @@ import type {
     ProductVariantDraft,
 } from "@/types/products";
 import { readFieldRows, type CustomizationFieldRow } from "@/lib/customization";
+import { readProductDetails } from "@/lib/product-details";
 
 interface Category {
     id: string;
@@ -72,6 +73,7 @@ interface SupabaseProduct {
     product_variants: {
         id: string;
         price: number;
+        compare_at_price: number | null;
         sku: string | null;
         is_active: boolean;
         position: number;
@@ -79,6 +81,11 @@ interface SupabaseProduct {
     }[];
 
     product_customization_fields: CustomizationFieldRow[];
+
+    included_items: unknown;
+    highlights: unknown;
+    specifications: unknown;
+    care_instructions: string | null;
 }
 
 const activeVariantCount = (product: SupabaseProduct) =>
@@ -122,6 +129,7 @@ function toVariantDrafts(product: SupabaseProduct): {
                 .filter((id) => optionIndex.has(id))
                 .sort((a, b) => optionIndex.get(a)! - optionIndex.get(b)!),
             price: Number(variant.price),
+            compareAtPrice: variant.compare_at_price ? Number(variant.compare_at_price) : null,
             sku: variant.sku ?? "",
             isActive: variant.is_active,
         }))
@@ -215,7 +223,7 @@ export default function Products() {
                             product_option_values ( id, value, position, image_id )
                         ),
                         product_variants (
-                            id, price, sku, is_active, position,
+                            id, price, compare_at_price, sku, is_active, position,
                             variant_option_values ( option_value_id )
                         ),
                         product_customization_fields (
@@ -422,7 +430,13 @@ export default function Products() {
                 product.product_images ??
                 [],
 
+            // MRP of the default variant (products without options).
+            compare_at_price:
+                (product.product_variants ?? []).find((variant) => variant.is_active)?.compare_at_price ?? null,
+
             ...toVariantDrafts(product),
+
+            details: readProductDetails(product),
 
             customizationFields: readFieldRows(
                 product.product_customization_fields
@@ -593,7 +607,7 @@ export default function Products() {
             ===================================== */}
 
             {error && (
-                <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-600">
+                <div className="rounded-xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">
                     {error}
                 </div>
             )}
@@ -887,7 +901,7 @@ export default function Products() {
                                                     <span
                                                         className={`rounded-full px-3 py-1 text-xs font-medium ${product.status ===
                                                             "Active"
-                                                            ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                                                            ? "bg-success/10 text-success  "
                                                             : "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400"
                                                             }`}
                                                     >
@@ -931,7 +945,7 @@ export default function Products() {
                                                                     product
                                                                 )
                                                             }
-                                                            className="cursor-pointer rounded-lg p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                                            className="cursor-pointer rounded-lg p-2 text-danger hover:bg-danger/15 "
                                                             title="Delete product"
                                                         >
                                                             <Trash2

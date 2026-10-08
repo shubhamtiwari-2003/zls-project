@@ -246,7 +246,7 @@ export function CheckoutForm({ email, defaultName, savedAddresses }: CheckoutFor
                   <div
                     key={saved.id}
                     className={`flex items-start gap-3 rounded-2xl border p-4 transition ${
-                      selected || editing ? "border-[#003D29] ring-2 ring-[#003D29]/15" : "border-border"
+                      selected || editing ? "border-brand ring-2 ring-brand/15" : "border-border"
                     }`}
                   >
                     <label className="flex flex-1 cursor-pointer items-start gap-3">
@@ -256,7 +256,7 @@ export function CheckoutForm({ email, defaultName, savedAddresses }: CheckoutFor
                         checked={selected}
                         onChange={() => selectSaved(saved.id)}
                         disabled={submitting}
-                        className="mt-1 accent-[#003D29]"
+                        className="mt-1 accent-brand"
                       />
                       <span className="text-sm">
                         <span className="font-semibold">{saved.full_name}</span>
@@ -283,7 +283,7 @@ export function CheckoutForm({ email, defaultName, savedAddresses }: CheckoutFor
                 onClick={startNew}
                 disabled={submitting}
                 className={`flex w-full items-center gap-2 rounded-2xl border border-dashed p-4 text-sm font-medium transition hover:border-foreground ${
-                  mode.kind === "new" ? "border-[#003D29] text-foreground" : "border-border text-muted-foreground"
+                  mode.kind === "new" ? "border-brand text-foreground" : "border-border text-muted-foreground"
                 }`}
               >
                 <Plus size={16} />
@@ -293,7 +293,7 @@ export function CheckoutForm({ email, defaultName, savedAddresses }: CheckoutFor
           )}
 
           {mode.kind === "edit" && (
-            <p className="mt-4 rounded-xl bg-amber-500/10 px-4 py-3 text-xs text-amber-700 dark:text-amber-400">
+            <p className="mt-4 rounded-xl bg-warning/10 px-4 py-3 text-xs text-warning ">
               Your changes will be saved as a new address. Past orders keep the address they were shipped to.
             </p>
           )}
@@ -341,7 +341,7 @@ export function CheckoutForm({ email, defaultName, savedAddresses }: CheckoutFor
           <CartSummary quote={quote} loading={loading} />
 
           {hasUnavailable && (
-            <div className="mt-4 flex items-start gap-2 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-600">
+            <div className="mt-4 flex items-start gap-2 rounded-xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">
               <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
               <span>
                 Some items are out of stock, no longer available or need new personalisation details.{" "}
@@ -353,13 +353,13 @@ export function CheckoutForm({ email, defaultName, savedAddresses }: CheckoutFor
           )}
 
           {(message || quoteError) && (
-            <p className="mt-4 rounded-xl bg-red-500/10 px-4 py-3 text-sm text-red-600">{message ?? quoteError}</p>
+            <p className="mt-4 rounded-xl bg-danger/10 px-4 py-3 text-sm text-danger">{message ?? quoteError}</p>
           )}
 
           <button
             type="submit"
             disabled={!canPay || submitting}
-            className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-[#003D29] py-3.5 font-semibold text-white transition hover:bg-[#002B1D] disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3.5 font-semibold text-white transition hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50"
           >
             {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Lock className="h-4 w-4" />}
             {submitting ? "Processing..." : quote ? `Pay ${formatINR(quote.total)}` : "Pay"}

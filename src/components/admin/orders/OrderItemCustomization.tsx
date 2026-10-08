@@ -61,8 +61,8 @@ export function OrderItemCustomization({ entries }: { entries: CustomizationSnap
   };
 
   return (
-    <div className="mt-2 space-y-2 rounded-xl bg-amber-500/10 p-2.5">
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400">
+    <div className="mt-2 space-y-2 rounded-xl bg-warning/10 p-2.5">
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-warning ">
         Personalised
       </p>
 
@@ -88,7 +88,7 @@ export function OrderItemCustomization({ entries }: { entries: CustomizationSnap
               {signed && (
                 <a
                   href={signed.download}
-                  className="mt-1 inline-flex items-center gap-1 font-medium text-[#058e60] hover:underline"
+                  className="mt-1 inline-flex items-center gap-1 font-medium text-brand-bright hover:underline"
                 >
                   <Download size={12} />
                   Download original

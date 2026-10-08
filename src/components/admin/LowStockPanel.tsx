@@ -79,7 +79,7 @@ export function LowStockPanel() {
       </div>
 
       {error ? (
-        <p className="text-sm text-red-600">Could not load stock levels.</p>
+        <p className="text-sm text-danger">Could not load stock levels.</p>
       ) : items === null ? (
         <p className="text-sm text-muted-foreground">Loading...</p>
       ) : items.length === 0 ? (
@@ -97,7 +97,7 @@ export function LowStockPanel() {
                 <span
                   className={`rounded-full px-3 py-1 text-xs font-medium ${
                     item.sellable <= 0
-                      ? "bg-red-500/10 text-red-600"
+                      ? "bg-danger/10 text-danger"
                       : "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400"
                   }`}
                 >

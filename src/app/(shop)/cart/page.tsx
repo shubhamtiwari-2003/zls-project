@@ -62,7 +62,7 @@ export default function CartPage() {
               </div>
 
               {blockedCount > 0 && (
-                <div className="mx-6 mt-4 flex items-start gap-2 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-600">
+                <div className="mx-6 mt-4 flex items-start gap-2 rounded-xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">
                   <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
                   Some items are out of stock, no longer available or need new personalisation details.
                   Remove them to continue.
@@ -109,7 +109,7 @@ export default function CartPage() {
 
                           <p className="mt-1 text-sm text-muted-foreground">
                             {isUnavailable ? (
-                              <span className="font-medium text-red-600">
+                              <span className="font-medium text-danger">
                                 {isOutOfStock
                                   ? "Out of stock"
                                   : customizationErrors
@@ -122,7 +122,7 @@ export default function CartPage() {
                           </p>
 
                           {!isUnavailable && available !== null && available <= lowStockThreshold && (
-                            <p className="mt-1 text-xs font-medium text-amber-600">Only {available} left</p>
+                            <p className="mt-1 text-xs font-medium text-warning">Only {available} left</p>
                           )}
                         </div>
 
@@ -158,7 +158,7 @@ export default function CartPage() {
 
                             <button
                               onClick={() => remove(item.lineKey)}
-                              className="text-muted-foreground transition hover:text-red-500"
+                              className="text-muted-foreground transition hover:text-danger"
                               aria-label="Remove item"
                             >
                               <Trash2 className="h-5 w-5" />
@@ -192,19 +192,19 @@ export default function CartPage() {
 
               <CartSummary quote={quote} loading={loading} />
 
-              {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+              {error && <p className="mt-4 text-sm text-danger">{error}</p>}
 
               {canCheckout ? (
                 <Link
                   href="/checkout"
-                  className="mt-6 flex w-full items-center justify-center rounded-full bg-[#003D29] py-3 font-semibold text-white transition hover:bg-[#002B1D]"
+                  className="mt-6 flex w-full items-center justify-center rounded-full bg-brand py-3 font-semibold text-white transition hover:bg-brand-hover"
                 >
                   Proceed to Checkout
                 </Link>
               ) : (
                 <button
                   disabled
-                  className="mt-6 w-full cursor-not-allowed rounded-full bg-[#003D29] py-3 font-semibold text-white opacity-50"
+                  className="mt-6 w-full cursor-not-allowed rounded-full bg-brand py-3 font-semibold text-white opacity-50"
                 >
                   Proceed to Checkout
                 </button>

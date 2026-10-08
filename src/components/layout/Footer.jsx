@@ -91,7 +91,7 @@ export function Footer() {
           </div>
 
           {/* Links Column 3: Studio (Span 2) */}
-          <div className="lg:col-span-2 space-y-3">
+          {/* <div className="lg:col-span-2 space-y-3">
             <h4 className="text-xs font-semibold text-white tracking-wider">Studio</h4>
             <ul className="space-y-2.5 text-xs text-zinc-400">
               <li><Link href="/about" className="hover:text-white transition">About Oruky</Link></li>
@@ -102,7 +102,7 @@ export function Footer() {
               <li><Link href="/studio-live" className="hover:text-white transition">The studio <span className="text-zinc-500">(live)</span></Link></li>
               <li><Link href="/contact-us" className="hover:text-white transition">Contact</Link></li>
             </ul>
-          </div>
+          </div> */}
 
           {/* Policies (required for payment gateway approval) */}
           <div className="lg:col-span-2 space-y-3">
@@ -161,13 +161,13 @@ export function Footer() {
           </div>
 
           {/* Quick Legal Links */}
-          <nav className="flex flex-wrap items-center gap-x-4 gap-y-1 text-zinc-400 shrink-0">
+          {/* <nav className="flex flex-wrap items-center gap-x-4 gap-y-1 text-zinc-400 shrink-0">
             <Link href="/shipping-policy" className="hover:text-white transition">Shipping</Link>
             <Link href="/cancellation-and-refund-policy" className="hover:text-white transition">Refunds</Link>
             <Link href="/privacy-policy" className="hover:text-white transition">Privacy</Link>
             <Link href="/terms-and-conditions" className="hover:text-white transition">Terms</Link>
             <Link href="/contact-us" className="hover:text-white transition">Contact</Link>
-          </nav>
+          </nav> */}
         </div>
       </div>
 

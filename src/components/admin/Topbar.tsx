@@ -58,7 +58,7 @@ export function Topbar() {
           <button className="relative flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface hover:bg-accent transition">
             <Bell size={18} />
 
-            <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500" />
+            <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-danger" />
           </button>
 
           {/* Admin Profile */}

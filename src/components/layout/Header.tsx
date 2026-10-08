@@ -3,10 +3,12 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Search, ShoppingCart } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Search, ShoppingCart, X } from "lucide-react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { CategoriesMenu } from "./CategoriesMenu";
+import { HeaderSearch, HeaderSearchFallback } from "./HeaderSearch";
+import { MobileMenu } from "./MobileMenu";
+import { NAV_LINKS } from "./nav-links";
 import { AccountMenu } from "./AccountMenu";
 import white_logo from "../../../public/White-logo-text.png";
 import black_logo from "../../../public/black_logo.png";
@@ -28,9 +30,9 @@ interface HeaderProps {
 }
 
 export function Header({ categories }: HeaderProps) {
-  const router = useRouter();
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [search, setSearch] = useState("");
+  // Phones: the search bar opens below the header from a search icon.
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const hydrated = useHydrated();
   const cartCount = useCartStore((state) =>
     state.items.reduce((sum, item) => sum + item.quantity, 0)
@@ -73,9 +75,6 @@ export function Header({ categories }: HeaderProps) {
     <>
       {/* Sticky so the cart (and its add-to-cart animation) stays in view. */}
       <header className="sticky top-0 z-40 w-full">
-        {/* Top Utility Bar */}
-        {/* <NewsBar/AnnouncementBar> */}
-
         {/* Main Navigation Bar */}
         <div
           className={`border-b transition-[background-color,border-color,box-shadow] duration-300 ${
@@ -85,6 +84,10 @@ export function Header({ categories }: HeaderProps) {
           }`}
         >
           <div className="w-full px-4 sm:px-10 lg:px-16 xl:px-20 h-16 sm:h-20 flex items-center justify-between gap-3 sm:gap-6">
+            <div className="flex items-center gap-2">
+            {/* Menu (phones and tablets: the nav links below are hidden) */}
+            <MobileMenu categories={categories} />
+
             <Link href="/" className="flex items-center">
               {/* Light theme → Black logo */}
               <Image
@@ -106,62 +109,59 @@ export function Header({ categories }: HeaderProps) {
                 priority
               />
             </Link>
+            </div>
 
             <nav className="hidden lg:flex items-center gap-8 text-sm font-semibold text-foreground ">
-              <Link href="/products" className="hover:text-emerald-700">
+              <Link href="/products" className="hover:text-brand-bright">
                 All Products
               </Link>
               <CategoriesMenu categories={categories} />
-              <Link href="/deals" className="hover:text-emerald-700">Deals</Link>
-              <Link href="/whats-new" className="hover:text-emerald-700">What&apos;s New</Link>
-              <Link href="/delivery" className="hover:text-emerald-700">Delivery</Link>
+              {NAV_LINKS.map((link) => (
+                <Link key={link.href} href={link.href} className="hover:text-brand-bright">
+                  {link.label}
+                </Link>
+              ))}
             </nav>
 
-            <form
-              role="search"
-              onSubmit={(e) => {
-                e.preventDefault();
-                const q = search.trim();
-                router.push(q ? `/products?q=${encodeURIComponent(q)}` : "/products");
-                setSearch("");
-              }}
-              className="flex-1 max-w-md relative hidden sm:block"
-            >
-              <input
-                type="search"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                maxLength={60}
-                placeholder="Search Product"
-                aria-label="Search products"
-                className="w-full bg-muted border-none rounded-full py-2.5 pl-5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#003d29]/20"
-              />
+            {/* Search (tablet and desktop) */}
+            <Suspense fallback={<HeaderSearchFallback className="hidden max-w-md flex-1 sm:block" />}>
+              <HeaderSearch className="hidden max-w-md flex-1 sm:block" />
+            </Suspense>
+
+            <div className="flex shrink-0 items-center gap-4 sm:gap-6 text-sm font-semibold text-foreground">
+
+              {/* Search (phones) */}
               <button
-                type="submit"
-                aria-label="Search"
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-zinc-400 hover:text-foreground"
+                type="button"
+                onClick={() => setMobileSearchOpen((open) => !open)}
+                aria-label={mobileSearchOpen ? "Close search" : "Search products"}
+                aria-expanded={mobileSearchOpen}
+                className="text-foreground hover:text-brand-bright sm:hidden"
               >
-                <Search className="w-4 h-4" />
+                {mobileSearchOpen ? <X /> : <Search />}
               </button>
-            </form>
 
-            <div className="flex shrink-0 items-center gap-4 sm:gap-6 text-sm font-semibold text-zinc-800">
-
-              <ThemeToggle />
+              {/* Theme and account: desktop only. Below lg they're in the
+                  ☰ menu (MobileMenu). */}
+              <div className="hidden lg:block">
+                <ThemeToggle />
+              </div>
 
               {/* Account: sign-in link or dropdown */}
-              <AccountMenu />
+              <div className="hidden lg:block">
+                <AccountMenu />
+              </div>
 
               <button
                 type="button"
                 ref={cartButtonRef}
                 onClick={() => setIsCartOpen(true)}
-                className="relative text-foreground hover:text-emerald-700"
+                className="relative text-foreground hover:text-brand-bright"
                 aria-label={`Open cart (${hydrated ? cartCount : 0} items)`}
               >
                 <ShoppingCart />
                 {hydrated && cartCount > 0 && (
-                  <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#058e60] px-1 text-[10px] font-bold text-white">
+                  <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-bright px-1 text-[10px] font-bold text-white">
                     {cartCount}
                   </span>
                 )}
@@ -173,6 +173,14 @@ export function Header({ categories }: HeaderProps) {
               />
             </div>
           </div>
+
+          {mobileSearchOpen && (
+            <div className="px-4 pb-3 sm:hidden">
+              <Suspense fallback={<HeaderSearchFallback />}>
+                <HeaderSearch autoFocus onNavigate={() => setMobileSearchOpen(false)} />
+              </Suspense>
+            </div>
+          )}
         </div>
       </header>
     </>

@@ -96,15 +96,15 @@ function couponStatus(coupon: Coupon, usage: Usage | undefined): Status {
   const now = Date.now();
   if (!coupon.is_active) return { label: "Off", className: "bg-muted text-muted-foreground" };
   if (coupon.expires_at && now >= new Date(coupon.expires_at).getTime()) {
-    return { label: "Expired", className: "bg-red-500/10 text-red-600" };
+    return { label: "Expired", className: "bg-danger/10 text-danger" };
   }
   if (coupon.usage_limit && (usage?.uses ?? 0) >= coupon.usage_limit) {
-    return { label: "Used up", className: "bg-red-500/10 text-red-600" };
+    return { label: "Used up", className: "bg-danger/10 text-danger" };
   }
   if (coupon.starts_at && now < new Date(coupon.starts_at).getTime()) {
-    return { label: "Scheduled", className: "bg-amber-500/10 text-amber-700 dark:text-amber-400" };
+    return { label: "Scheduled", className: "bg-warning/10 text-warning " };
   }
-  return { label: "Active", className: "bg-green-500/10 text-green-700 dark:text-green-400" };
+  return { label: "Active", className: "bg-success/10 text-success " };
 }
 
 const formatDate = (iso: string | null) =>
@@ -184,7 +184,7 @@ export default function Coupons() {
       </div>
 
       {notice && (
-        <div className="flex items-start justify-between gap-3 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-600">
+        <div className="flex items-start justify-between gap-3 rounded-xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">
           {notice}
           <button type="button" onClick={() => setNotice(null)} aria-label="Dismiss">
             <X size={16} />
@@ -193,7 +193,7 @@ export default function Coupons() {
       )}
 
       {loadError ? (
-        <p className="rounded-2xl border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-600">{loadError}</p>
+        <p className="rounded-2xl border border-danger/20 bg-danger/10 p-4 text-sm text-danger">{loadError}</p>
       ) : !coupons ? (
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Loader2 size={16} className="animate-spin" /> Loading coupons…
@@ -241,7 +241,7 @@ export default function Coupons() {
                       type="button"
                       onClick={() => toggleActive(coupon)}
                       disabled={busyId === coupon.id}
-                      className={`relative h-6 w-11 rounded-full transition disabled:opacity-50 ${coupon.is_active ? "bg-green-600" : "bg-zinc-400"}`}
+                      className={`relative h-6 w-11 rounded-full transition disabled:opacity-50 ${coupon.is_active ? "bg-success" : "bg-zinc-400"}`}
                       aria-label={coupon.is_active ? `Switch off ${coupon.code}` : `Switch on ${coupon.code}`}
                       aria-pressed={coupon.is_active}
                     >
@@ -259,7 +259,7 @@ export default function Coupons() {
                       type="button"
                       onClick={() => remove(coupon)}
                       disabled={busyId === coupon.id}
-                      className="rounded-lg p-2 text-muted-foreground hover:bg-red-500/10 hover:text-red-500 disabled:opacity-50"
+                      className="rounded-lg p-2 text-muted-foreground hover:bg-danger/10 hover:text-danger disabled:opacity-50"
                       aria-label={`Delete ${coupon.code}`}
                     >
                       <Trash2 size={16} />
@@ -554,7 +554,7 @@ function CouponForm({ draft: initial, onClose, onSaved }: { draft: Draft; onClos
               type="checkbox"
               checked={draft.is_active}
               onChange={(e) => set("is_active", e.target.checked)}
-              className="accent-[#003D29]"
+              className="accent-brand"
             />
             Active (customers can use it)
           </label>
@@ -576,7 +576,7 @@ function CouponForm({ draft: initial, onClose, onSaved }: { draft: Draft; onClos
             </div>
           )}
 
-          {error && <p className="rounded-xl bg-red-500/10 px-4 py-3 text-sm text-red-600">{error}</p>}
+          {error && <p className="rounded-xl bg-danger/10 px-4 py-3 text-sm text-danger">{error}</p>}
         </div>
 
         <div className="flex gap-3 border-t border-border px-6 py-4">

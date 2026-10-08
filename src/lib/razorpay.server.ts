@@ -80,3 +80,34 @@ export function verifyWebhookSignature(rawBody: string, signature: string): bool
   if (!secret) throw new Error("RAZORPAY_WEBHOOK_SECRET is not configured.");
   return safeEqual(hmacHex(secret, rawBody), signature);
 }
+
+// The parts of a Razorpay payment we keep (amounts in paise).
+export interface RazorpayPaymentEntity {
+  id: string;
+  order_id?: string;
+  amount?: number;
+  method?: string;
+  bank?: string | null;
+  wallet?: string | null;
+  vpa?: string | null;
+  fee?: number | null;
+  tax?: number | null;
+  card?: { network?: string | null; last4?: string | null } | null;
+}
+
+/** Fetches a payment from Razorpay (method, fee…). */
+export async function fetchRazorpayPayment(paymentId: string): Promise<RazorpayPaymentEntity> {
+  const { keyId, keySecret } = credentials();
+
+  const response = await fetch(`https://api.razorpay.com/v1/payments/${encodeURIComponent(paymentId)}`, {
+    headers: { Authorization: `Basic ${Buffer.from(`${keyId}:${keySecret}`).toString("base64")}` },
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data?.error?.description ?? "Could not fetch the Razorpay payment.");
+  }
+
+  return data as RazorpayPaymentEntity;
+}

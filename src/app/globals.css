@@ -18,8 +18,10 @@
 
     muted / muted-foreground   light grey background / grey secondary text
     accent / accent-foreground hover background of menu items, etc.
-    primary                    gold brand colour
-    brand                      brown brand accent
+    primary                    gold accent colour
+    brand / brand-bright       the site's greens (buttons, badges, links);
+    brand-hover                hover state of brand buttons
+    success/danger/warning/info status colours (messages, badges, errors)
 */
 
 :root {
@@ -50,9 +52,25 @@
   --input: #E7E5E4;
   --ring: #A8A29E;
 
-  --brand: #8B5E34;
-  --success: #16A34A;
+  --brand: #0440af;
+  --brand-bright: #1c65d3;
+  --brand-hover: #1c65d3;
+  --brand-foreground: #FFFFFF;
+
+  --success: #15803D;
   --danger: #DC2626;
+  --warning: #B45309;
+  --info: #1D4ED8;
+
+  /* Charts (single series). Checked for contrast and lightness on this surface. */
+  --chart-1: #1C65D3;
+
+  /* Promotion colour presets (Admin → Promotions). The same in both themes,
+     always with white text (each ≥ 4.5:1). */
+  --promo-dark: #18181B;
+  --promo-festive: #C2410C;
+  --promo-sale: #B91C1C;
+  --promo-green: #15803D;
 
   --radius: 0.5rem; /* rounded-sm…xl keep their Tailwind default sizes */
 
@@ -96,9 +114,19 @@
   --input: #3F3F46;
   --ring: #71717A;
 
-  --brand: #A47148;
-  --success: #22C55E;
-  --danger: #EF4444;
+  /* Brand greens are the same in both themes. */
+  --brand: #0440af;
+  --brand-bright: #1c65d3;
+  --brand-hover: #1c65d3;
+  --brand-foreground: #FFFFFF;
+
+  /* Lighter status shades stay readable on the dark background. */
+  --success: #4ADE80;
+  --danger: #F87171;
+  --warning: #FBBF24;
+  --info: #60A5FA;
+
+  --chart-1: #3B82F6;
 }
 
 
@@ -131,6 +159,19 @@
   --color-ring: var(--ring);
 
   --color-brand: var(--brand);
+  --color-brand-bright: var(--brand-bright);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-foreground: var(--brand-foreground);
+
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  --color-chart-1: var(--chart-1);
+  --color-promo-dark: var(--promo-dark);
+  --color-promo-festive: var(--promo-festive);
+  --color-promo-sale: var(--promo-sale);
+  --color-promo-green: var(--promo-green);
 
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
@@ -185,4 +226,14 @@ button{
 .razorpay-container,
 .razorpay-checkout-frame {
   color-scheme: light;
+}
+/* Header announcements (AnnouncementBar): the track holds the messages
+   twice, so moving it by half its width loops seamlessly. */
+@keyframes promo-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.promo-marquee {
+  animation: promo-marquee 30s linear infinite;
 }

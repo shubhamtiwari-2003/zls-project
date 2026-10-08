@@ -6,6 +6,7 @@ import { purchasableStock, type InventoryJoin } from "@/lib/stock";
 import { productCardVariantFields, type VariantSummaryRow } from "@/lib/variants";
 import type { ProductItem } from "@/features/products/components/ProductCard";
 import { readFieldRows, type CustomizationField, type CustomizationFieldRow } from "@/lib/customization";
+import { readProductDetails, type ProductDetails } from "@/lib/product-details";
 
 interface ImageRow {
   id: string;
@@ -27,6 +28,8 @@ export interface ProductVariantDetail {
   title: string;
   sku: string | null;
   price: number;
+  // MRP shown struck through; null = no discount.
+  compareAtPrice: number | null;
   // One value per option, in option order.
   valueIds: string[];
   // Units purchasable now; null = unlimited ('continue selling').
@@ -53,6 +56,8 @@ export interface ProductDetail {
   variants: ProductVariantDetail[];
   // What the customer personalises (name, photo…); empty for most products.
   customizationFields: CustomizationField[];
+  // What's in the box, highlights, specifications, care.
+  details: ProductDetails;
 }
 
 function sortImages<T extends { order: number | null; is_primary: boolean }>(images: T[]): T[] {
@@ -91,12 +96,17 @@ interface ProductDetailRow {
     title: string;
     sku: string | null;
     price: number;
+    compare_at_price: number | null;
     is_active: boolean;
     position: number;
     inventory: InventoryJoin;
     variant_option_values: { option_value_id: string }[];
   }[];
   product_customization_fields: CustomizationFieldRow[];
+  included_items: unknown;
+  highlights: unknown;
+  specifications: unknown;
+  care_instructions: string | null;
 }
 
 /**
@@ -114,11 +124,12 @@ export const getProductDetail = cache(
       .select(
         `id, name, slug, description, price, status, inventory_policy,
          weight_grams, width_mm, height_mm, length_mm,
+         included_items, highlights, specifications, care_instructions,
          categories!inner ( id, name, slug ),
          product_images ( id, url, alt_text, is_primary, "order" ),
          product_options ( id, name, position, is_visual,
            product_option_values ( id, value, position, image_id ) ),
-         product_variants ( id, title, sku, price, is_active, position,
+         product_variants ( id, title, sku, price, compare_at_price, is_active, position,
            inventory ( stock_available, stock_reserved ),
            variant_option_values ( option_value_id ) ),
          product_customization_fields ( id, key, label, type, required, help_text, config, pricing, position )`
@@ -180,6 +191,7 @@ export const getProductDetail = cache(
           title: variant.title ?? "",
           sku: variant.sku,
           price: Number(variant.price),
+          compareAtPrice: variant.compare_at_price ? Number(variant.compare_at_price) : null,
           valueIds,
           stock: purchasableStock(row.inventory_policy, variant.inventory),
           imageUrl: valueIds.map((id) => valueImage.get(id)).find(Boolean) ?? null,
@@ -206,6 +218,7 @@ export const getProductDetail = cache(
       options,
       variants,
       customizationFields: readFieldRows(row.product_customization_fields),
+      details: readProductDetails(row),
     };
   }
 );
@@ -220,7 +233,7 @@ export async function getRelatedProducts(
   const { data, error } = await supabase
     .from("products")
     .select(
-      `id, name, slug, description, price, status, inventory_policy,
+      `id, name, slug, description, price, compare_at_price, status, inventory_policy,
        product_images ( url, is_primary, "order" ),
        product_variants ( id, is_active, price, inventory ( stock_available, stock_reserved ) ),
        product_customization_fields ( id )`
@@ -250,6 +263,7 @@ export async function getRelatedProducts(
         title: row.name,
         description: row.description ?? "",
         price: Number(row.price),
+        compareAtPrice: row.compare_at_price ? Number(row.compare_at_price) : null,
         rating: 0,
         reviewCount: 0,
         imageUrl: cover?.url ?? "",

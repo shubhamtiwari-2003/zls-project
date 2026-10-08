@@ -8,6 +8,7 @@ import { useCartStore } from "@/features/cart/store/cartStore";
 import { announceAddedToCart } from "@/features/cart/lib/cartFeedback";
 import { useHydrated } from "@/hooks/useHydrated";
 import { useShopSettings } from "@/components/providers/ShopSettingsProvider";
+import { priceDisplay } from "@/lib/product-details";
 
 export interface ProductItem {
   id: string;
@@ -15,6 +16,8 @@ export interface ProductItem {
   title: string;
   description: string;
   price: number;
+  // MRP of the cheapest variant, shown struck through; null = no discount.
+  compareAtPrice?: number | null;
   rating: number;
   reviewCount: number;
   imageUrl: string;
@@ -47,6 +50,7 @@ export function ProductCard({ product }: { product: ProductItem }) {
 
   const href = `/products/${product?.category?.trim().toLowerCase().replace(/\s+/g, "-")}/${product.slug}`;
   const [rupees, paise] = product.price.toFixed(2).split(".");
+  const { mrp, percentOff } = priceDisplay(product.price, product.compareAtPrice);
 
   return (
     <div data-product-card className="group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border sm:rounded-3xl border-border bg-surface transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl">
@@ -69,6 +73,13 @@ export function ProductCard({ product }: { product: ProductItem }) {
             </div>
           )}
         </Link>
+
+        {/* Discount Badge */}
+        {mrp && percentOff > 0 && (
+          <span className="absolute bottom-2 left-2 rounded-full bg-brand-bright px-2 py-0.5 text-[10px] font-bold text-white sm:bottom-4 sm:left-4 sm:px-2.5 sm:py-1 sm:text-xs">
+            {percentOff}% OFF
+          </span>
+        )}
 
         {/* Category Badge */}
         <span className="absolute left-2 top-2 max-w-[calc(100%-3.5rem)] truncate rounded-full bg-black/70 px-2 py-0.5 text-[9px] font-medium uppercase tracking-wider text-white backdrop-blur sm:left-4 sm:top-4 sm:px-3 sm:py-1 sm:text-[10px]">
@@ -126,15 +137,20 @@ export function ProductCard({ product }: { product: ProductItem }) {
                 ₹{rupees}
               </span>
               <span className="pb-0.5 text-xs text-muted-foreground sm:pb-1 sm:text-sm">.{paise}</span>
+              {mrp && (
+                <span className="ml-1.5 pb-0.5 text-xs text-muted-foreground line-through sm:ml-2 sm:pb-1 sm:text-sm">
+                  ₹{mrp.toLocaleString("en-IN")}
+                </span>
+              )}
             </div>
           </div>
 
           {outOfStock ? (
-            <span className="rounded-full bg-red-500/10 px-2 py-0.5 text-[8px] sm:px-2.5 sm:py-1 sm:text-[11px] font-medium text-red-600">
+            <span className="rounded-full bg-danger/10 px-2 py-0.5 text-[8px] sm:px-2.5 sm:py-1 sm:text-[11px] font-medium text-danger">
               Out of stock
             </span>
           ) : stock !== null && stock <= lowStockThreshold ? (
-            <span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[8px] sm:px-2.5 sm:py-1 sm:text-[11px] font-medium text-amber-700 dark:text-amber-400">
+            <span className="rounded-full bg-warning/10 px-2 py-0.5 text-[8px] sm:px-2.5 sm:py-1 sm:text-[11px] font-medium text-warning ">
               Only {stock} left
             </span>
           ) : (
@@ -152,7 +168,7 @@ export function ProductCard({ product }: { product: ProductItem }) {
             // Several variants (or no data): choose on the product page.
             <Link
               href={href}
-              className="flex  items-center justify-center gap-2 rounded-full border border-[#003D29] py-1 text-xs font-semibold text-foreground transition-all hover:bg-[#003D29] hover:text-white dark:border-emerald-700 sm:py-3 sm:text-sm"
+              className="flex items-center justify-center gap-2 rounded-full border border-brand py-1 text-xs font-semibold text-foreground transition-all hover:bg-brand hover:text-white dark:border-brand sm:py-3 sm:text-sm"
             >
               {outOfStock
                 ? "View product"
@@ -163,10 +179,10 @@ export function ProductCard({ product }: { product: ProductItem }) {
                     : "View product"}
             </Link>
           ) : quantityInCart > 0 ? (
-            <div className="flex w-full items-center justify-between rounded-full border border-[#003D29] p-1">
+            <div className="flex w-full items-center justify-between rounded-full border border-brand p-1">
               <button
                 onClick={() => decrease(variantId)}
-                className="rounded-full p-2 hover:bg-[#003D29]/10"
+                className="rounded-full p-2 hover:bg-brand/10"
                 aria-label="Decrease quantity"
               >
                 <Minus size={16} />
@@ -175,7 +191,7 @@ export function ProductCard({ product }: { product: ProductItem }) {
               <button
                 onClick={() => increase(variantId)}
                 disabled={quantityInCart >= maxQuantity}
-                className="rounded-full p-2 hover:bg-[#003D29]/10 disabled:opacity-40"
+                className="rounded-full p-2 hover:bg-brand/10 disabled:opacity-40"
                 aria-label="Increase quantity"
               >
                 <Plus size={16} />
@@ -208,7 +224,7 @@ export function ProductCard({ product }: { product: ProductItem }) {
                   source: e.currentTarget,
                 });
               }}
-              className="flex w-full items-center justify-center gap-2 rounded-full bg-[#003D29] py-2.5 text-xs font-semibold text-white transition-all hover:bg-[#002B1D] active:scale-[0.98] sm:py-3 sm:text-sm"
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-brand py-2.5 text-xs font-semibold text-white transition-all hover:bg-brand-hover active:scale-[0.98] sm:py-3 sm:text-sm"
             >
               <ShoppingBag size={16} />
               Add to Cart

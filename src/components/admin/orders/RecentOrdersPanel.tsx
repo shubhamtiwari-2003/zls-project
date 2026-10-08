@@ -59,7 +59,7 @@ export function RecentOrdersPanel() {
       </div>
 
       {error ? (
-        <p className="p-6 text-sm text-red-600">Could not load orders.</p>
+        <p className="p-6 text-sm text-danger">Could not load orders.</p>
       ) : orders === null ? (
         <p className="p-6 text-sm text-muted-foreground">Loading...</p>
       ) : orders.length === 0 ? (

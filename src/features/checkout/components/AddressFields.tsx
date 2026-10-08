@@ -43,12 +43,12 @@ export function AddressFields({ address, errors, onChange, disabled }: AddressFi
             inputMode={field.inputMode}
             disabled={disabled}
             aria-invalid={!!errors[field.key]}
-            className={`mt-1.5 w-full rounded-xl border bg-background px-4 py-3 outline-none transition focus:ring-2 focus:ring-[#003D29]/20 ${
-              errors[field.key] ? "border-red-500" : "border-border"
+            className={`mt-1.5 w-full rounded-xl border bg-background px-4 py-3 outline-none transition focus:ring-2 focus:ring-brand/20 ${
+              errors[field.key] ? "border-danger" : "border-border"
             }`}
           />
           {errors[field.key] && (
-            <span className="mt-1 block text-xs text-red-600">{errors[field.key]}</span>
+            <span className="mt-1 block text-xs text-danger">{errors[field.key]}</span>
           )}
         </label>
       ))}

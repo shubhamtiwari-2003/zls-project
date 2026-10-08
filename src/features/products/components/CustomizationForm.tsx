@@ -101,7 +101,7 @@ function TextFieldInput({
         field={field}
         htmlFor={id}
         extra={
-          <span className={`text-xs tabular-nums ${count > field.config.maxLength ? "text-red-600" : "text-muted-foreground"}`}>
+          <span className={`text-xs tabular-nums ${count > field.config.maxLength ? "text-danger" : "text-muted-foreground"}`}>
             {count}/{field.config.maxLength}
           </span>
         }
@@ -125,7 +125,7 @@ function TextFieldInput({
         aria-describedby={error ? `${id}-error` : undefined}
         className={`mt-2 w-full rounded-xl border bg-background px-4 py-3 text-base outline-none focus:ring-2 focus:ring-foreground/10 ${
           field.config.uppercase ? "uppercase placeholder:normal-case" : ""
-        } ${error ? "border-red-500" : "border-border"}`}
+        } ${error ? "border-danger" : "border-border"}`}
       />
 
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs">
@@ -134,7 +134,7 @@ function TextFieldInput({
       </div>
 
       {error && (
-        <p id={`${id}-error`} className="mt-1 text-xs font-medium text-red-600">
+        <p id={`${id}-error`} className="mt-1 text-xs font-medium text-danger">
           {error}
         </p>
       )}
@@ -260,7 +260,7 @@ function PhotoFieldInput({
           </div>
 
           <div className="min-w-0 flex-1 text-sm">
-            <p className="font-medium text-green-700 dark:text-green-500">Photo uploaded</p>
+            <p className="font-medium text-success ">Photo uploaded</p>
             {photo.width && photo.height && (
               <p className="mt-0.5 text-xs text-muted-foreground">
                 {photo.width} × {photo.height}px
@@ -268,7 +268,7 @@ function PhotoFieldInput({
             )}
 
             {warning && (
-              <p className="mt-2 flex items-start gap-1.5 rounded-lg bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-400">
+              <p className="mt-2 flex items-start gap-1.5 rounded-lg bg-warning/10 px-3 py-2 text-xs text-warning ">
                 <AlertTriangle size={14} className="mt-0.5 shrink-0" />
                 {warning}
               </p>
@@ -292,7 +292,7 @@ function PhotoFieldInput({
                 type="button"
                 onClick={() => onChange(field.key, "")}
                 disabled={uploading}
-                className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-red-600"
+                className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-danger"
               >
                 <Trash2 size={14} />
                 Remove
@@ -305,7 +305,7 @@ function PhotoFieldInput({
           <label
             htmlFor={id}
             className={`mt-2 flex w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-4 py-6 text-center transition hover:border-foreground/40 ${
-              error ? "border-red-500" : "border-border"
+              error ? "border-danger" : "border-border"
             }`}
           >
             {uploading ? (
@@ -332,7 +332,7 @@ function PhotoFieldInput({
 
       {pricing && <p className="mt-2 text-xs text-muted-foreground">{pricing}</p>}
 
-      {error && <p className="mt-1 text-xs font-medium text-red-600">{error}</p>}
+      {error && <p className="mt-1 text-xs font-medium text-danger">{error}</p>}
     </div>
   );
 }

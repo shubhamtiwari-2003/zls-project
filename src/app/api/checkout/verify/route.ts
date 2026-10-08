@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { verifyPaymentSignature } from "@/lib/razorpay.server";
-import { markOrderPaid } from "@/lib/orders.server";
+import { fetchRazorpayPayment, verifyPaymentSignature } from "@/lib/razorpay.server";
+import { markOrderPaid, recordPaymentDetails } from "@/lib/orders.server";
 
 export const runtime = "nodejs";
 
@@ -57,6 +57,14 @@ export async function POST(request: Request) {
 
     if (!verifyPaymentSignature(razorpayOrderId, razorpayPaymentId, signature)) {
       return NextResponse.json({ error: "Payment verification failed." }, { status: 400 });
+    }
+
+    // Payment method and fee, saved before the invoice is issued. Optional:
+    // a Razorpay hiccup here must not stop the order being marked paid.
+    try {
+      await recordPaymentDetails(admin, razorpayOrderId, await fetchRazorpayPayment(razorpayPaymentId));
+    } catch (detailsError) {
+      console.error("Fetch payment details error:", detailsError);
     }
 
     const result = await markOrderPaid(admin, { razorpayOrderId, razorpayPaymentId });

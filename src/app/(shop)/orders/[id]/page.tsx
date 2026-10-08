@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { Check, CheckCircle2, Clock, ExternalLink, PackageCheck, Truck, XCircle } from "lucide-react";
+import { Check, CheckCircle2, Clock, ExternalLink, FileDown, PackageCheck, Truck, XCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { formatINR } from "@/lib/shop-config";
 import { FULFILLMENT_LABELS, FULFILLMENT_STEPS, fulfillmentStepIndex, type FulfillmentStatus } from "@/lib/order-status";
@@ -113,7 +113,7 @@ export default async function OrderPage({ params }: OrderPageProps) {
       <section className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
         <div className="text-center">
           <StatusIcon
-            className={`mx-auto h-14 w-14 ${paid ? "text-green-600" : canceled ? "text-red-500" : "text-amber-500"}`}
+            className={`mx-auto h-14 w-14 ${paid ? "text-success" : canceled ? "text-danger" : "text-warning"}`}
           />
           <h1 className="mt-4 text-3xl font-bold">{heading}</h1>
           <p className="mt-2 text-muted-foreground">
@@ -130,6 +130,17 @@ export default async function OrderPage({ params }: OrderPageProps) {
           <p className="mt-2 text-sm text-muted-foreground">
             Order <span className="font-mono font-semibold text-foreground">{order.order_number}</span>
           </p>
+
+          {/* Invoice (issued when the payment succeeds) */}
+          {paid && (
+            <a
+              href={`/api/invoices/${order.id}`}
+              className="mt-5 inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-medium transition hover:bg-surface"
+            >
+              <FileDown className="h-4 w-4" />
+              Download invoice
+            </a>
+          )}
         </div>
 
         {/* Shipping progress */}
@@ -142,7 +153,7 @@ export default async function OrderPage({ params }: OrderPageProps) {
                   <li key={s.value} className="flex flex-col items-center text-center">
                     <span
                       className={`flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-bold ${
-                        done ? "border-green-600 bg-green-600 text-white" : "border-border text-muted-foreground"
+                        done ? "border-success bg-success text-white" : "border-border text-muted-foreground"
                       }`}
                     >
                       {done ? <Check size={14} /> : index + 1}
@@ -170,7 +181,7 @@ export default async function OrderPage({ params }: OrderPageProps) {
                     href={order.tracking_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 font-medium text-blue-600 hover:underline"
+                    className="inline-flex items-center gap-1 font-medium text-info hover:underline"
                   >
                     Track shipment <ExternalLink size={14} />
                   </a>
@@ -200,7 +211,7 @@ export default async function OrderPage({ params }: OrderPageProps) {
               <span>{formatINR(Number(order.subtotal_amount))}</span>
             </div>
             {Number(order.discount_amount) > 0 && (
-              <div className="flex justify-between text-green-700 dark:text-green-400">
+              <div className="flex justify-between text-success ">
                 <span>Coupon{order.coupon_code ? ` (${order.coupon_code})` : ""}</span>
                 <span>−{formatINR(Number(order.discount_amount))}</span>
               </div>

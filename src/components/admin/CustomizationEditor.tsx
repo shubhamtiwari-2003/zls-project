@@ -149,7 +149,7 @@ export function CustomizationEditor({ fields, onChange, basePrice, disabled }: C
                 type="button"
                 onClick={() => remove(field.uid)}
                 disabled={disabled}
-                className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-muted-foreground hover:text-red-500"
+                className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-muted-foreground hover:text-danger"
               >
                 <Trash2 size={14} />
                 Remove
@@ -181,7 +181,7 @@ export function CustomizationEditor({ fields, onChange, basePrice, disabled }: C
                       );
                   update(field.uid, { ...field, label, key });
                 }}
-                className={`${inputClass} ${field.label.trim() ? "" : "border-amber-500"}`}
+                className={`${inputClass} ${field.label.trim() ? "" : "border-warning"}`}
               />
             </div>
 
@@ -207,7 +207,7 @@ export function CustomizationEditor({ fields, onChange, basePrice, disabled }: C
               checked={field.required}
               disabled={disabled}
               onChange={(e) => update(field.uid, { ...field, required: e.target.checked })}
-              className="accent-[#003D29]"
+              className="accent-brand"
             />
             Customer must fill this in
           </label>
@@ -325,7 +325,7 @@ function TextRules({
             onChange={(e) =>
               set({ maxLength: Math.min(parseWholeNumber(e.target.value) ?? 0, MAX_TEXT_LENGTH) })
             }
-            className={`${inputClass} ${config.maxLength < 1 ? "border-amber-500" : ""}`}
+            className={`${inputClass} ${config.maxLength < 1 ? "border-warning" : ""}`}
           />
         </div>
       </div>
@@ -367,7 +367,7 @@ function TextRules({
             checked={config.allowSpaces}
             disabled={disabled}
             onChange={(e) => set({ allowSpaces: e.target.checked })}
-            className="accent-[#003D29]"
+            className="accent-brand"
           />
           Allow spaces
         </label>
@@ -377,7 +377,7 @@ function TextRules({
             checked={config.uppercase}
             disabled={disabled}
             onChange={(e) => set({ uppercase: e.target.checked })}
-            className="accent-[#003D29]"
+            className="accent-brand"
           />
           Convert to CAPITALS
         </label>
@@ -658,7 +658,7 @@ function TierEditor({
         );
       })}
 
-      {gap && <p className="text-xs text-amber-600">Add a row that goes up to {maxLength} characters.</p>}
+      {gap && <p className="text-xs text-warning">Add a row that goes up to {maxLength} characters.</p>}
 
       <button
         type="button"
@@ -724,7 +724,7 @@ function PricePreview({ field, basePrice }: { field: CustomizationFieldDraft; ba
                 {text || "—"} <span className="font-normal text-muted-foreground">({countChars(text)} chars)</span>
               </span>
               {error ? (
-                <span className="shrink-0 text-amber-600">{error}</span>
+                <span className="shrink-0 text-warning">{error}</span>
               ) : (
                 <span className="shrink-0 tabular-nums">
                   {formatINR(basePrice)} + {formatINR(addOn)} ={" "}

@@ -51,12 +51,12 @@ interface VariantQueryRow {
 const MAX_STOCK = 100000;
 
 function stockStatus(stock: number, lowStockThreshold: number) {
-  if (stock < 0) return { label: "Oversold", className: "bg-red-500/10 text-red-600" };
-  if (stock === 0) return { label: "Out of stock", className: "bg-red-500/10 text-red-600" };
+  if (stock < 0) return { label: "Oversold", className: "bg-danger/10 text-danger" };
+  if (stock === 0) return { label: "Out of stock", className: "bg-danger/10 text-danger" };
   if (stock <= lowStockThreshold) {
-    return { label: "Low stock", className: "bg-amber-500/10 text-amber-700 dark:text-amber-400" };
+    return { label: "Low stock", className: "bg-warning/10 text-warning " };
   }
-  return { label: "In stock", className: "bg-green-500/10 text-green-700 dark:text-green-400" };
+  return { label: "In stock", className: "bg-success/10 text-success " };
 }
 
 export default function Inventory() {
@@ -287,7 +287,7 @@ export default function Inventory() {
       </div>
 
       {error && (
-        <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-600">
+        <div className="rounded-xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">
           {error}
         </div>
       )}
@@ -441,7 +441,7 @@ export default function Inventory() {
                           )}
                         </div>
 
-                        {rowErrors[row.id] && <p className="mt-2 text-xs text-red-600">{rowErrors[row.id]}</p>}
+                        {rowErrors[row.id] && <p className="mt-2 text-xs text-danger">{rowErrors[row.id]}</p>}
 
                         {row.updatedAt && !rowErrors[row.id] && (
                           <p className="mt-2 text-xs text-muted-foreground">
