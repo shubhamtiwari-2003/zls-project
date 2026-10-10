@@ -6,6 +6,7 @@ import { ArrowRight, Eye, EyeOff, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
 import { safeNextPath } from "@/lib/safe-redirect";
+import { useAuthStore } from "@/features/auth/store/authStore";
 import { GoogleButton } from "@/features/auth/components/GoogleButton";
 import { OAuthError } from "@/features/auth/components/OAuthError";
 
@@ -39,6 +40,9 @@ export default function SignInPage() {
       setLoading(false);
       return;
     }
+
+    // The header learns about the new session without a page reload.
+    await useAuthStore.getState().reload();
 
     router.push(getNextPath());
     router.refresh();

@@ -1,8 +1,22 @@
 "use client";
 
 import { create } from "zustand";
-import { User } from "@supabase/supabase-js";
-import { supabase } from "@/lib/supabase/client";
+import type { User } from "@supabase/supabase-js";
+import { getSupabase } from "@/lib/supabase/lazy";
+
+/**
+ * Supabase keeps the login session in a cookie named
+ * sb-<project>-auth-token (split into .0, .1… when long). No such cookie
+ * means nobody is logged in in this browser, so the Supabase library
+ * doesn't need to be downloaded at all (most visitors). Sign-in pages load
+ * it themselves; Google sign-in returns with a full page load, and
+ * email sign-in calls reload() below.
+ */
+const SESSION_COOKIE = /(?:^|;\s*)sb-[^=]*-auth-token(?:\.\d+)?=/;
+const hasSessionCookie = () => typeof document !== "undefined" && SESSION_COOKIE.test(document.cookie);
+
+// onAuthStateChange is subscribed once per page load.
+let subscribed = false;
 
 /* -------------------------------------------------------------------------- */
 /*                                   Profile                                  */
@@ -44,6 +58,9 @@ interface AuthState {
   // Initialize authentication
   initialize: () => Promise<void>;
 
+  // Re-read the session (after signing in on this page without a reload)
+  reload: () => Promise<void>;
+
   // Fetch profile using auth user ID
   fetchProfile: (userId: string) => Promise<void>;
 
@@ -73,10 +90,24 @@ initialize: async () => {
     return;
   }
 
+  // Logged out: nothing to load.
+  if (!hasSessionCookie()) {
+    set({
+      user: null,
+      profile: null,
+      loading: false,
+      initialized: true,
+    });
+
+    return;
+  }
+
   try {
     set({
       loading: true,
     });
+
+    const supabase = await getSupabase();
 
     const {
       data: { session },
@@ -116,6 +147,9 @@ initialize: async () => {
       initialized: true,
     });
 
+    if (subscribed) return;
+    subscribed = true;
+
     supabase.auth.onAuthStateChange((_event, session) => {
       const user = session?.user ?? null;
 
@@ -147,12 +181,18 @@ initialize: async () => {
   }
 },
 
+  reload: async () => {
+    set({ initialized: false });
+    await get().initialize();
+  },
+
   /* ---------------------------------------------------------------------- */
   /*                             Fetch Profile                              */
   /* ---------------------------------------------------------------------- */
 
   fetchProfile: async (userId: string) => {
     try {
+      const supabase = await getSupabase();
       const {
         data,
         error,
@@ -194,6 +234,7 @@ initialize: async () => {
         loading: true,
       });
 
+      const supabase = await getSupabase();
       const { error } = await supabase.auth.signOut();
 
       if (error) {

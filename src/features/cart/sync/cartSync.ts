@@ -1,6 +1,6 @@
 "use client";
 
-import { supabase } from "@/lib/supabase/client";
+import { getSupabase } from "@/lib/supabase/lazy";
 import { variantImageUrl, type VariantValueImageJoin } from "@/lib/variants";
 import {
   cartLineKey,
@@ -68,6 +68,7 @@ const toSyncedMap = (items: CartItem[]): SyncedMap =>
   );
 
 async function fetchServerCart(userId: string): Promise<CartItem[]> {
+  const supabase = await getSupabase();
   const { data, error } = await supabase
     .from("cart_items")
     .select(
@@ -165,6 +166,7 @@ export function startCartSync(userId: string): () => void {
     flushing = true;
 
     try {
+      const supabase = await getSupabase();
       do {
         dirtyWhileFlushing = false;
 

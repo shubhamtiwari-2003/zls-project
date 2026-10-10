@@ -13,7 +13,12 @@ import { AccountMenu } from "./AccountMenu";
 import white_logo from "../../../public/optimized/logo-text-white-320.webp";
 import black_logo from "../../../public/optimized/logo-text-black-320.webp";
 import ThemeToggle from "../shared/toggleTheme";
-import { CartDrawer } from "@/features/cart/components/CartDrawer";
+import dynamic from "next/dynamic";
+
+// The cart drawer (and its UI library) loads only when it's about to be
+// used: hovering, focusing or touching the cart icon, or opening it.
+const loadCartDrawer = () => import("@/features/cart/components/CartDrawer");
+const CartDrawer = dynamic(() => loadCartDrawer().then((module) => module.CartDrawer), { ssr: false });
 import { useCartStore } from "@/features/cart/store/cartStore";
 import { useHydrated } from "@/hooks/useHydrated";
 import {
@@ -31,6 +36,16 @@ interface HeaderProps {
 
 export function Header({ categories }: HeaderProps) {
   const [isCartOpen, setIsCartOpen] = useState(false);
+  // Mounted after the first sign of interest, so the drawer can animate open.
+  const [cartWanted, setCartWanted] = useState(false);
+  const prepareCart = () => {
+    void loadCartDrawer();
+    setCartWanted(true);
+  };
+  const openCart = () => {
+    setCartWanted(true);
+    setIsCartOpen(true);
+  };
   // Phones: the search bar opens below the header from a search icon.
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const hydrated = useHydrated();
@@ -61,7 +76,7 @@ export function Header({ categories }: HeaderProps) {
       await flyToCart(image, from, icon);
       bumpCartIcon(icon);
     };
-    const onOpen = () => setIsCartOpen(true);
+    const onOpen = () => openCart();
 
     window.addEventListener(CART_ADDED_EVENT, onAdded);
     window.addEventListener(CART_OPEN_EVENT, onOpen);
@@ -153,7 +168,10 @@ export function Header({ categories }: HeaderProps) {
               <button
                 type="button"
                 ref={cartButtonRef}
-                onClick={() => setIsCartOpen(true)}
+                onClick={openCart}
+                onPointerEnter={prepareCart}
+                onFocus={prepareCart}
+                onTouchStart={prepareCart}
                 className="relative text-foreground hover:text-brand-bright"
                 aria-label={`Open cart (${hydrated ? cartCount : 0} items)`}
               >
@@ -165,10 +183,12 @@ export function Header({ categories }: HeaderProps) {
                 )}
               </button>
 
+              {cartWanted && (
               <CartDrawer
                 isOpen={isCartOpen}
                 onClose={() => setIsCartOpen(false)}
               />
+              )}
             </div>
           </div>
 
