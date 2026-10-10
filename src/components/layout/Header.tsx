@@ -110,7 +110,6 @@ export function Header({ categories }: HeaderProps) {
                 alt="Z Factor Studio"
                 sizes="(min-width: 640px) 160px, 128px"
                 className="hidden h-auto w-32 sm:w-40 dark:block "
-                priority
               />
 
               {/* Dark theme → White logo */}
@@ -119,7 +118,6 @@ export function Header({ categories }: HeaderProps) {
                 alt="Z Factor Studio"
                 sizes="(min-width: 640px) 160px, 128px"
                 className="block h-auto w-32 sm:w-40 dark:hidden"
-                priority
               />
             </Link>
             </div>

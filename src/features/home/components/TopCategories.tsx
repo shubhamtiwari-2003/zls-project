@@ -88,7 +88,7 @@ export function TopCategories({ categories }: { categories: CategoryTile[] }) {
         ref={trackRef}
         className="grid snap-x snap-mandatory auto-cols-[calc((100%-0.75rem)/2.15)] grid-flow-col gap-3 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] sm:auto-cols-[calc((100%-2rem)/3)] sm:gap-4 lg:auto-cols-[calc((100%-3rem)/4)] [&::-webkit-scrollbar]:hidden"
       >
-        {categories.map((category, index) => (
+        {categories.map((category) => (
           <li key={category.id} className="snap-start">
             <Link href={`/products/${category.slug}`} className="group block rounded-2xl outline-offset-4">
               <div className="relative aspect-square overflow-hidden rounded-2xl bg-muted">
@@ -97,7 +97,6 @@ export function TopCategories({ categories }: { categories: CategoryTile[] }) {
                     src={category.image}
                     alt=""
                     fill
-                    priority={index < 4}
                     sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 47vw"
                     className="object-cover transition duration-500 group-hover:scale-105"
                   />

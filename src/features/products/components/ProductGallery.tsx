@@ -100,7 +100,8 @@ export function ProductGallery({ images, name, selected, onSelect }: ProductGall
                 src={image.url}
                 alt={image.alt}
                 fill
-                priority={i === 0}
+                preload={i === 0}
+                fetchPriority={i === 0 ? "high" : undefined}
                 sizes="(min-width: 1280px) 600px, (min-width: 1024px) 45vw, calc(100vw - 64px)"
                 className="object-contain p-4"
                 draggable={false}

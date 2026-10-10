@@ -63,7 +63,8 @@ export function ProductCard({ product, priority = false }: { product: ProductIte
               src={product.imageUrl}
               alt={product.title}
               fill
-              priority={priority}
+              preload={priority}
+              fetchPriority={priority ? "high" : undefined}
               sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
               className="object-cover"
             />
