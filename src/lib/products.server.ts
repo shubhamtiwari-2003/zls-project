@@ -1,7 +1,8 @@
 import "server-only";
 
 import { cache } from "react";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/public";
+import { storefrontCache } from "@/lib/storefront-cache";
 import { purchasableStock, type InventoryJoin } from "@/lib/stock";
 import { productCardVariantFields, type VariantSummaryRow } from "@/lib/variants";
 import type { ProductItem } from "@/features/products/components/ProductCard";
@@ -115,9 +116,8 @@ interface ProductDetailRow {
  * inactive/draft, or is in another category. Cached per request so
  * metadata and the page share one query.
  */
-export const getProductDetail = cache(
-  async (categorySlug: string, productSlug: string): Promise<ProductDetail | null> => {
-    const supabase = await createClient();
+async function loadProductDetail(categorySlug: string, productSlug: string): Promise<ProductDetail | null> {
+    const supabase = createPublicClient();
 
     const { data, error } = await supabase
       .from("products")
@@ -140,10 +140,7 @@ export const getProductDetail = cache(
       .limit(1)
       .maybeSingle();
 
-    if (error) {
-      console.error("Product detail error:", error);
-      return null;
-    }
+    if (error) throw new Error(`Product detail: ${error.message}`);
 
     const row = data as unknown as ProductDetailRow | null;
 
@@ -220,15 +217,17 @@ export const getProductDetail = cache(
       customizationFields: readFieldRows(row.product_customization_fields),
       details: readProductDetails(row),
     };
-  }
-);
+}
+
+/** Cached (see storefront-cache.ts); also shared by the page and its metadata. */
+export const getProductDetail = cache(storefrontCache("product", loadProductDetail, () => null));
 
 /** Other active products from the same category, for "You may also like". */
-export async function getRelatedProducts(
+async function loadRelatedProducts(
   product: Pick<ProductDetail, "id" | "category">,
   limit = 4
 ): Promise<ProductItem[]> {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   const { data, error } = await supabase
     .from("products")
@@ -244,10 +243,7 @@ export async function getRelatedProducts(
     .order("created_at", { ascending: false })
     .limit(limit * 2);
 
-  if (error) {
-    console.error("Related products error:", error);
-    return [];
-  }
+  if (error) throw new Error(`Related products: ${error.message}`);
 
   return (data ?? [])
     .filter((row) => row.status?.toLowerCase() !== "draft")
@@ -276,3 +272,8 @@ export async function getRelatedProducts(
       };
     });
 }
+
+/** Cached (see storefront-cache.ts). Only the id and category are used, so only they go into the cache key. */
+const cachedRelatedProducts = storefrontCache("related", loadRelatedProducts, () => []);
+export const getRelatedProducts = (product: Pick<ProductDetail, "id" | "category">, limit = 4) =>
+  cachedRelatedProducts({ id: product.id, category: product.category }, limit);

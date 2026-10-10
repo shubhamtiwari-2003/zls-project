@@ -4,6 +4,7 @@ import {
   Boxes,
   ChartColumn,
   CreditCard,
+  FolderTree,
   Layers,
   LayoutDashboard,
   Megaphone,
@@ -46,6 +47,7 @@ const MENU: { label: string; items: MenuItem[] }[] = [
       { label: "Overview", tab: "overview", icon: LayoutDashboard },
       { label: "Orders", tab: "orders", icon: ShoppingCart },
       { label: "Products", tab: "products", icon: Package },
+      { label: "Categories", tab: "categories", icon: FolderTree },
       { label: "Inventory", tab: "inventory", icon: Boxes },
       { label: "Coupons", tab: "coupons", icon: TicketPercent },
       { label: "Promotions", tab: "promotions", icon: Megaphone },
@@ -98,12 +100,12 @@ export function Sidebar() {
     <SidebarRoot collapsible="icon">
       {/* Logo */}
       <SidebarHeader className="border-b border-sidebar-border">
-        <SidebarMenu>
+        <SidebarMenu>Z Factor Studio
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" tooltip="Z Layer Studio" onClick={() => changeTab("overview")}>
               <div className="flex aspect-square size-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                 <Layers className="size-4" />
-              </div>
+              </div>Z Factor Studio
               <div className="grid flex-1 text-left leading-tight">
                 <span className="truncate font-bold">Z Layer Studio</span>
                 <span className="truncate text-xs text-muted-foreground">Admin Panel</span>

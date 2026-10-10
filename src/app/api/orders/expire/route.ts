@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { expireStaleOrders } from "@/lib/orders.server";
-import { getShopSettings } from "@/lib/shop-settings.server";
+import { getFreshShopSettings } from "@/lib/shop-settings.server";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +21,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const { orderReservationMinutes } = await getShopSettings();
+    const { orderReservationMinutes } = await getFreshShopSettings();
     const expired = await expireStaleOrders(createAdminClient(), orderReservationMinutes);
 
     return NextResponse.json({ success: true, expired });

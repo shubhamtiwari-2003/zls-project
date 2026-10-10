@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { Loader2, Minus, Plus, Search } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
+import { refreshStorefront } from "@/lib/refresh-storefront";
 import { useShopSettings } from "@/components/providers/ShopSettingsProvider";
 import { variantImageUrl, type VariantValueImageJoin } from "@/lib/variants";
 
@@ -213,6 +214,8 @@ export default function Inventory() {
       return;
     }
 
+    refreshStorefront();
+
     setRows((current) =>
       current.map((r) =>
         r.id === row.id
@@ -252,6 +255,8 @@ export default function Inventory() {
       }));
       return;
     }
+
+    refreshStorefront();
 
     // Policy is per product: applies to all its variants.
     setRows((current) =>

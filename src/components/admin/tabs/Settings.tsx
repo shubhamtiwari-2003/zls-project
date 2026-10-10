@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Boxes, Clock, Info, Loader2, Save, Truck } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
+import { refreshStorefront } from "@/lib/refresh-storefront";
 import { parseWholeNumber } from "@/lib/number-input";
 import {
   MAX_QTY_LIMIT,
@@ -145,6 +146,8 @@ export default function Settings() {
       setMessage({ type: "error", text: error?.message ?? "Could not save. Are you signed in as an admin?" });
       return;
     }
+
+    refreshStorefront();
 
     const next = toDraft(values);
     setDraft(next);

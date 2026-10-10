@@ -87,7 +87,7 @@ export default function SignUpPage() {
               </h2>
 
               <p className="mt-8 text-lg leading-8 text-muted-foreground">
-                Become part of the Z Layer Studio community and enjoy early
+                Become part of the Z Factor Studio community and enjoy early
                 access, wishlist syncing and seamless order tracking.
               </p>
 
@@ -127,7 +127,7 @@ export default function SignUpPage() {
                 <div className="text-center">
                   <h2 className="text-3xl font-bold">Create account</h2>
                   <p className="mt-2 text-sm text-muted-foreground">
-                    Start your Z Layer Studio journey
+                    Start your Z Factor Studio journey
                   </p>
                 </div>
 

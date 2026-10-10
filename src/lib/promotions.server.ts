@@ -1,7 +1,8 @@
 import "server-only";
 
 import { cache } from "react";
-import { createClient } from "@supabase/supabase-js";
+import { createPublicClient } from "@/lib/supabase/public";
+import { storefrontCache } from "@/lib/storefront-cache";
 import { NO_PROMOTIONS, PROMOTION_SELECT, type LivePromotions, type Promotion } from "@/lib/promotions";
 
 type Row = Promotion & { promo_campaigns: { priority: number } | { priority: number }[] | null };
@@ -15,12 +16,8 @@ type Row = Promotion & { promo_campaigns: { priority: number } | { priority: num
  * Falls back to nothing (the site shows its defaults) if the table is
  * missing or the read fails.
  */
-export const getLivePromotions = cache(async (): Promise<LivePromotions> => {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { auth: { persistSession: false, autoRefreshToken: false } }
-  );
+async function loadLivePromotions(): Promise<LivePromotions> {
+  const supabase = createPublicClient();
 
   const { data, error } = await supabase
     .from("promotions")
@@ -29,8 +26,8 @@ export const getLivePromotions = cache(async (): Promise<LivePromotions> => {
 
   if (error) {
     // Before the promotions migration runs, the table doesn't exist.
-    if (!error.message.includes("promotions")) console.error("Promotions error:", error);
-    return NO_PROMOTIONS;
+    if (error.message.includes("promotions")) return NO_PROMOTIONS;
+    throw new Error(`Promotions: ${error.message}`);
   }
 
   const priority = (row: Row) => {
@@ -53,4 +50,7 @@ export const getLivePromotions = cache(async (): Promise<LivePromotions> => {
     popup: of("popup")[0] ?? null,
     productNotices: of("product_notice"),
   };
-});
+}
+
+/** Cached (see storefront-cache.ts): a campaign appears or ends within a minute of its time. */
+export const getLivePromotions = cache(storefrontCache("promotions", loadLivePromotions, () => NO_PROMOTIONS));

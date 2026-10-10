@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 
 import { supabase } from "@/lib/supabase/client";
+import { refreshStorefront } from "@/lib/refresh-storefront";
 import { slugify } from "@/lib/slugify";
 import { parseWholeNumber, showWholeNumber } from "@/lib/number-input";
 
@@ -1126,6 +1127,9 @@ export default function AddEditProductDrawer({
       /* ===================================================
          SUCCESS
       =================================================== */
+
+      // Show the change on the shop straight away.
+      refreshStorefront();
 
       setSuccess(
         product

@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
+import { FaInstagram, FaTwitter, FaYoutube, FaLinkedin } from 'react-icons/fa';
 // import { Instagram, Twitter, Youtube, Mail, Phone } from "lucide-react";
 import { useState } from "react";
-import black_logo from "../../../public/Logo_black.png"
+import black_logo from "../../../public/optimized/logo-mark-256.webp"
 import { BUSINESS, formatAddress, operatedBy } from "@/lib/business";
 import { LEGAL_PAGES } from "@/lib/legal-pages";
 
@@ -26,16 +28,16 @@ export function Footer() {
           <div className="col-span-2 md:col-span-2 lg:col-span-4 flex flex-col items-start pr-0 lg:pr-8">
             {/* Pop-Art Logo Style */}
             <Link href="/" className=" group mb-4 ">
-              <img src={black_logo.src} alt="Z Layer Studio" className="w-24 h-24 sm:w-32 sm:h-32"/>
+              <Image src={black_logo} alt="Z Factor Studio" sizes="(min-width: 640px) 128px, 96px" className="w-24 h-24 sm:w-32 sm:h-32"/>
             </Link>
 
             <p className="text-xs sm:text-[13px] text-zinc-400 leading-relaxed max-w-sm font-light">
               Made for the obsession. Enthusiast collectibles — numbered, made-to-order on Bambu Lab P2S, hand-finished and shipped from{" "}
-              <strong className="text-white font-medium">Pune & Gurgaon</strong>.
+              <strong className="text-white font-medium">Pune</strong>.
             </p>
 
             {/* Social Icons */}
-            {/* <div className="flex items-center gap-3 mt-6">
+            <div className="flex items-center gap-3 mt-6">
               <a
                 href="https://instagram.com"
                 target="_blank"
@@ -43,27 +45,10 @@ export function Footer() {
                 aria-label="Instagram"
                 className="w-8 h-8 rounded-full bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 hover:text-white flex items-center justify-center transition"
               >
-                <Instagram className="w-4 h-4" />
+                <FaInstagram className="w-4 h-4" />
               </a>
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Twitter / X"
-                className="w-8 h-8 rounded-full bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 hover:text-white flex items-center justify-center transition"
-              >
-                <Twitter className="w-4 h-4" />
-              </a>
-              <a
-                href="https://youtube.com"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="YouTube"
-                className="w-8 h-8 rounded-full bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 hover:text-white flex items-center justify-center transition"
-              >
-                <Youtube className="w-4 h-4" />
-              </a>
-            </div> */}
+              
+            </div>
           </div>
 
           {/* Links Column 1: Tribes (Span 2) */}

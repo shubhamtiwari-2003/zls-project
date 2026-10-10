@@ -9,7 +9,7 @@ import {
 } from "@/lib/checkout-validation";
 import { createRazorpayOrder, razorpayKeyId } from "@/lib/razorpay.server";
 import { cancelOrder, expireStaleOrders } from "@/lib/orders.server";
-import { getShopSettings } from "@/lib/shop-settings.server";
+import { getFreshShopSettings } from "@/lib/shop-settings.server";
 
 export const runtime = "nodejs";
 
@@ -58,7 +58,7 @@ export async function POST(request: Request) {
     }
 
     // Store rules from Admin → Settings (shipping, limits, reservation time).
-    const settings = await getShopSettings();
+    const settings = await getFreshShopSettings();
     const items = parseCartItems(body?.items, settings.maxQtyPerItem);
 
     if (!items) {

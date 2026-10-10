@@ -7,7 +7,7 @@ import { formatINR } from "@/lib/shop-config";
 import { TONE_CLASSES, orderStatusBadge } from "@/lib/order-status";
 
 export const metadata: Metadata = {
-  title: "My Orders | Z Layer Studio",
+  title: "My Orders | Z Factor Studio",
 };
 
 interface OrderListRow {

@@ -26,14 +26,14 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const { "category-name": categorySlug, "product-name": productSlug } = await params;
   const product = await getProductDetail(categorySlug, productSlug);
 
-  if (!product) return { title: "Product not found | Z Layer Studio" };
+  if (!product) return { title: "Product not found | Z Factor Studio" };
 
   const description =
     product.description?.slice(0, 160) ||
-    `${product.name} — from ${formatINR(product.price)} at Z Layer Studio.`;
+    `${product.name} — from ${formatINR(product.price)} at Z Factor Studio.`;
 
   return {
-    title: `${product.name} | Z Layer Studio`,
+    title: `${product.name} | Z Factor Studio`,
     description,
     openGraph: {
       title: product.name,

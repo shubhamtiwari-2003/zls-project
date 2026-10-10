@@ -6,7 +6,7 @@ import type { SavedAddress } from "@/lib/checkout-validation";
 import { CheckoutForm } from "@/features/checkout/components/CheckoutForm";
 
 export const metadata: Metadata = {
-  title: "Checkout | Z Layer Studio",
+  title: "Checkout | Z Factor Studio",
 };
 
 export default async function CheckoutPage() {

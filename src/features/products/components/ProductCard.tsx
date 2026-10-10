@@ -33,7 +33,8 @@ export interface ProductItem {
   isCustomizable?: boolean;
 }
 
-export function ProductCard({ product }: { product: ProductItem }) {
+/** `priority`: load the photo straight away (the first cards on a page, which are visible without scrolling). */
+export function ProductCard({ product, priority = false }: { product: ProductItem; priority?: boolean }) {
   const [liked, setLiked] = useState(false);
   const hydrated = useHydrated();
   const { lowStockThreshold, maxQtyPerItem } = useShopSettings();
@@ -62,6 +63,7 @@ export function ProductCard({ product }: { product: ProductItem }) {
               src={product.imageUrl}
               alt={product.title}
               fill
+              priority={priority}
               sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
               className="object-cover"
             />

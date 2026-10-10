@@ -1,7 +1,9 @@
 import "server-only";
 
 import { cache } from "react";
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { createPublicClient } from "@/lib/supabase/public";
+import { storefrontCache } from "@/lib/storefront-cache";
 import {
   DEFAULT_SHOP_SETTINGS,
   SHOP_SETTINGS_SELECT,
@@ -26,17 +28,26 @@ export async function loadShopSettings(supabase: SupabaseClient): Promise<ShopSe
   return toShopSettings(data as ShopSettingsRow | null);
 }
 
-/**
- * Store rules for server components and route handlers, read once per
- * request. Public data, so a cookie-less client is used: reading it doesn't
- * make a page dynamic.
- */
-export const getShopSettings = cache(async (): Promise<ShopSettings> => {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { auth: { persistSession: false, autoRefreshToken: false } }
-  );
+/** Store rules, failing loudly (so a failed read is never cached). */
+async function loadShopSettingsOrThrow(): Promise<ShopSettings> {
+  const { data, error } = await createPublicClient()
+    .from("shop_settings")
+    .select(SHOP_SETTINGS_SELECT)
+    .eq("id", true)
+    .maybeSingle();
 
-  return loadShopSettings(supabase);
-});
+  if (error) throw new Error(`Shop settings: ${error.message}`);
+  return toShopSettings(data as ShopSettingsRow | null);
+}
+
+/**
+ * Store rules for pages (cached, see storefront-cache.ts; cleared when
+ * Admin → Settings is saved). Falls back to the defaults.
+ */
+export const getShopSettings = cache(storefrontCache("shop-settings", loadShopSettingsOrThrow, () => DEFAULT_SHOP_SETTINGS));
+
+/**
+ * Store rules read live, for checkout and pricing: shipping fees and limits
+ * must be exactly what's saved at the moment of the order.
+ */
+export const getFreshShopSettings = cache(async (): Promise<ShopSettings> => loadShopSettings(createPublicClient()));

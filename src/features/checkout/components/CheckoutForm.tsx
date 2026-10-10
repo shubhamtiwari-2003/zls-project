@@ -162,10 +162,10 @@ export function CheckoutForm({ email, defaultName, savedAddresses }: CheckoutFor
         amount: data.amount,
         currency: data.currency,
         order_id: data.razorpayOrderId,
-        name: "Z Layer Studio",
+        name: "Z Factor Studio",
         description: `Order ${data.orderNumber}`,
         prefill: data.prefill,
-        theme: { color: "#003D29" },
+        theme: { color: "#0440af" },
         timeout: paymentWindowMinutes * 60,
 
         handler: async (payment) => {

@@ -9,7 +9,7 @@ import { listAddresses } from "@/lib/addresses.server";
 import type { SavedAddress } from "@/lib/checkout-validation";
 
 export const metadata: Metadata = {
-  title: "Profile | Z Layer Studio",
+  title: "Profile | Z Factor Studio",
 };
 
 export default async function AccountPage() {

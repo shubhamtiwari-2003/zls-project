@@ -14,6 +14,7 @@ import AddEditProductDrawer from "@/components/admin/AddEditProductDrawer";
 import ProductPreviewDrawer from "@/components/admin/tabs/ProductPreviewDrawer";
 import { DeleteProductDialog } from "@/components/admin/DeleteProductDialog";
 import { supabase } from "@/lib/supabase/client";
+import { refreshStorefront } from "@/lib/refresh-storefront";
 import type {
     Product,
     ProductImage,
@@ -538,6 +539,8 @@ export default function Products() {
                 "Product was not deleted. You may not have permission."
             );
         }
+
+        refreshStorefront();
 
         /*
           Best-effort Cloudinary cleanup. If any

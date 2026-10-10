@@ -3,6 +3,7 @@
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { switchThemeSmoothly } from "@/lib/theme-transition";
 
 export default function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
@@ -22,7 +23,7 @@ export default function ThemeToggle() {
 
   return (
     <button
-      onClick={() => setTheme(isDark ? "light" : "dark")}
+      onClick={() => switchThemeSmoothly(setTheme, isDark ? "light" : "dark")}
       className="rounded-full p-2 border border-border bg-surface "
     >
       {isDark ? <Sun color="white" size={18} /> : <Moon  size={18} />}

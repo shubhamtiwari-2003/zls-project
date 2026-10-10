@@ -9,7 +9,7 @@ import { hasActiveFilters, parseProductFilters } from "@/lib/catalog";
 import { getActiveCategories, listProducts } from "@/lib/catalog.server";
 
 export const metadata: Metadata = {
-  title: "All Products | Z Layer Studio",
+  title: "All Products | Z Factor Studio",
 };
 
 interface AllProductsPageProps {
@@ -56,8 +56,8 @@ export default async function AllProductsPage({ searchParams }: AllProductsPageP
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-6 lg:grid-cols-4 xl:grid-cols-5">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
+            {products.map((product, index) => (
+              <ProductCard key={product.id} product={product} priority={index < 4} />
             ))}
           </div>
         )}

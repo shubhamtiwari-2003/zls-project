@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { applyCoupon, parseCartItems, priceCart } from "@/lib/pricing.server";
-import { getShopSettings } from "@/lib/shop-settings.server";
+import { getFreshShopSettings } from "@/lib/shop-settings.server";
 
 /**
  * Prices the cart from the database so the cart/checkout pages always show
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
 
-  const settings = await getShopSettings();
+  const settings = await getFreshShopSettings();
   const items = parseCartItems(body?.items, settings.maxQtyPerItem);
 
   if (!items) {

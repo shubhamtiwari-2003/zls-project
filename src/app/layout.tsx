@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Manrope } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers/theme-provider";
 import type { ReactNode } from "react";
@@ -10,14 +10,19 @@ import { ShopSettingsProvider } from "@/components/providers/ShopSettingsProvide
 import { getShopSettings } from "@/lib/shop-settings.server";
 
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Fonts are downloaded at build time and served with the site (no request
+// to Google, no text jump when they load). Used via --font-sans/--font-mono
+// in globals.css.
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -30,8 +35,8 @@ export default async function RootLayout({ children }: {children:ReactNode}) {
   const shopSettings = await getShopSettings();
 
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+    <html lang="en" className={`${manrope.variable} ${geistMono.variable}`} suppressHydrationWarning>
+      <body className="antialiased">
         <Providers>
           <ShopSettingsProvider settings={shopSettings}>
           <AuthProvider>

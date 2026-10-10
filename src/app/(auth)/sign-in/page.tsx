@@ -73,7 +73,7 @@ export default function SignInPage() {
 
               <p className="mt-8 text-lg leading-8 text-muted-foreground">
                 Sign in to manage orders, wishlist, addresses and get early access
-                to limited drops from Z Layer Studio.
+                to limited drops from Z Factor Studio.
               </p>
 
               <div className="mt-10 space-y-4">

@@ -32,6 +32,7 @@ import {
 import { useAuthStore } from "@/features/auth/store/authStore";
 import { BUSINESS } from "@/lib/business";
 import { NAV_LINKS } from "./nav-links";
+import { switchThemeSmoothly } from "@/lib/theme-transition";
 
 interface MobileMenuProps {
   categories: { name: string; slug: string }[];
@@ -178,7 +179,7 @@ export function MobileMenu({ categories }: MobileMenuProps) {
                   type="button"
                   role="radio"
                   aria-checked={selected}
-                  onClick={() => setTheme(value)}
+                  onClick={() => switchThemeSmoothly(setTheme, value)}
                   className={`flex items-center justify-center gap-2 rounded-lg py-2 text-sm font-medium transition ${
                     selected ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
                   }`}

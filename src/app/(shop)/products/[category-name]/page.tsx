@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ProductCard } from "@/features/products/components/ProductCard";
+import { ResponsiveImage } from "@/components/shared/ResponsiveImage";
 import { FilterBar } from "@/features/products/components/FilterBar";
 import Breadcrumb from "@/components/shared/Breadcrumb";
-import { createClient } from "@/lib/supabase/server";
 import { hasActiveFilters, parseProductFilters } from "@/lib/catalog";
-import { getActiveCategories, listProducts } from "@/lib/catalog.server";
+import { getActiveCategories, getCategoryBySlug as getCategory, listProducts } from "@/lib/catalog.server";
 
-import postersBanner from "../../../../../public/poster-banner.png";
+// Banner when the category has no photo of its own (Admin → Categories).
+import categoryBanner from "../../../../../public/optimized/category-banner-1920.webp";
+import categoryBannerMobile from "../../../../../public/optimized/category-banner-828.webp";
 
 interface CategoryPageProps {
   params: Promise<{
@@ -19,25 +20,11 @@ interface CategoryPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
-async function getCategory(slug: string) {
-  const supabase = await createClient();
-
-  const { data, error } = await supabase
-    .from("categories")
-    .select("id, name, slug, description, image_url")
-    .eq("slug", slug)
-    .eq("is_active", true)
-    .maybeSingle();
-
-  if (error) console.error("Category error:", error);
-  return data;
-}
-
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { "category-name": categorySlug } = await params;
   const category = await getCategory(categorySlug);
 
-  return { title: category ? `${category.name} | Z Layer Studio` : "Category not found | Z Layer Studio" };
+  return { title: category ? `${category.name} | Z Factor Studio` : "Category not found | Z Factor Studio" };
 }
 
 export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
@@ -60,12 +47,11 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     <main className="min-h-screen bg-background">
       {/* HERO */}
       <section className="relative h-55 overflow-hidden sm:h-80 lg:h-100">
-        <Image
-          src={category.image_url || postersBanner}
-          alt={`${category.name} collection`}
-          fill
+        <ResponsiveImage
+          desktop={category.image_url || categoryBanner}
+          mobile={category.image_url ? null : categoryBannerMobile}
+          alt={category.image_url ? `${category.name} collection` : ""}
           priority
-          sizes="100vw"
           className="object-cover"
         />
 
@@ -100,8 +86,8 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
             </div>
           ) : products.length > 0 ? (
             <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:gap-6 xl:grid-cols-4">
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
+              {products.map((product, index) => (
+                <ProductCard key={product.id} product={product} priority={index < 4} />
               ))}
             </div>
           ) : (

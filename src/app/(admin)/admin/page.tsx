@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import Overview from "@/components/admin/tabs/Overview"
 import Products from "@/components/admin/tabs/Products";
 import Inventory from "@/components/admin/tabs/Inventory";
+import Categories from "@/components/admin/tabs/Categories";
 import Coupons from "@/components/admin/tabs/Coupons";
 import Promotions from "@/components/admin/tabs/Promotions";
 import Orders from "@/components/admin/tabs/Orders";
@@ -23,6 +24,9 @@ export default function AdminPage() {
 
     case "products":
       return <Products/>;
+
+    case "categories":
+      return <Categories />;
 
     case "inventory":
       return <Inventory/>;

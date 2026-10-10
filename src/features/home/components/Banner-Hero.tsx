@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { ResponsiveImage } from "@/components/shared/ResponsiveImage";
 import { isExternalLink, type Promotion } from "@/lib/promotions";
-import banner from "../../../../public/hero-image2.png";
+import banner from "../../../../public/optimized/hero-default-1920.webp";
+import bannerMobile from "../../../../public/optimized/hero-default-828.webp";
 
 /*
   Homepage carousel. Slides come from live campaigns (Admin → Promotions →
@@ -35,7 +36,7 @@ const DEFAULT_SLIDE: Slide = {
   ctaText: "Shop all products",
   link: "/products",
   image: banner.src,
-  mobileImage: null,
+  mobileImage: bannerMobile.src,
 };
 
 const toSlide = (promotion: Promotion): Slide => ({
@@ -80,32 +81,20 @@ export function BannerHero({ banners = [] }: { banners?: Promotion[] }) {
       aria-roledescription="carousel"
       aria-label="Highlighted Promotions"
     >
-      <div className="relative group w-full overflow-hidden rounded-b-3xl min-h-[460px] sm:min-h-[500px] lg:min-h-[520px] shadow-xs">
+      <div className="relative group w-full overflow-hidden rounded-b-3xl min-h-[460px] sm:min-h-[500px] lg:min-h-[590px] shadow-xs">
         {slides.map((slide, idx) => {
           const isActive = idx === currentIndex;
           const external = slide.link ? isExternalLink(slide.link) : false;
 
+          // Phones get the phone image when there is one (only one is downloaded).
           const images = (
-            <>
-              <Image
-                src={slide.image}
-                alt={slide.title ?? slide.tag ?? "Promotion"}
-                fill
-                priority={idx === 0}
-                className={`object-cover ${slide.mobileImage ? "hidden sm:block" : ""}`}
-                sizes="100vw"
-              />
-              {slide.mobileImage && (
-                <Image
-                  src={slide.mobileImage}
-                  alt={slide.title ?? slide.tag ?? "Promotion"}
-                  fill
-                  priority={idx === 0}
-                  className="object-cover sm:hidden"
-                  sizes="100vw"
-                />
-              )}
-            </>
+            <ResponsiveImage
+              desktop={slide.image}
+              mobile={slide.mobileImage}
+              alt={slide.title ?? slide.tag ?? "Promotion"}
+              priority={idx === 0}
+              className="object-cover"
+            />
           );
 
           return (
@@ -136,20 +125,20 @@ export function BannerHero({ banners = [] }: { banners?: Promotion[] }) {
                   {images}
 
                   {/* Dark overlay keeps the text readable on any image. */}
-                  <div className="absolute inset-0 bg-black/45" />
+                  <div className="absolute inset-0 bg-black/15" />
 
                   <div className="relative z-10 flex h-full items-center px-6 sm:px-12 lg:px-20">
-                    <div className="max-w-xl">
+                    <div className="max-w-3xl">
                       {slide.tag && (
                         <span className="inline-block px-3.5 py-1 rounded-full text-xs font-semibold mb-4 bg-white/20 text-white backdrop-blur-xs">
                           {slide.tag}
                         </span>
                       )}
 
-                      <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight">{slide.title}</h1>
+                      <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-white leading-tight">{slide.title}</h1>
 
                       {slide.subtitle && (
-                        <p className="mt-4 text-sm sm:text-base text-white/80 leading-relaxed">{slide.subtitle}</p>
+                        <p className="mt-4 text-sm sm:text-2xl text-white/80 leading-relaxed">{slide.subtitle}</p>
                       )}
 
                       {slide.link && slide.ctaText && (

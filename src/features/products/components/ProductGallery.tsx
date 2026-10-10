@@ -101,7 +101,7 @@ export function ProductGallery({ images, name, selected, onSelect }: ProductGall
                 alt={image.alt}
                 fill
                 priority={i === 0}
-                sizes="(min-width: 1024px) 50vw, 100vw"
+                sizes="(min-width: 1280px) 600px, (min-width: 1024px) 45vw, calc(100vw - 64px)"
                 className="object-contain p-4"
                 draggable={false}
               />
@@ -162,7 +162,7 @@ export function ProductGallery({ images, name, selected, onSelect }: ProductGall
                   index === i ? "border-foreground" : "border-border opacity-70 hover:opacity-100"
                 }`}
               >
-                <Image src={image.url} alt="" fill sizes="96px" className="object-cover" />
+                <Image src={image.url} alt="" fill sizes="(min-width: 640px) 96px, 64px" className="object-cover" />
               </button>
             ))}
           </div>

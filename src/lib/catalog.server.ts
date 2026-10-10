@@ -1,7 +1,8 @@
 import "server-only";
 
 import { cache } from "react";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/public";
+import { storefrontCache } from "@/lib/storefront-cache";
 import { productCardVariantFields, type VariantSummaryRow } from "@/lib/variants";
 import type { ProductFilters } from "@/lib/catalog";
 import type { ProductItem } from "@/features/products/components/ProductCard";
@@ -12,23 +13,30 @@ export interface CategoryOption {
   slug: string;
 }
 
-/** Active categories, A–Z. Cached per request (header + filter bar). */
-export const getActiveCategories = cache(async (): Promise<CategoryOption[]> => {
-  const supabase = await createClient();
+/** Active categories in the admin's order (Admin → Categories). Cached per request (header + filter bar). */
+async function loadActiveCategories(): Promise<CategoryOption[]> {
+  const supabase = createPublicClient();
 
-  const { data, error } = await supabase
-    .from("categories")
-    .select("id, name, slug")
-    .eq("is_active", true)
-    .order("name", { ascending: true });
+  const read = (ordered: boolean) => {
+    let query = supabase.from("categories").select("id, name, slug").eq("is_active", true);
+    if (ordered) query = query.order("sort_order", { ascending: true });
+    return query.order("name", { ascending: true });
+  };
 
-  if (error) {
-    console.error("Categories error:", error);
-    return [];
-  }
+  let { data, error } = await read(true);
+  // Before the categories migration there's no sort_order: A–Z.
+  if (error && isMissingColumn(error)) ({ data, error } = await read(false));
+
+  if (error) throw new Error(`Categories: ${error.message}`);
 
   return data ?? [];
-});
+}
+
+export const getActiveCategories = cache(storefrontCache("categories", loadActiveCategories, () => []));
+
+/** Postgres "column does not exist" (a migration hasn't run yet). */
+const isMissingColumn = (error: { code?: string; message: string }) =>
+  error.code === "42703" || /column .* does not exist/i.test(error.message);
 
 interface ProductListRow {
   id: string;
@@ -53,11 +61,11 @@ export const cleanSearch = (q: string) => q.replace(/[,()*%\\:"'.]/g, " ").repla
  * `categoryIds` limits the result (category page); otherwise the filter's
  * category slugs are used.
  */
-export async function listProducts(
+async function loadProducts(
   filters: ProductFilters,
   options: { categoryIds?: string[] } = {}
 ): Promise<{ products: ProductItem[]; error: boolean }> {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   let categoryIds = options.categoryIds;
 
@@ -107,10 +115,7 @@ export async function listProducts(
 
   const { data, error } = await query.limit(200);
 
-  if (error) {
-    console.error("Product list error:", error);
-    return { products: [], error: true };
-  }
+  if (error) throw new Error(`Product list: ${error.message}`);
 
   const products = ((data ?? []) as unknown as ProductListRow[])
     .filter((row) => row.status?.toLowerCase() !== "draft")
@@ -138,3 +143,111 @@ export async function listProducts(
 
   return { products, error: false };
 }
+
+/** Cached (see storefront-cache.ts). `error` is true when the database couldn't be read. */
+export const listProducts = storefrontCache("products", loadProducts, () => ({ products: [], error: true }));
+
+export interface CategoryTile {
+  id: string;
+  name: string;
+  slug: string;
+  image: string | null;
+  /** "New Launch" badge: set by the admin, or automatic (a product added in the last NEW_LAUNCH_DAYS days). */
+  isNew: boolean;
+}
+
+const NEW_LAUNCH_DAYS = 30;
+
+interface CategoryTileRow {
+  id: string;
+  name: string;
+  slug: string;
+  image_url: string | null;
+  badge_mode?: "auto" | "new" | "none";
+  products: {
+    created_at: string;
+    is_active: boolean;
+    status: string | null;
+    product_images: { url: string; is_primary: boolean; order: number | null }[];
+  }[];
+}
+
+/**
+ * Homepage "Shop by category": active categories that have at least one
+ * product on sale. Picture: the category's own image, otherwise the cover
+ * photo of its newest product.
+ */
+async function loadCategoryTiles(): Promise<CategoryTile[]> {
+  const supabase = createPublicClient();
+  const products = `products ( created_at, is_active, status, product_images ( url, is_primary, "order" ) )`;
+
+  // Before the categories migration there's no badge_mode / sort_order.
+  const read = async (migrated: boolean): Promise<{ data: unknown; error: { code?: string; message: string } | null }> => {
+    let query = supabase
+      .from("categories")
+      .select(`id, name, slug, image_url, ${migrated ? "badge_mode, " : ""}${products}`)
+      .eq("is_active", true);
+    if (migrated) query = query.order("sort_order", { ascending: true });
+    return query.order("name", { ascending: true });
+  };
+
+  let { data, error } = await read(true);
+  if (error && isMissingColumn(error)) ({ data, error } = await read(false));
+
+  if (error) throw new Error(`Category tiles: ${error.message}`);
+
+  const newSince = Date.now() - NEW_LAUNCH_DAYS * 86_400_000;
+
+  return ((data ?? []) as unknown as CategoryTileRow[]).flatMap((category) => {
+    const products = (category.products ?? [])
+      .filter((product) => product.is_active && product.status?.toLowerCase() !== "draft")
+      .sort((a, b) => b.created_at.localeCompare(a.created_at));
+
+    if (products.length === 0) return [];
+
+    // Newest product that has a photo.
+    const cover = products
+      .map((product) => {
+        const images = [...(product.product_images ?? [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+        return (images.find((image) => image.is_primary) ?? images[0])?.url;
+      })
+      .find(Boolean);
+
+    return [
+      {
+        id: category.id,
+        name: category.name,
+        slug: category.slug,
+        image: category.image_url || cover || null,
+        isNew:
+          category.badge_mode === "new" ||
+          (category.badge_mode !== "none" && new Date(products[0].created_at).getTime() >= newSince),
+      },
+    ];
+  });
+}
+
+export const getCategoryTiles = storefrontCache("category-tiles", loadCategoryTiles, () => []);
+
+export interface CategoryDetail {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  image_url: string | null;
+}
+
+async function loadCategoryBySlug(slug: string): Promise<CategoryDetail | null> {
+  const { data, error } = await createPublicClient()
+    .from("categories")
+    .select("id, name, slug, description, image_url")
+    .eq("slug", slug)
+    .eq("is_active", true)
+    .maybeSingle();
+
+  if (error) throw new Error(`Category: ${error.message}`);
+  return data;
+}
+
+/** An active category by its link name, for its page (cached; shared by the page and its metadata). */
+export const getCategoryBySlug = cache(storefrontCache("category", loadCategoryBySlug, () => null));

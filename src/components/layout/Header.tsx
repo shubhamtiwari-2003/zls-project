@@ -10,8 +10,8 @@ import { HeaderSearch, HeaderSearchFallback } from "./HeaderSearch";
 import { MobileMenu } from "./MobileMenu";
 import { NAV_LINKS } from "./nav-links";
 import { AccountMenu } from "./AccountMenu";
-import white_logo from "../../../public/White-logo-text.png";
-import black_logo from "../../../public/black_logo.png";
+import white_logo from "../../../public/optimized/logo-text-white-320.webp";
+import black_logo from "../../../public/optimized/logo-text-black-320.webp";
 import ThemeToggle from "../shared/toggleTheme";
 import { CartDrawer } from "@/features/cart/components/CartDrawer";
 import { useCartStore } from "@/features/cart/store/cartStore";
@@ -92,9 +92,8 @@ export function Header({ categories }: HeaderProps) {
               {/* Light theme → Black logo */}
               <Image
                 src={black_logo}
-                alt="Z Layer Studio"
-                width={500}
-                height={700}
+                alt="Z Factor Studio"
+                sizes="(min-width: 640px) 160px, 128px"
                 className="hidden h-auto w-32 sm:w-40 dark:block "
                 priority
               />
@@ -102,9 +101,8 @@ export function Header({ categories }: HeaderProps) {
               {/* Dark theme → White logo */}
               <Image
                 src={white_logo}
-                alt="Z Layer Studio"
-                width={500}
-                height={700}
+                alt="Z Factor Studio"
+                sizes="(min-width: 640px) 160px, 128px"
                 className="block h-auto w-32 sm:w-40 dark:hidden"
                 priority
               />

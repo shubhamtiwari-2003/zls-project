@@ -15,6 +15,7 @@ import {
   X,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
+import { refreshStorefront } from "@/lib/refresh-storefront";
 import {
   CAMPAIGN_SELECT,
   PLACEMENTS,
@@ -119,12 +120,18 @@ export default function Promotions() {
     load();
   }, [load]);
 
+  // After any change: reload the list and show it on the shop straight away.
+  const changed = useCallback(() => {
+    refreshStorefront();
+    return load();
+  }, [load]);
+
   const toggleCampaign = async (campaign: PromoCampaign) => {
     setBusyId(campaign.id);
     const { error } = await supabase.from("promo_campaigns").update({ is_active: !campaign.is_active }).eq("id", campaign.id);
     setBusyId(null);
     if (error) setNotice(error.message);
-    else load();
+    else changed();
   };
 
   const removeCampaign = async (campaign: PromoCampaign) => {
@@ -141,7 +148,7 @@ export default function Promotions() {
       return;
     }
     if (openId === campaign.id) setOpenId(null);
-    load();
+    changed();
   };
 
   const open = campaigns?.find((campaign) => campaign.id === openId) ?? null;
@@ -175,7 +182,7 @@ export default function Promotions() {
           onEdit={() => setCampaignDraft(open)}
           onToggle={() => toggleCampaign(open)}
           onDelete={() => removeCampaign(open)}
-          onChanged={load}
+          onChanged={changed}
           onError={setNotice}
         />
       ) : (
@@ -197,7 +204,7 @@ export default function Promotions() {
           onSaved={(id) => {
             setCampaignDraft(null);
             setOpenId(id);
-            load();
+            changed();
           }}
         />
       )}

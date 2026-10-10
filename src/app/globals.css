@@ -1,13 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Manrope:wght@200..800&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
 
-@theme {
-  /* --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono); */
-  --font-sans: "Manrope", sans-serif;
-  --font-serif: "Lora", serif;
+/* Fonts (loaded with next/font in src/app/layout.tsx):
+     sans  Manrope     all text
+     mono  Geist Mono  order numbers, coupon codes, IDs */
+@theme inline {
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -193,10 +193,9 @@
   mask-image: linear-gradient(to bottom, transparent, #000 0.75rem, #000 calc(100% - 0.75rem), transparent);
 }
 
-/* Smooth theme transition */
 @layer base {
   * {
-    @apply border-border outline-ring/50 transition-colors duration-700;
+    @apply border-border outline-ring/50;
   }
 
   html {
@@ -206,10 +205,17 @@
   body {
     background: var(--background);
     color: var(--foreground);
-    transition:
-      background-color 0.5s ease,
-      color 0.5s ease;
   }
+}
+
+/* Smooth light/dark switch: only while the theme changes
+   (switchThemeSmoothly in src/lib/theme-transition.ts). Never on all
+   elements permanently: that animated the whole page on every load. */
+.theme-switching,
+.theme-switching * {
+  transition-property: color, background-color, border-color, fill, stroke !important;
+  transition-duration: 0.5s !important;
+  transition-timing-function: ease !important;
 }
 
 button{
