@@ -35,6 +35,21 @@ const nextConfig = {
     "/api/admin/invoices/**": ["./node_modules/pdfkit/js/**/*", "./src/assets/fonts/**/*"],
   },
 
+  // One address for the site: zfactorstudio.in → www.zfactorstudio.in (the
+  // address Google sign-in and Supabase are set up for). Matches the bare
+  // domain only, so www can never redirect to itself. Don't also add this
+  // in Hostinger's Redirects: that rule matches www too and loops.
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "zfactorstudio.in" }],
+        destination: "https://www.zfactorstudio.in/:path*",
+        permanent: true,
+      },
+    ];
+  },
+
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
